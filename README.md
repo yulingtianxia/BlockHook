@@ -3,6 +3,10 @@
 Hook Objective-C block with libffi. (Developing!!!)
 Thanks to MABlockClosure and Aspects!
 
+## Article
+
+[Hook Objective-C Block with Libffi](http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/)
+
 ## Usage
 
 You can hook a block using 3 modes (before/instead/after). This method returns a `BHToken` instance for more control. You can `remove` a `BHToken`, or set custom return value to its `retValue` property.

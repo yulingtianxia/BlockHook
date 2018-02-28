@@ -297,7 +297,7 @@ static int BHArgCount(const char *str)
 - (int)_prepCIF:(ffi_cif *)cif withEncodeString:(const char *)str
 {
     int argCount;
-    ffi_type **argTypes = [self _argsWithEncodeString: str getCount: &argCount];
+    ffi_type **argTypes = [self _argsWithEncodeString:str getCount:&argCount];
     
     ffi_status status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argCount, [self _ffiArgForEncode: str], argTypes);
     if(status != FFI_OK)
