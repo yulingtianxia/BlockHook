@@ -1,12 +1,12 @@
 //
-//  BHClosure.m
+//  BlockHook.m
 //  BlockHookSample
 //
 //  Created by 杨萧玉 on 2018/2/27.
 //  Copyright © 2018年 杨萧玉. All rights reserved.
 //  Thanks to MABlockClosure : https://github.com/mikeash/MABlockClosure
 
-#import "BHToken.h"
+#import "BlockHook.h"
 
 #import <assert.h>
 #import <objc/runtime.h>
@@ -329,13 +329,14 @@ static int BHArgCount(const char *str)
     NSMethodSignature *hookBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(self.hookBlock)];
     NSMethodSignature *originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(self.block)];
     NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:hookBlockSignature];
+    
+    // origin block invoke func arguments: block(self), ...
+    // hook block signature arguments: block(self), token, ...
+    
     if (hookBlockSignature.numberOfArguments > self.numberOfArguments + 1) {
         NSLog(@"Block has too many arguments. Not calling %@", self);
         return NO;
     }
-    
-    // origin block invoke func arguments: block(self), ...
-    // hook block signature arguments: block(self), token, ...
     
     if (hookBlockSignature.numberOfArguments > 1) {
         [blockInvocation setArgument:(void *)&self atIndex:1];

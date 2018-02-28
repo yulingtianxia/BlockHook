@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "BHToken.h"
+#import "BlockHook.h"
 #import <objc/runtime.h>
 
 @interface ViewController ()
@@ -19,25 +19,40 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    int (^block)(int, int) = ^(int x, int y) { NSLog(@"I'm here!"); return x + y; };
+    int (^block)(int, int) = ^(int x, int y) {
+        int result = x + y;
+        NSLog(@"I'm here! result: %d", result);
+        return result;
+    };
     
-    BHToken *token = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
-        NSLog(@"after x:%d y:%d ret:%d", x, y, *(int *)(token.retValue));
+    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
+        // change the block imp and result
+        *(int *)(token.retValue) = x * y;
+        NSLog(@"hook instead");
+    }];
+    
+    BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
+        // print args and result
+        NSLog(@"hook after block! x:%d y:%d ret:%d", x, y, *(int *)(token.retValue));
     }];
 
-    BHToken *token1 = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(id token){
-        NSLog(@"before token:%@", token);
-    }];
-    
-    [token block_hookWithMode:BlockHookModeBefore usingBlock:^() {
-        
+    BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(id token){
+        // BHToken has to be the first arg.
+        NSLog(@"hook before block! token:%@", token);
     }];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSLog(@"hooked block");
         int ret = block(3, 5);
-        NSLog(@"result: %d", ret);
-        [token remove];
-        [token1 remove];
+        NSLog(@"hooked result:%d", ret);
+        // remove all tokens when you don't need.
+        // reversed order of hook.
+        [tokenBefore remove];
+        [tokenAfter remove];
+        [tokenInstead remove];
+        NSLog(@"original block");
+        ret = block(3, 5);
+        NSLog(@"original result:%d", ret);
     });
 }
 

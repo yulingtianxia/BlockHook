@@ -1,5 +1,5 @@
 //
-//  BHClosure.h
+//  BlockHook.h
 //  BlockHookSample
 //
 //  Created by 杨萧玉 on 2018/2/27.
@@ -15,10 +15,12 @@ typedef NS_ENUM(NSUInteger, BlockHookMode) {
     BlockHookModeBefore,
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface BHToken : NSObject
 
 @property (nonatomic) BlockHookMode mode;
-@property (nonatomic) void *retValue;
+@property (nonatomic, nullable) void *retValue;
 
 - (BOOL)remove;
 
@@ -26,8 +28,10 @@ typedef NS_ENUM(NSUInteger, BlockHookMode) {
 
 @interface NSObject (BlockHook)
 
-- (BHToken *)block_hookWithMode:(BlockHookMode)mode
+- (nullable BHToken *)block_hookWithMode:(BlockHookMode)mode
                      usingBlock:(id)block;
 - (BOOL)remove:(BHToken *)token;
 
 @end
+
+NS_ASSUME_NONNULL_END

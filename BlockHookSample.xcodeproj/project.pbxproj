@@ -13,7 +13,7 @@
 		A46E6C082044648A000D1DAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A46E6C072044648A000D1DAA /* Assets.xcassets */; };
 		A46E6C0B2044648A000D1DAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A46E6C092044648A000D1DAA /* LaunchScreen.storyboard */; };
 		A46E6C0E2044648A000D1DAA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C0D2044648A000D1DAA /* main.m */; };
-		A46E6C17204467F4000D1DAA /* BHToken.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BHToken.m */; };
+		A46E6C17204467F4000D1DAA /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,8 +27,8 @@
 		A46E6C0A2044648A000D1DAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A46E6C0C2044648A000D1DAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A46E6C0D2044648A000D1DAA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		A46E6C15204467F4000D1DAA /* BHToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BHToken.h; sourceTree = "<group>"; };
-		A46E6C16204467F4000D1DAA /* BHToken.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BHToken.m; sourceTree = "<group>"; };
+		A46E6C15204467F4000D1DAA /* BlockHook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockHook.h; sourceTree = "<group>"; };
+		A46E6C16204467F4000D1DAA /* BlockHook.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHook.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,8 +78,8 @@
 		A46E6C14204464B7000D1DAA /* BlockHook */ = {
 			isa = PBXGroup;
 			children = (
-				A46E6C15204467F4000D1DAA /* BHToken.h */,
-				A46E6C16204467F4000D1DAA /* BHToken.m */,
+				A46E6C15204467F4000D1DAA /* BlockHook.h */,
+				A46E6C16204467F4000D1DAA /* BlockHook.m */,
 			);
 			path = BlockHook;
 			sourceTree = "<group>";
@@ -156,7 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A46E6C032044648A000D1DAA /* ViewController.m in Sources */,
-				A46E6C17204467F4000D1DAA /* BHToken.m in Sources */,
+				A46E6C17204467F4000D1DAA /* BlockHook.m in Sources */,
 				A46E6C0E2044648A000D1DAA /* main.m in Sources */,
 				A46E6C002044648A000D1DAA /* AppDelegate.m in Sources */,
 			);
