@@ -71,7 +71,14 @@ original result:8
 
 ## Installation
 
-BlockHook needs libffi, which is a submodule in this project.
+BlockHook needs libffi, which is a submodule in this project. You should use `--recursive` when clone this sample, or you can use these commands get the submodule.
+
+```
+cd libffi
+git submodule init
+git submodule update
+```
+
 before running target in Xcode, you need do these in libffi:
 
 - run `./autogen.sh`
