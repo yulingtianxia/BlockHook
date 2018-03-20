@@ -71,9 +71,15 @@ original result:8
 
 ## Installation
 
-BlockHook needs libffi : https://github.com/libffi/libffi
+BlockHook needs libffi, which is a submodule in this project.
+before running target in Xcode, you need do these in libffi:
+
+- run `./autogen.sh`
+- run `./configure`
+- run `python generate-darwin-source-and-headers.py`
+
 You must build libffi for every architecture you need.
-The sample project "BlockHookSample" just support arm64. 
+The sample project "BlockHookSample" just only support iOS platform. 
 
 After importing libffi, just add the two files BlockHook.h/m to your project.
 

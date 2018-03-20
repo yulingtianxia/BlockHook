@@ -14,6 +14,7 @@
 		A46E6C0B2044648A000D1DAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A46E6C092044648A000D1DAA /* LaunchScreen.storyboard */; };
 		A46E6C0E2044648A000D1DAA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C0D2044648A000D1DAA /* main.m */; };
 		A46E6C17204467F4000D1DAA /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
+		A4F557BD2060ED0A00497FFE /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4F557BE2060ED0A00497FFE /* libffi.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		A46E6C0D2044648A000D1DAA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A46E6C15204467F4000D1DAA /* BlockHook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockHook.h; sourceTree = "<group>"; };
 		A46E6C16204467F4000D1DAA /* BlockHook.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHook.m; sourceTree = "<group>"; };
+		A4F557BE2060ED0A00497FFE /* libffi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libffi.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4F557BD2060ED0A00497FFE /* libffi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,6 +51,7 @@
 				A46E6C14204464B7000D1DAA /* BlockHook */,
 				A46E6BFD2044648A000D1DAA /* BlockHookSample */,
 				A46E6BFC2044648A000D1DAA /* Products */,
+				A4F557BC2060ED0A00497FFE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,6 +86,14 @@
 				A46E6C16204467F4000D1DAA /* BlockHook.m */,
 			);
 			path = BlockHook;
+			sourceTree = "<group>";
+		};
+		A4F557BC2060ED0A00497FFE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A4F557BE2060ED0A00497FFE /* libffi.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -294,10 +306,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				HEADER_SEARCH_PATHS = "libffi/**";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi/build_iphoneos-arm64/include\"";
 				INFOPLIST_FILE = BlockHookSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = libffi/libffi.a;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -310,10 +321,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				HEADER_SEARCH_PATHS = "libffi/**";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi/build_iphoneos-arm64/include\"";
 				INFOPLIST_FILE = BlockHookSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = libffi/libffi.a;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
