@@ -32,36 +32,6 @@ struct _BHBlock
     struct _BHBlockDescriptor *descriptor;
 };
 
-@interface BHCenter : NSObject
-
-@property (nonatomic, class, readonly) BHCenter *defaultCenter;
-@property (nonatomic) NSMutableDictionary<NSString *, BHToken *> *tokens;
-
-@end
-
-@implementation BHCenter
-
-+ (instancetype)defaultCenter
-{
-    static dispatch_once_t onceToken;
-    static BHCenter *instance;
-    dispatch_once(&onceToken, ^{
-        instance = [BHCenter new];
-    });
-    return instance;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        _tokens = [NSMutableDictionary dictionary];
-    }
-    return self;
-}
-
-@end
-
 @interface BHDealloc : NSObject
 
 @property (nonatomic, strong) BHToken *token;
