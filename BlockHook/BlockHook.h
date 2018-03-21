@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable BHToken *)block_hookWithMode:(BlockHookMode)mode
                      usingBlock:(id)block;
-- (BOOL)remove:(BHToken *)token;
+- (BOOL)block_removeHook:(BHToken *)token;
 
 @end
 
