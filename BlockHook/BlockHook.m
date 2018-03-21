@@ -62,6 +62,23 @@ struct _BHBlock
 
 @end
 
+@interface BHDealloc : NSObject
+
+@property (nonatomic, strong) BHToken *token;
+@property (nonatomic, copy) BHDeadBlock deadBlock;
+
+@end
+
+@implementation BHDealloc
+
+- (void)dealloc
+{
+    if (self.deadBlock) {
+        self.deadBlock(self.token);
+    }
+}
+
+@end
 @interface BHToken ()
 {
     ffi_cif _cif;
@@ -88,6 +105,9 @@ struct _BHBlock
         _block = block;
         _closure = ffi_closure_alloc(sizeof(ffi_closure), &_replacementInvoke);
         _numberOfArguments = [self _prepCIF:&_cif withEncodeString:BHBlockTypeEncodeString(_block)];
+        BHDealloc *bhDealloc = [BHDealloc new];
+        bhDealloc.token = self;
+        objc_setAssociatedObject(block, NSSelectorFromString([NSString stringWithFormat:@"%p", self]), bhDealloc, OBJC_ASSOCIATION_RETAIN);
         [self _prepClosure];
     }
     return self;
@@ -96,8 +116,10 @@ struct _BHBlock
 - (void)dealloc
 {
     [self remove];
-    if(_closure)
+    if(_closure) {
         ffi_closure_free(_closure);
+        _closure = NULL;
+    }
 }
 
 - (BOOL)remove
@@ -107,10 +129,15 @@ struct _BHBlock
             ((__bridge struct _BHBlock *)self.block)->invoke = _originInvoke;
         }
         _originInvoke = NULL;
-        BHCenter.defaultCenter.tokens[[NSString stringWithFormat:@"%p", self]] = nil;
         return YES;
     }
     return NO;
+}
+
+- (void)setBlockDeadCallback:(BHDeadBlock)deadBlock
+{
+    BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, NSSelectorFromString([NSString stringWithFormat:@"%p", self]));
+    bhDealloc.deadBlock = deadBlock;
 }
 
 #pragma mark - Help Function
@@ -145,6 +172,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     if (BlockHookModeAfter == token.mode) {
         [token invokeHookBlockWithArgs:args];
     }
+    token.retValue = NULL;
 }
 
 static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *len)
@@ -381,7 +409,6 @@ static int BHArgCount(const char *str)
     BHToken *token = [[BHToken alloc] initWithBlock:self];
     token.mode = mode;
     token.hookBlock = block;
-    BHCenter.defaultCenter.tokens[[NSString stringWithFormat:@"%p", token]] = token;
     return token;
 }
 

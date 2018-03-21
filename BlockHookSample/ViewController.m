@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "BlockHook.h"
-#import <objc/runtime.h>
 
 @interface ViewController ()
 
@@ -19,11 +18,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    NSObject *z = NSObject.new;
     int (^block)(int, int) = ^(int x, int y) {
         int result = x + y;
+        NSLog(@"%p",z);
         NSLog(@"I'm here! result: %d", result);
         return result;
     };
+    
     
     BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
         // change the block imp and result
@@ -39,6 +41,10 @@
     BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(id token){
         // BHToken has to be the first arg.
         NSLog(@"hook before block! token:%@", token);
+    }];
+    
+    [tokenBefore setBlockDeadCallback:^(BHToken * _Nullable token) {
+        NSLog(@"%p", token);
     }];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

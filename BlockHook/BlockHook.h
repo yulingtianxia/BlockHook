@@ -15,6 +15,9 @@ typedef NS_ENUM(NSUInteger, BlockHookMode) {
     BlockHookModeBefore,
 };
 
+@class BHToken;
+typedef void(^BHDeadBlock)(BHToken * _Nullable token);
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface BHToken : NSObject
@@ -23,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) void *retValue;
 
 - (BOOL)remove;
+
+- (void)setBlockDeadCallback:(BHDeadBlock)deadBlock;
 
 @end
 
