@@ -32,36 +32,6 @@ struct _BHBlock
     struct _BHBlockDescriptor *descriptor;
 };
 
-@interface BHCenter : NSObject
-
-@property (nonatomic, class, readonly) BHCenter *defaultCenter;
-@property (nonatomic) NSMutableDictionary<NSString *, BHToken *> *tokens;
-
-@end
-
-@implementation BHCenter
-
-+ (instancetype)defaultCenter
-{
-    static dispatch_once_t onceToken;
-    static BHCenter *instance;
-    dispatch_once(&onceToken, ^{
-        instance = [BHCenter new];
-    });
-    return instance;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        _tokens = [NSMutableDictionary dictionary];
-    }
-    return self;
-}
-
-@end
-
 @interface BHToken ()
 {
     ffi_cif _cif;
@@ -88,6 +58,7 @@ struct _BHBlock
         _block = block;
         _closure = ffi_closure_alloc(sizeof(ffi_closure), &_replacementInvoke);
         _numberOfArguments = [self _prepCIF:&_cif withEncodeString:BHBlockTypeEncodeString(_block)];
+        objc_setAssociatedObject(block, (__bridge_retained const void * _Nonnull)([NSString stringWithFormat:@"%p", self]), self, OBJC_ASSOCIATION_RETAIN);
         [self _prepClosure];
     }
     return self;
@@ -95,6 +66,7 @@ struct _BHBlock
 
 - (void)dealloc
 {
+    [self remove];
     if(_closure)
         ffi_closure_free(_closure);
 }
@@ -102,8 +74,7 @@ struct _BHBlock
 - (BOOL)remove
 {
     if (_originInvoke) {
-        ((__bridge struct _BHBlock *)self.block)->invoke = _originInvoke;
-        BHCenter.defaultCenter.tokens[[NSString stringWithFormat:@"%p", self]] = nil;
+        ((__bridge_retained struct _BHBlock *)self.block)->invoke = _originInvoke;
         return YES;
     }
     return NO;
@@ -113,7 +84,7 @@ struct _BHBlock
 
 static const char *BHBlockTypeEncodeString(id blockObj)
 {
-    struct _BHBlock *block = (__bridge void *)blockObj;
+    struct _BHBlock *block = (__bridge_retained void *)blockObj;
     struct _BHBlockDescriptor *descriptor = block->descriptor;
     
     int copyDisposeFlag = 1 << 25;
@@ -130,7 +101,7 @@ static const char *BHBlockTypeEncodeString(id blockObj)
 
 static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata)
 {
-    BHToken *token = (__bridge BHToken *)(userdata);
+    BHToken *token = (__bridge_transfer BHToken *)(userdata);
     token.retValue = ret;
     if (BlockHookModeBefore == token.mode) {
         [token invokeHookBlockWithArgs:args];
@@ -168,7 +139,7 @@ static int BHArgCount(const char *str)
 
 - (void *)_allocate:(size_t)howmuch
 {
-    NSMutableData *data = [NSMutableData dataWithLength: howmuch];
+    NSMutableData *data = [NSMutableData dataWithLength:howmuch];
     [_allocations addObject: data];
     return [data mutableBytes];
 }
@@ -310,15 +281,15 @@ static int BHArgCount(const char *str)
 
 - (void)_prepClosure
 {
-    ffi_status status = ffi_prep_closure_loc(_closure, &_cif, BHFFIClosureFunc, (__bridge void *)(self), _replacementInvoke);
+    ffi_status status = ffi_prep_closure_loc(_closure, &_cif, BHFFIClosureFunc, (__bridge_retained void *)(self), _replacementInvoke);
     if(status != FFI_OK)
     {
         NSLog(@"ffi_prep_closure returned %d", (int)status);
         abort();
     }
     // exchange invoke func imp
-    _originInvoke = ((__bridge struct _BHBlock *)self.block)->invoke;
-    ((__bridge struct _BHBlock *)self.block)->invoke = _replacementInvoke;
+    _originInvoke = ((__bridge_retained struct _BHBlock *)self.block)->invoke;
+    ((__bridge_retained struct _BHBlock *)self.block)->invoke = _replacementInvoke;
 }
 
 - (BOOL)invokeHookBlockWithArgs:(void **)args
@@ -377,7 +348,6 @@ static int BHArgCount(const char *str)
     BHToken *token = [[BHToken alloc] initWithBlock:self];
     token.mode = mode;
     token.hookBlock = block;
-    BHCenter.defaultCenter.tokens[[NSString stringWithFormat:@"%p", token]] = token;
     return token;
 }
 

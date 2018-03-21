@@ -30,7 +30,7 @@
         *(int *)(token.retValue) = x * y;
         NSLog(@"hook instead");
     }];
-    
+
     BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
         // print args and result
         NSLog(@"hook after block! x:%d y:%d ret:%d", x, y, *(int *)(token.retValue));
