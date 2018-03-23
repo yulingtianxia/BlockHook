@@ -35,7 +35,7 @@ struct _BHBlock
 @interface BHDealloc : NSObject
 
 @property (nonatomic, strong) BHToken *token;
-@property (nonatomic, copy) BHDeadBlock deadBlock;
+@property (nonatomic, nullable, copy) BHDeadBlock deadBlock;
 
 @end
 
@@ -94,14 +94,33 @@ struct _BHBlock
 
 - (BOOL)remove
 {
+    [self setBlockDeadCallback:nil];
     if (_originInvoke) {
         if (self.block) {
             ((__bridge struct _BHBlock *)self.block)->invoke = _originInvoke;
         }
+#if DEBUG
         _originInvoke = NULL;
+#endif
         return YES;
     }
     return NO;
+}
+
+- (void)setMode:(BlockHookMode)mode
+{
+    _mode = mode;
+    if (BlockHookModeDead == mode) {
+        [self setBlockDeadCallback:self.hookBlock];
+    }
+}
+
+- (void)setHookBlock:(id)hookBlock
+{
+    _hookBlock = hookBlock;
+    if (BlockHookModeDead == self.mode) {
+        [self setBlockDeadCallback:hookBlock];
+    }
 }
 
 - (void)setBlockDeadCallback:(BHDeadBlock)deadBlock
@@ -137,7 +156,12 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         [token invokeHookBlockWithArgs:args];
     }
     if (!(BlockHookModeInstead == token.mode && [token invokeHookBlockWithArgs:args])) {
-        ffi_call(&token->_cif, token->_originInvoke, ret, args);
+        if (token->_originInvoke) {
+            ffi_call(&token->_cif, token->_originInvoke, ret, args);
+        }
+        else {
+            NSLog(@"You had lost your originInvoke! Please check the order of removing tokens!");
+        }
     }
     if (BlockHookModeAfter == token.mode) {
         [token invokeHookBlockWithArgs:args];

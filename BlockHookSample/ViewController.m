@@ -21,8 +21,7 @@
     NSObject *z = NSObject.new;
     int (^block)(int, int) = ^(int x, int y) {
         int result = x + y;
-        NSLog(@"%p",z);
-        NSLog(@"I'm here! result: %d", result);
+        NSLog(@"I'm here! result: %d, z is a NSObject: %p", result, z);
         return result;
     };
     
@@ -43,8 +42,9 @@
         NSLog(@"hook before block! token:%@", token);
     }];
     
-    [tokenBefore setBlockDeadCallback:^(BHToken * _Nullable token) {
-        NSLog(@"%p", token);
+    BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(id token){
+        // BHToken is the only arg.
+        NSLog(@"block dead! token:%@", token);
     }];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -59,6 +59,7 @@
         NSLog(@"original block");
         ret = block(3, 5);
         NSLog(@"original result:%d", ret);
+//        [tokenDead remove];
     });
 }
 

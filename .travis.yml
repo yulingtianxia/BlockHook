@@ -1,0 +1,30 @@
+osx_image: xcode9.2
+language: objective-c
+xcode_workspace: BlockHookWorkSpace
+xcode_scheme: BlockHookKit
+xcode_sdk: iphoneos11.2
+env:
+  global:
+  - FRAMEWORK_NAME=BlockHookKit
+before_install:
+- brew update
+- brew outdated carthage || brew upgrade carthage
+- cd libffi
+- git submodule init
+- git submodule update
+- "./autogen.sh"
+- "./configure"
+- python generate-darwin-source-and-headers.py
+before_script:
+before_deploy:
+- carthage build --no-skip-current
+- carthage archive $FRAMEWORK_NAME
+script: xcodebuild -workspace BlockHookWorkSpace.xcworkspace -scheme BlockHookSample -configuration Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
+deploy:
+  provider: releases
+  api_key:
+    secure: bfE7slv9dJNwMdFodHjjrQkvakQDImBFrg4MnL6NwibcKjnayefsfV4iGy1cHxI0PUPTHs8T3ZPm5987ViLZryg+s9UrtZRtGEtIeLYrcRvPjr3sBSj9jnbS9vWYvuXOiYGkuYHRIwkY4iqA7ULOn0s86HKWWxcYUcUKGv94/JwvWTxH8SCd1LaC42JVazajpF9DdlZzwjcu/4qQCsrfapPVetjO0R4YblERmq8ZZBODUJgV2WAaPdMJeuiE6/90YYdrJ3zbntHRWNqptGOObYSvH2bcXiDPzCSjGi7BQ7r5TP3sjrL8oX6SVvmCFiqqWno2pycAyn6MVkOrmWmYAy/84QVnSJ6hL8RDA/XPoOZFPWiFUyS6+5T1yYbcEcxHwbXF9EUK4CDSiNUMmy3DPX9SlI1PSj8AgF9gbJzQ20Vv2xQ7kq3tQO40pXtoPrP/ve+3drJs3T3WqYcGf33dTy5yd78N25SZY4kensKtd8X+ldjMtAfOURAOqwnaQ/Zqb/sq5frEkrewrj7C4m5ZxwFrejFdywl2Q1ptXY+dF6wj28X3gwjnMuzUyHH38umJ1naRQQpnOU/zcu+hix2u555Wd/5AyylbGXSXClBYR8cxjLSyAL6zL2TGVifW0aGEyNZwf3AGu2QnPxbdNvkVYTK4BAl6pt1pNYMx5+MjQog=
+  file: BlockHookKit.framework.zip
+  on:
+    repo: yulingtianxia/BlockHook
+    tags: true
