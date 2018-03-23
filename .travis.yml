@@ -15,6 +15,7 @@ before_install:
 - "./autogen.sh"
 - "./configure"
 - python generate-darwin-source-and-headers.py
+- cd ..
 before_script:
 before_deploy:
 - carthage build --no-skip-current
