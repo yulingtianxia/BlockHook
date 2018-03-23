@@ -5,10 +5,9 @@
 </p>
 
 [![CI Status](http://img.shields.io/travis/yulingtianxia/BlockHook.svg?style=flat)](https://travis-ci.org/yulingtianxia/BlockHook)
-[![Version](https://img.shields.io/cocoapods/v/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![License](https://img.shields.io/cocoapods/l/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
-[![Platform](https://img.shields.io/cocoapods/p/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
+[![GitHub release](https://img.shields.io/github/release/yulingtianxia/blockhook.svg)](https://github.com/yulingtianxia/BlockHook/releases)
+
 
 # BlockHook
 
@@ -27,6 +26,7 @@ Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockH
 - [x] Use tokens to change hook mode dynamically.
 - [x] Modify return value.
 - [x] Self-managed tokens.
+- [x] Support Carthage
 
 ## 🔮 Example
 
@@ -118,34 +118,6 @@ block dead! token:<BHToken: 0x1c40e8480>
 ```
 
 ## 📲 Installation
-
-### CocoaPods
-
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
-
-```bash
-$ gem install cocoapods
-```
-
-To integrate BlockHook into your Xcode project using CocoaPods, specify it in your `Podfile`:
-
-
-```
-source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '11.0'
-use_frameworks!
-target 'MyApp' do
-	pod 'BlockHook'
-end
-```
-
-You need replace "MyApp" with your project's name.
-
-Then, run the following command:
-
-```bash
-$ pod install
-```
 
 ### Carthage
 
