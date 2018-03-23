@@ -20,7 +20,7 @@ before_script:
 before_deploy:
 - carthage build --no-skip-current
 - carthage archive $FRAMEWORK_NAME
-script: xcodebuild -workspace BlockHookWorkSpace.xcworkspace -scheme BlockHookSample -configuration Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
+script: xcodebuild -workspace BlockHookWorkSpace.xcworkspace -scheme BlockHookKit -configuration Release
 deploy:
   provider: releases
   api_key:
