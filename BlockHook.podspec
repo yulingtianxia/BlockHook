@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
 s.name         = "BlockHook"
 s.version      = "1.0.0"
-s.summary      = "Hook Objective-C block with libffi."
+s.summary      = "Hook Objective-C blocks with libffi."
 s.description  = <<-DESC
-You can hook a block using 4 modes (before/instead/after/dead). This method returns a `BHToken` instance for more control. You can `remove` a `BHToken`, or set custom return value to its `retValue` property.
+Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockHook can run your code before/instead/after invoking a block. BlockHook can even notify you when a block dealloc. You can trace the whole lifecycle of a block using BlockHook!
 DESC
 s.homepage     = "https://github.com/yulingtianxia/BlockHook"
 

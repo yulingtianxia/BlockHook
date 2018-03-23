@@ -4,10 +4,15 @@
 </a>
 </p>
 
+[![CI Status](http://img.shields.io/travis/yulingtianxia/BlockHook.svg?style=flat)](https://travis-ci.org/yulingtianxia/BlockHook)
+[![Version](https://img.shields.io/cocoapods/v/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![License](https://img.shields.io/cocoapods/l/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
+[![Platform](https://img.shields.io/cocoapods/p/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
+
 # BlockHook
 
-Hook Objective-C block with libffi.
-Thanks to MABlockClosure and Aspects!
+Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockHook can run your code before/instead/after invoking a block. BlockHook can even notify you when a block dealloc. You can trace the whole lifecycle of a block using BlockHook!
 
 ## 📚 Article
 
@@ -16,11 +21,30 @@ Thanks to MABlockClosure and Aspects!
 ## 🌟 Features
 
 - [x] Easy to use.
-- [x] Keep your code clear
+- [x] Keep your code clear.
 - [x] Reserve the whole arguments.
-- [x] Support 4 modes: Before, Instead, After and Dead.
-- [x] Centralized management of rules.
-- [x] Self-managed rules.
+- [x] Support 4 hook modes: Before, Instead, After and Dead.
+- [x] Use tokens to change hook mode dynamically.
+- [x] Modify return value.
+- [x] Self-managed tokens.
+
+## 🔮 Example
+
+BlockHook needs libffi, which is a submodule in this project. You should use `--recursive` when clone this sample, or you can use these commands get the submodule.
+
+```
+cd libffi
+git submodule init
+git submodule update
+```
+
+If targets in Xcode fails to compile, you need do these in libffi folder:
+
+- run `./autogen.sh`
+- run `./configure`
+- run `python generate-darwin-source-and-headers.py`
+
+The sample project "BlockHookSample" just only support iOS platform. You must build libffi for every architecture you need.
 
 ## 🐒 How to use
 
@@ -95,25 +119,56 @@ block dead! token:<BHToken: 0x1c40e8480>
 
 ## 📲 Installation
 
-BlockHook needs libffi, which is a submodule in this project. You should use `--recursive` when clone this sample, or you can use these commands get the submodule.
+### CocoaPods
+
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
+
+```bash
+$ gem install cocoapods
+```
+
+To integrate BlockHook into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
 
 ```
-cd libffi
-git submodule init
-git submodule update
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '11.0'
+use_frameworks!
+target 'MyApp' do
+	pod 'BlockHook'
+end
 ```
 
-before running target in Xcode, you need do these in libffi:
+You need replace "MyApp" with your project's name.
 
-- run `./autogen.sh`
-- run `./configure`
-- run `python generate-darwin-source-and-headers.py`
+Then, run the following command:
 
-You must build libffi for every architecture you need.
-The sample project "BlockHookSample" just only support iOS platform. 
+```bash
+$ pod install
+```
 
-After importing libffi, just add the two files BlockHook.h/m to your project.
+### Carthage
 
+[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks.
+
+You can install Carthage with [Homebrew](http://brew.sh/) using the following command:
+
+```bash
+$ brew update
+$ brew install carthage
+```
+
+To integrate BlockHook into your Xcode project using Carthage, specify it in your `Cartfile`:
+
+```ogdl
+github "yulingtianxia/BlockHook"
+```
+
+Run `carthage update` to build the framework and drag the built `BlockHookKit.framework` into your Xcode project.
+
+### Manual
+
+After importing libffi, just add the two files `BlockHook.h/m` to your project.
 
 ## ❤️ Contributed
 
@@ -128,5 +183,7 @@ yulingtianxia, yulingtianxia@gmail.com
 
 ## 👮🏻 License
 
-MessageThrottle is available under the MIT license. See the LICENSE file for more info.
+BlockHook is available under the MIT license. See the LICENSE file for more info.
+
+Thanks to MABlockClosure and Aspects!
 
