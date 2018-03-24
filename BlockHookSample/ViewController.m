@@ -21,20 +21,22 @@
     NSObject *z = NSObject.new;
     int (^block)(int, int) = ^(int x, int y) {
         int result = x + y;
-        NSLog(@"I'm here! result: %d, z is a NSObject: %p", result, z);
+        NSLog(@"%d + %d = %d, z is a NSObject: %p", x, y, result, z);
         return result;
     };
     
     
     BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
+        [token invokeOriginalBlock];
+        NSLog(@"let me see original result: %d", *(int *)(token.retValue));
         // change the block imp and result
         *(int *)(token.retValue) = x * y;
-        NSLog(@"hook instead");
+        NSLog(@"hook instead: '+' -> '*'");
     }];
 
     BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
         // print args and result
-        NSLog(@"hook after block! x:%d y:%d ret:%d", x, y, *(int *)(token.retValue));
+        NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(token.retValue));
     }];
 
     BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(id token){
@@ -56,7 +58,7 @@
         [tokenBefore remove];
         [tokenAfter remove];
         [tokenInstead remove];
-        NSLog(@"original block");
+        NSLog(@"remove tokens, original block");
         ret = block(3, 5);
         NSLog(@"original result:%d", ret);
 //        [tokenDead remove];

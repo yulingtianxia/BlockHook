@@ -25,8 +25,9 @@ Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockH
 - [x] Support 4 hook modes: Before, Instead, After and Dead.
 - [x] Use tokens to change hook mode dynamically.
 - [x] Modify return value.
+- [x] Support invoking original implementation.
 - [x] Self-managed tokens.
-- [x] Support Carthage
+- [x] Support Carthage.
 
 ## 🔮 Example
 
@@ -48,7 +49,7 @@ The sample project "BlockHookSample" just only support iOS platform. You must bu
 
 ## 🐒 How to use
 
-You can hook a block using 4 modes (before/instead/after/dead). This method returns a `BHToken` instance for more control. You can `remove` a `BHToken`, or set custom return value to its `retValue` property.
+You can hook a block using 4 modes (before/instead/after/dead). This method returns a `BHToken` instance for more control. You can `remove` a `BHToken`, or set custom return value to its `retValue` property. Calling `invokeOriginalBlock` method will invoke original implementation of the block.
 
 ```
 - (BHToken *)block_hookWithMode:(BlockHookMode)mode
@@ -61,20 +62,22 @@ BlockHook is easy to use. Its APIs take example by Aspects. Here is a full set o
 NSObject *z = NSObject.new;
 int (^block)(int, int) = ^(int x, int y) {
    int result = x + y;
-   NSLog(@"I'm here! result: %d, z is a NSObject: %p", result, z);
+   NSLog(@"%d + %d = %d, z is a NSObject: %p", x, y, result, z);
    return result;
 };
     
     
 BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
+   [token invokeOriginalBlock];
+   NSLog(@"let me see original result: %d", *(int *)(token.retValue));
    // change the block imp and result
    *(int *)(token.retValue) = x * y;
-   NSLog(@"hook instead");
+   NSLog(@"hook instead: '+' -> '*'");
 }];
 
 BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
    // print args and result
-   NSLog(@"hook after block! x:%d y:%d ret:%d", x, y, *(int *)(token.retValue));
+   NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(token.retValue));
 }];
 
 BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(id token){
@@ -96,7 +99,7 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
    [tokenBefore remove];
    [tokenAfter remove];
    [tokenInstead remove];
-   NSLog(@"original block");
+   NSLog(@"remove tokens, original block");
    ret = block(3, 5);
    NSLog(@"original result:%d", ret);
 //        [tokenDead remove];
@@ -107,14 +110,16 @@ Here is the log:
 
 ```
 hooked block
-hook before block! token:<BHToken: 0x1d00e0f80>
-hook instead
-hook after block! x:3 y:5 ret:15
+hook before block! token:<BHToken: 0x1d00f0d80>
+3 + 5 = 8, z is a NSObject: 0x1d00172b0
+let me see original result: 8
+hook instead: '+' -> '*'
+hook after block! 3 * 5 = 15
 hooked result:15
-original block
-I'm here! result: 8, z is a NSObject: 0x1c0011ec0
+remove tokens, original block
+3 + 5 = 8, z is a NSObject: 0x1d00172b0
 original result:8
-block dead! token:<BHToken: 0x1c40e8480>
+block dead! token:<BHToken: 0x1d00f9900>
 ```
 
 ## 📲 Installation

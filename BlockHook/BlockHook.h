@@ -24,9 +24,22 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BHToken : NSObject
 
 @property (nonatomic) BlockHookMode mode;
+/**
+ Return value of invoking the block. Need type casting.
+ */
 @property (nonatomic, nullable) void *retValue;
 
+/**
+ Remove token will revert the hook.
+
+ @return remove successfully
+ */
 - (BOOL)remove;
+
+/**
+ Invoke original implementation of the block.
+ */
+- (void)invokeOriginalBlock;
 
 @end
 
