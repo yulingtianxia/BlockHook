@@ -7,7 +7,7 @@
 //  Thanks to MABlockClosure : https://github.com/mikeash/MABlockClosure
 
 #import "BlockHook.h"
-
+#import <ffi.h>
 #import <assert.h>
 #import <objc/runtime.h>
 #import <sys/mman.h>

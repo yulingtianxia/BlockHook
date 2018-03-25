@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <ffi.h>
 
 typedef NS_ENUM(NSUInteger, BlockHookMode) {
     BlockHookModeAfter,
