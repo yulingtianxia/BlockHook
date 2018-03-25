@@ -16,6 +16,14 @@
 #import <CoreGraphics/CoreGraphics.h>
 #endif
 
+enum {
+    BLOCK_HAS_COPY_DISPOSE =  (1 << 25),
+    BLOCK_HAS_CTOR =          (1 << 26), // helpers have C++ code
+    BLOCK_IS_GLOBAL =         (1 << 28),
+    BLOCK_HAS_STRET =         (1 << 29), // IFF BLOCK_HAS_SIGNATURE
+    BLOCK_HAS_SIGNATURE =     (1 << 30),
+};
+
 struct _BHBlockDescriptor
 {
     unsigned long reserved;
@@ -148,13 +156,10 @@ static const char *BHBlockTypeEncodeString(id blockObj)
     struct _BHBlock *block = (__bridge void *)blockObj;
     struct _BHBlockDescriptor *descriptor = block->descriptor;
     
-    int copyDisposeFlag = 1 << 25;
-    int signatureFlag = 1 << 30;
-    
-    assert(block->flags & signatureFlag);
+    assert(block->flags & BLOCK_HAS_SIGNATURE);
     
     int index = 0;
-    if(block->flags & copyDisposeFlag)
+    if(block->flags & BLOCK_HAS_COPY_DISPOSE)
         index += 2;
     
     return descriptor->rest[index];
@@ -407,6 +412,16 @@ static int BHArgCount(const char *str)
                      usingBlock:(id)block
 {
     if (!block || ![self isKindOfClass:NSClassFromString(@"NSBlock")]) {
+        NSLog(@"Not Block!");
+        return nil;
+    }
+    struct _BHBlock *bh_block = (__bridge void *)block;
+    if (!(bh_block->flags & BLOCK_HAS_SIGNATURE)) {
+        NSLog(@"Block has no signature! Required ABI.2010.3.16");
+        return nil;
+    }
+    if (!(bh_block->flags & BLOCK_HAS_COPY_DISPOSE) && BlockHookModeDead == mode) {
+        NSLog(@"Block will never die!");
         return nil;
     }
     BHToken *token = [[BHToken alloc] initWithBlock:self];
