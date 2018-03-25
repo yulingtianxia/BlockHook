@@ -7,7 +7,7 @@
 [![CI Status](http://img.shields.io/travis/yulingtianxia/BlockHook.svg?style=flat)](https://travis-ci.org/yulingtianxia/BlockHook)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![GitHub release](https://img.shields.io/github/release/yulingtianxia/blockhook.svg)](https://github.com/yulingtianxia/BlockHook/releases)
-
+[![Twitter Follow](https://img.shields.io/twitter/follow/yulingtianxia.svg?style=social&label=Follow)](https://twitter.com/yulingtianxia)
 
 # BlockHook
 
