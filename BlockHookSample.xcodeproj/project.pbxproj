@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A46E6C002044648A000D1DAA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6BFF2044648A000D1DAA /* AppDelegate.m */; };
 		A46E6C032044648A000D1DAA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C022044648A000D1DAA /* ViewController.m */; };
 		A46E6C062044648A000D1DAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A46E6C042044648A000D1DAA /* Main.storyboard */; };
@@ -129,6 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A4F5588C2064EE2A00497FFE /* BlockHookKit.h in Headers */,
+				A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
