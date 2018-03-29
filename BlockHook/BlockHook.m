@@ -43,7 +43,7 @@ struct _BHBlock
 @interface BHDealloc : NSObject
 
 @property (nonatomic, strong) BHToken *token;
-@property (nonatomic, nullable, copy) BHDeadBlock deadBlock;
+@property (nonatomic, nullable) BHDeadBlock deadBlock;
 
 @end
 
@@ -68,7 +68,7 @@ struct _BHBlock
 @property (nonatomic) NSMutableArray *allocations;
 @property (nonatomic, weak) id block;
 @property (nonatomic) NSUInteger numberOfArguments;
-@property (nonatomic, copy) id hookBlock;
+@property (nonatomic) id hookBlock;
 
 - (id)initWithBlock:(id)block;
 
