@@ -24,6 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BlockHookMode mode;
 /**
+ Arguments of invoking the block. Need type casting.
+ */
+@property (nonatomic) void *_Nullable *_Null_unspecified args;
+/**
  Return value of invoking the block. Need type casting.
  */
 @property (nonatomic, nullable) void *retValue;

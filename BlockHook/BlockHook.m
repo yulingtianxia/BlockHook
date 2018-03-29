@@ -69,7 +69,6 @@ struct _BHBlock
 @property (nonatomic, weak) id block;
 @property (nonatomic) NSUInteger numberOfArguments;
 @property (nonatomic, copy) id hookBlock;
-@property (nonatomic) void *_Nullable *_Null_unspecified args;
 
 - (id)initWithBlock:(id)block;
 
@@ -418,10 +417,6 @@ static int BHArgCount(const char *str)
     struct _BHBlock *bh_block = (__bridge void *)block;
     if (!(bh_block->flags & BLOCK_HAS_SIGNATURE)) {
         NSLog(@"Block has no signature! Required ABI.2010.3.16");
-        return nil;
-    }
-    if (!(bh_block->flags & BLOCK_HAS_COPY_DISPOSE) && BlockHookModeDead == mode) {
-        NSLog(@"Block will never die!");
         return nil;
     }
     BHToken *token = [[BHToken alloc] initWithBlock:self];

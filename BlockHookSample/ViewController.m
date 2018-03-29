@@ -21,7 +21,7 @@
     NSObject *z = NSObject.new;
     int (^block)(int, int) = ^(int x, int y) {
         int result = x + y;
-        NSLog(@"%d + %d = %d, z is a NSObject: %p", x, y, result, z);
+        NSLog(@"%d + %d = %d, z is a NSObject: %@", x, y, result, z);
         return result;
     };
     
