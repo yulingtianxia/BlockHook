@@ -10,10 +10,25 @@
 #import <ffi.h>
 #import <assert.h>
 #import <objc/runtime.h>
-#import <sys/mman.h>
+#include <dlfcn.h>
+#include <mach-o/dyld.h>
+#include <mach-o/nlist.h>
+#import <pthread.h>
 
 #if TARGET_OS_IPHONE
 #import <CoreGraphics/CoreGraphics.h>
+#endif
+
+#ifdef __LP64__
+typedef struct mach_header_64 mach_header_t;
+typedef struct segment_command_64 segment_command_t;
+typedef struct nlist_64 nlist_t;
+#define LC_SEGMENT_ARCH_DEPENDENT LC_SEGMENT_64
+#else
+typedef struct mach_header mach_header_t;
+typedef struct segment_command segment_command_t;
+typedef struct nlist nlist_t;
+#define LC_SEGMENT_ARCH_DEPENDENT LC_SEGMENT
 #endif
 
 enum {
@@ -39,6 +54,62 @@ struct _BHBlock
     void *invoke;
     struct _BHBlockDescriptor *descriptor;
 };
+
+static NSMapTable *block_invoke_cache;
+static pthread_mutex_t block_invoke_cache_mutex;
+
+static void _hunt_blocks_for_image(const struct mach_header *header,
+                                   intptr_t slide) {
+    Dl_info info;
+    if (dladdr(header, &info) == 0) {
+        return;
+    }
+    
+    segment_command_t *cur_seg_cmd;
+    segment_command_t *linkedit_segment = NULL;
+    segment_command_t *pagezero_segment = NULL;
+    struct symtab_command* symtab_cmd = NULL;
+    
+    uintptr_t cur = (uintptr_t)header + sizeof(mach_header_t);
+    for (uint i = 0; i < header->ncmds; i++, cur += cur_seg_cmd->cmdsize) {
+        cur_seg_cmd = (segment_command_t *)cur;
+        if (cur_seg_cmd->cmd == LC_SEGMENT_ARCH_DEPENDENT) {
+            if (strcmp(cur_seg_cmd->segname, SEG_LINKEDIT) == 0) {
+                linkedit_segment = cur_seg_cmd;
+            }
+            else if (strcmp(SEG_PAGEZERO, cur_seg_cmd->segname) == 0) {
+                pagezero_segment = (segment_command_t*)cur_seg_cmd;
+            }
+        } else if (cur_seg_cmd->cmd == LC_SYMTAB) {
+            symtab_cmd = (struct symtab_command*)cur_seg_cmd;
+        }
+    }
+    
+    if (!symtab_cmd || !linkedit_segment ) {
+        return;
+    }
+    
+    uintptr_t linkedit_base = (uintptr_t)slide + linkedit_segment->vmaddr - linkedit_segment->fileoff;
+    nlist_t *symtab = (nlist_t *)(linkedit_base + symtab_cmd->symoff);
+    char *strtab = (char *)(linkedit_base + symtab_cmd->stroff);
+    
+    pthread_mutex_lock(&block_invoke_cache_mutex);
+    
+    if (!block_invoke_cache) {
+        block_invoke_cache = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsOpaqueMemory | NSMapTableObjectPointerPersonality valueOptions:NSPointerFunctionsCopyIn];
+    }
+    
+    for (uint i = 0; i < symtab_cmd->nsyms; i++) {
+        uint32_t strtab_offset = symtab[i].n_un.n_strx;
+        char *symbol_name = strtab + strtab_offset;
+        uintptr_t block_addr = (uintptr_t)info.dli_fbase + symtab[i].n_value - (pagezero_segment ? pagezero_segment->vmsize : 0);
+        NSString *symbolName = [NSString stringWithUTF8String:symbol_name];
+        // TODO: check symbolName and get location info...add thread safety for block_invoke_cache!
+        [block_invoke_cache setObject:symbolName forKey:(__bridge id)(void *)block_addr];
+    }
+    
+    pthread_mutex_unlock(&block_invoke_cache_mutex);
+}
 
 @interface BHDealloc : NSObject
 
@@ -101,6 +172,12 @@ struct _BHBlock
     }
 }
 
++ (void)load
+{
+    pthread_mutex_init(&block_invoke_cache_mutex, NULL);
+    _dyld_register_func_for_add_image(_hunt_blocks_for_image);
+}
+
 - (BOOL)remove
 {
     [self setBlockDeadCallback:nil];
@@ -136,6 +213,17 @@ struct _BHBlock
 {
     BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, NSSelectorFromString([NSString stringWithFormat:@"%p", self]));
     bhDealloc.deadBlock = deadBlock;
+}
+
+- (NSString *)definedLocation
+{
+    NSString *value = nil;
+    pthread_mutex_lock(&block_invoke_cache_mutex);
+    if (_originInvoke) {
+        value = [block_invoke_cache objectForKey:(__bridge id)_originInvoke];
+    }
+    pthread_mutex_unlock(&block_invoke_cache_mutex);
+    return value;
 }
 
 - (void)invokeOriginalBlock

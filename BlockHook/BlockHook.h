@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, nullable) void *retValue;
 
+@property (nonatomic, nullable, readonly) NSString *definedLocation;
+
 /**
  Remove token will revert the hook.
 
