@@ -31,8 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
  Return value of invoking the block. Need type casting.
  */
 @property (nonatomic, nullable) void *retValue;
-
-@property (nonatomic, nullable, readonly) NSString *definedLocation;
+/**
+ Mangle name of the invoke function.
+ */
+@property (nonatomic, nullable, readonly) NSString *mangleName;
 
 /**
  Remove token will revert the hook.

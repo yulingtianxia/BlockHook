@@ -10,9 +10,9 @@
 #import <ffi.h>
 #import <assert.h>
 #import <objc/runtime.h>
-#include <dlfcn.h>
-#include <mach-o/dyld.h>
-#include <mach-o/nlist.h>
+#import <dlfcn.h>
+#import <mach-o/dyld.h>
+#import <mach-o/nlist.h>
 #import <pthread.h>
 
 #if TARGET_OS_IPHONE
@@ -55,16 +55,14 @@ struct _BHBlock
     struct _BHBlockDescriptor *descriptor;
 };
 
-static NSMapTable *block_invoke_cache;
-static pthread_mutex_t block_invoke_cache_mutex;
+static NSMapTable *block_invoke_mangle_cache;
+static pthread_mutex_t block_invoke_mangle_cache_mutex;
 
-static void _hunt_blocks_for_image(const struct mach_header *header,
-                                   intptr_t slide) {
+static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t slide) {
     Dl_info info;
     if (dladdr(header, &info) == 0) {
         return;
     }
-    
     segment_command_t *cur_seg_cmd;
     segment_command_t *linkedit_segment = NULL;
     segment_command_t *pagezero_segment = NULL;
@@ -93,22 +91,28 @@ static void _hunt_blocks_for_image(const struct mach_header *header,
     nlist_t *symtab = (nlist_t *)(linkedit_base + symtab_cmd->symoff);
     char *strtab = (char *)(linkedit_base + symtab_cmd->stroff);
     
-    pthread_mutex_lock(&block_invoke_cache_mutex);
+    pthread_mutex_lock(&block_invoke_mangle_cache_mutex);
     
-    if (!block_invoke_cache) {
-        block_invoke_cache = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsOpaqueMemory | NSMapTableObjectPointerPersonality valueOptions:NSPointerFunctionsCopyIn];
+    if (!block_invoke_mangle_cache) {
+        block_invoke_mangle_cache = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsOpaqueMemory | NSMapTableObjectPointerPersonality valueOptions:NSPointerFunctionsCopyIn];
     }
     
     for (uint i = 0; i < symtab_cmd->nsyms; i++) {
         uint32_t strtab_offset = symtab[i].n_un.n_strx;
         char *symbol_name = strtab + strtab_offset;
+        bool symbol_name_longer_than_1 = symbol_name[0] && symbol_name[1];
+        if (!symbol_name_longer_than_1) {
+            continue;
+        }
         uintptr_t block_addr = (uintptr_t)info.dli_fbase + symtab[i].n_value - (pagezero_segment ? pagezero_segment->vmsize : 0);
-        NSString *symbolName = [NSString stringWithUTF8String:symbol_name];
-        // TODO: check symbolName and get location info...add thread safety for block_invoke_cache!
-        [block_invoke_cache setObject:symbolName forKey:(__bridge id)(void *)block_addr];
+        NSString *symbolName = [NSString stringWithUTF8String:&symbol_name[1]];
+        NSRange range = [symbolName rangeOfString:@"_block_invoke"];
+        if (range.location != NSNotFound && range.location > 0) {
+            [block_invoke_mangle_cache setObject:symbolName forKey:(__bridge id)(void *)block_addr];
+        }
     }
     
-    pthread_mutex_unlock(&block_invoke_cache_mutex);
+    pthread_mutex_unlock(&block_invoke_mangle_cache_mutex);
 }
 
 @interface BHDealloc : NSObject
@@ -174,7 +178,7 @@ static void _hunt_blocks_for_image(const struct mach_header *header,
 
 + (void)load
 {
-    pthread_mutex_init(&block_invoke_cache_mutex, NULL);
+    pthread_mutex_init(&block_invoke_mangle_cache_mutex, NULL);
     _dyld_register_func_for_add_image(_hunt_blocks_for_image);
 }
 
@@ -215,14 +219,14 @@ static void _hunt_blocks_for_image(const struct mach_header *header,
     bhDealloc.deadBlock = deadBlock;
 }
 
-- (NSString *)definedLocation
+- (NSString *)mangleName
 {
     NSString *value = nil;
-    pthread_mutex_lock(&block_invoke_cache_mutex);
+    pthread_mutex_lock(&block_invoke_mangle_cache_mutex);
     if (_originInvoke) {
-        value = [block_invoke_cache objectForKey:(__bridge id)_originInvoke];
+        value = [block_invoke_mangle_cache objectForKey:(__bridge id)_originInvoke];
     }
-    pthread_mutex_unlock(&block_invoke_cache_mutex);
+    pthread_mutex_unlock(&block_invoke_mangle_cache_mutex);
     return value;
 }
 
