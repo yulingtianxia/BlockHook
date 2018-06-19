@@ -144,6 +144,7 @@ static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t sl
 @property (nonatomic, weak) id block;
 @property (nonatomic) NSUInteger numberOfArguments;
 @property (nonatomic) id hookBlock;
+@property (nonatomic, nullable, readwrite) NSString *mangleName;
 
 - (id)initWithBlock:(id)block;
 
@@ -221,13 +222,14 @@ static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t sl
 
 - (NSString *)mangleName
 {
-    NSString *value = nil;
-    pthread_mutex_lock(&block_invoke_mangle_cache_mutex);
-    if (_originInvoke) {
-        value = [block_invoke_mangle_cache objectForKey:(__bridge id)_originInvoke];
+    if (!_mangleName) {
+        pthread_mutex_lock(&block_invoke_mangle_cache_mutex);
+        if (_originInvoke) {
+            _mangleName = [block_invoke_mangle_cache objectForKey:(__bridge id)_originInvoke];
+        }
+        pthread_mutex_unlock(&block_invoke_mangle_cache_mutex);
     }
-    pthread_mutex_unlock(&block_invoke_mangle_cache_mutex);
-    return value;
+    return _mangleName;
 }
 
 - (void)invokeOriginalBlock
