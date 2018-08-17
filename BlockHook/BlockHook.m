@@ -504,8 +504,13 @@ static int BHArgCount(const char *str)
 - (BHToken *)block_hookWithMode:(BlockHookMode)mode
                      usingBlock:(id)block
 {
+    // __NSStackBlock__ -> __NSStackBlock -> NSBlock
     if (!block || ![self isKindOfClass:NSClassFromString(@"NSBlock")]) {
         NSLog(@"Not Block!");
+        return nil;
+    }
+    if ([self isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
+        NSLog(@"Stack Block! Please copy it by yourself!");
         return nil;
     }
     struct _BHBlock *bh_block = (__bridge void *)block;
