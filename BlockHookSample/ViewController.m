@@ -15,6 +15,20 @@
 
 @implementation ViewController
 
+- (void)performBlock:(void(^)(void))block
+{
+    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
+        [token invokeOriginalBlock];
+        NSLog(@"hook stack block succeed!");
+    }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (block) {
+            block();
+        }
+        [tokenInstead remove];
+    });
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -24,30 +38,32 @@
         NSLog(@"%d + %d = %d, z is a NSObject: %@", x, y, result, z);
         return result;
     };
-    
-    
-    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
-        [token invokeOriginalBlock];
-        NSLog(@"let me see original result: %d", *(int *)(token.retValue));
-        // change the block imp and result
-        *(int *)(token.retValue) = x * y;
-        NSLog(@"hook instead: '+' -> '*'");
+    [self performBlock:^{
+        NSLog(@"stack block:%@", z);
     }];
+    
+//    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
+//        [token invokeOriginalBlock];
+//        NSLog(@"let me see original result: %d", *(int *)(token.retValue));
+//        // change the block imp and result
+//        *(int *)(token.retValue) = x * y;
+//        NSLog(@"hook instead: '+' -> '*'");
+//    }];
 
-    BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
-        // print args and result
-        NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(token.retValue));
-    }];
-
-    BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(id token){
-        // BHToken has to be the first arg.
-        NSLog(@"hook before block! token:%@", token);
-    }];
-    
-    BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(id token){
-        // BHToken is the only arg.
-        NSLog(@"block dead! token:%@", token);
-    }];
+//    BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
+//        // print args and result
+//        NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(token.retValue));
+//    }];
+//
+//    BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(id token){
+//        // BHToken has to be the first arg.
+//        NSLog(@"hook before block! token:%@", token);
+//    }];
+//
+//    BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(id token){
+//        // BHToken is the only arg.
+//        NSLog(@"block dead! token:%@", token);
+//    }];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSLog(@"hooked block");
@@ -55,9 +71,9 @@
         NSLog(@"hooked result:%d", ret);
         // remove all tokens when you don't need.
         // reversed order of hook.
-        [tokenBefore remove];
-        [tokenAfter remove];
-        [tokenInstead remove];
+//        [tokenBefore remove];
+//        [tokenAfter remove];
+//        [tokenInstead remove];
         NSLog(@"remove tokens, original block");
         ret = block(3, 5);
         NSLog(@"original result:%d", ret);

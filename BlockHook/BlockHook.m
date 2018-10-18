@@ -132,19 +132,24 @@ static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t sl
 }
 
 @end
+
 @interface BHToken ()
 {
     ffi_cif _cif;
     void *_originInvoke;
     void *_replacementInvoke;
     ffi_closure *_closure;
-    
 }
 @property (nonatomic) NSMutableArray *allocations;
 @property (nonatomic, weak) id block;
 @property (nonatomic) NSUInteger numberOfArguments;
 @property (nonatomic) id hookBlock;
 @property (nonatomic, nullable, readwrite) NSString *mangleName;
+@property (nonatomic) NSMethodSignature *originalBlockSignature;
+/**
+ if block is kind of `__NSStackBlock__` class.
+ */
+@property (nonatomic, getter=isStackBlock) BOOL stackBlock;
 
 - (id)initWithBlock:(id)block;
 
@@ -158,6 +163,7 @@ static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t sl
     {
         _allocations = [[NSMutableArray alloc] init];
         _block = block;
+        _originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(block)];
         _closure = ffi_closure_alloc(sizeof(ffi_closure), &_replacementInvoke);
         _numberOfArguments = [self _prepCIF:&_cif withEncodeString:BHBlockTypeEncodeString(_block)];
         BHDealloc *bhDealloc = [BHDealloc new];
@@ -187,6 +193,10 @@ static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t sl
 {
     [self setBlockDeadCallback:nil];
     if (_originInvoke) {
+        if (self.isStackBlock) {
+            NSLog(@"Can't remove token for StackBlock!");
+            return NO;
+        }
         if (self.block) {
             ((__bridge struct _BHBlock *)self.block)->invoke = _originInvoke;
         }
@@ -216,6 +226,10 @@ static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t sl
 
 - (void)setBlockDeadCallback:(BHDeadBlock)deadBlock
 {
+    if (self.isStackBlock) {
+        NSLog(@"Can't set BlockDeadCallback for StackBlock!");
+        return;
+    }
     BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, NSSelectorFromString([NSString stringWithFormat:@"%p", self]));
     bhDealloc.deadBlock = deadBlock;
 }
@@ -456,11 +470,10 @@ static int BHArgCount(const char *str)
 
 - (BOOL)invokeHookBlockWithArgs:(void **)args
 {
-    if (!self.block || !self.hookBlock) {
+    if ((!self.isStackBlock && !self.block) || !self.hookBlock) {
         return NO;
     }
     NSMethodSignature *hookBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(self.hookBlock)];
-    NSMethodSignature *originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(self.block)];
     NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:hookBlockSignature];
     
     // origin block invoke func arguments: block(self), ...
@@ -477,7 +490,7 @@ static int BHArgCount(const char *str)
 
     void *argBuf = NULL;
     for (NSUInteger idx = 2; idx < hookBlockSignature.numberOfArguments; idx++) {
-        const char *type = [originalBlockSignature getArgumentTypeAtIndex:idx - 1];
+        const char *type = [self.originalBlockSignature getArgumentTypeAtIndex:idx - 1];
         NSUInteger argSize;
         NSGetSizeAndAlignment(type, &argSize, NULL);
         
@@ -509,10 +522,6 @@ static int BHArgCount(const char *str)
         NSLog(@"Not Block!");
         return nil;
     }
-    if ([self isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
-        NSLog(@"Stack Block! Please copy it by yourself!");
-        return nil;
-    }
     struct _BHBlock *bh_block = (__bridge void *)block;
     if (!(bh_block->flags & BLOCK_HAS_SIGNATURE)) {
         NSLog(@"Block has no signature! Required ABI.2010.3.16");
@@ -521,6 +530,10 @@ static int BHArgCount(const char *str)
     BHToken *token = [[BHToken alloc] initWithBlock:self];
     token.mode = mode;
     token.hookBlock = block;
+    if ([self isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
+        NSLog(@"Stack Block! I suggest you copy it first!");
+        token.stackBlock = YES;
+    }
     return token;
 }
 
