@@ -1,0 +1,6 @@
+framework module BlockHookKit {
+  umbrella header "BlockHookKit.h"
+
+  export *
+  module * { export * }
+}

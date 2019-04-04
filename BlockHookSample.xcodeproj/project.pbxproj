@@ -162,6 +162,7 @@
 				A4F558842064EE2A00497FFE /* Frameworks */,
 				A4F558852064EE2A00497FFE /* Headers */,
 				A4F558862064EE2A00497FFE /* Resources */,
+				A42E39552255CA2900A42AFA /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -229,6 +230,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A42E39552255CA2900A42AFA /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp -R \"${CONFIGURATION_BUILD_DIR}/BlockHookKit.framework\" \"${PROJECT_DIR}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A46E6BF72044648A000D1DAA /* Sources */ = {
