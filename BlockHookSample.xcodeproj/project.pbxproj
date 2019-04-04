@@ -6,6 +6,20 @@
 	objectVersion = 48;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		A42E39592255FEBD00A42AFA /* ReleaseBlockHookKit */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = A42E395A2255FEBE00A42AFA /* Build configuration list for PBXAggregateTarget "ReleaseBlockHookKit" */;
+			buildPhases = (
+				A42E395D2255FEC500A42AFA /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = ReleaseBlockHookKit;
+			productName = ReleaseBlockHookKit;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A46E6C002044648A000D1DAA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6BFF2044648A000D1DAA /* AppDelegate.m */; };
@@ -162,7 +176,6 @@
 				A4F558842064EE2A00497FFE /* Frameworks */,
 				A4F558852064EE2A00497FFE /* Headers */,
 				A4F558862064EE2A00497FFE /* Resources */,
-				A42E39552255CA2900A42AFA /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -182,6 +195,10 @@
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "杨萧玉";
 				TargetAttributes = {
+					A42E39592255FEBD00A42AFA = {
+						CreatedOnToolsVersion = 10.1;
+						ProvisioningStyle = Automatic;
+					};
 					A46E6BFA2044648A000D1DAA = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
@@ -207,6 +224,7 @@
 			targets = (
 				A46E6BFA2044648A000D1DAA /* BlockHookSample */,
 				A4F558872064EE2A00497FFE /* BlockHookKit */,
+				A42E39592255FEBD00A42AFA /* ReleaseBlockHookKit */,
 			);
 		};
 /* End PBXProject section */
@@ -232,7 +250,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A42E39552255CA2900A42AFA /* ShellScript */ = {
+		A42E395D2255FEC500A42AFA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -247,7 +265,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp -R \"${CONFIGURATION_BUILD_DIR}/BlockHookKit.framework\" \"${PROJECT_DIR}\"\n";
+			shellScript = "#!/bin/sh\n\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Step 1. Build Device and Simulator versions\nxcodebuild -target \"BlockHookKit\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\n\n# Step 2. Copy the framework structure (from iphoneos build) to the universal folder\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/BlockHookKit.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Step 3. Copy Swift modules from iphonesimulator build (if it exists) to the copied framework directory\nSIMULATOR_SWIFT_MODULES_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/BlockHookKit.framework/Modules/BlockHookKit.swiftmodule/.\"\nif [ -d \"${SIMULATOR_SWIFT_MODULES_DIR}\" ]; then\ncp -R \"${SIMULATOR_SWIFT_MODULES_DIR}\" \"${UNIVERSAL_OUTPUTFOLDER}/BlockHookKit.framework/Modules/BlockHookKit.swiftmodule\"\nfi\n\n# Step 4. Create universal binary file using lipo and place the combined executable in the copied framework directory\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/BlockHookKit.framework/BlockHookKit\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/BlockHookKit.framework/BlockHookKit\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/BlockHookKit.framework/BlockHookKit\"\n\n# Step 5. Convenience step to copy the framework to the project's directory\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/BlockHookKit.framework\" \"${PROJECT_DIR}\"\n\n# Step 6. Convenience step to open the project's directory in Finder\nopen \"${PROJECT_DIR}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -293,6 +311,24 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		A42E395B2255FEBE00A42AFA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A42E395C2255FEBE00A42AFA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		A46E6C0F2044648A000D1DAA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -482,6 +518,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A42E395A2255FEBE00A42AFA /* Build configuration list for PBXAggregateTarget "ReleaseBlockHookKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A42E395B2255FEBE00A42AFA /* Debug */,
+				A42E395C2255FEBE00A42AFA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A46E6BF620446489000D1DAA /* Build configuration list for PBXProject "BlockHookSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
