@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "BlockHook"
-s.version      = "1.1.0"
+s.version      = "1.1.1"
 s.summary      = "Hook Objective-C blocks."
 s.description  = <<-DESC
 Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockHook can run your code before/instead/after invoking a block. BlockHook can even notify you when a block dealloc. You can trace the whole lifecycle of a block using BlockHook!
@@ -16,7 +16,6 @@ s.platform     = :ios, '8.0'
 s.requires_arc = true
 
 s.vendored_frameworks = "BlockHookKit.framework"
-# s.static_framework = true
 
 end
 
