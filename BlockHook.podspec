@@ -17,9 +17,9 @@ s.osx.deployment_target = "10.7"
 s.tvos.deployment_target = "9.0"
 s.requires_arc = true
 
-s.ios.vendored_frameworks = "universal/iOS/BlockHookKit.framework"
-s.tvos.vendored_frameworks = "universal/tvOS/BlockHookKit.framework"
-s.osx.vendored_frameworks = "universal/macOS/BlockHookKit.framework"
+s.ios.vendored_frameworks = "universal/iOS/BlockHook.framework"
+s.tvos.vendored_frameworks = "universal/tvOS/BlockHook.framework"
+s.osx.vendored_frameworks = "universal/macOS/BlockHook.framework"
 
 end
 
