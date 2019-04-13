@@ -34,6 +34,8 @@
 		A4E7320A2261E70C003D7063 /* BlockHook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A4F558882064EE2A00497FFE /* BlockHook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A4E732262261EA62003D7063 /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E732252261EA62003D7063 /* libffi.a */; };
 		A4E732272261ED2F003D7063 /* ffi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E732122261E814003D7063 /* ffi.dylib */; };
+		A4E732282261FD24003D7063 /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
+		A4E732292261FD2A003D7063 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4F558952064EE4B00497FFE /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
 		A4F558962064EF1200497FFE /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4F557BE2060ED0A00497FFE /* libffi.a */; };
 /* End PBXBuildFile section */
@@ -194,6 +196,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4E732292261FD2A003D7063 /* BlockHook.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,7 +387,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Step 1. Build Device and Simulator versions\nxcodebuild -target \"BlockHook iOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\n\n# Step 2. Copy the framework structure (from iphoneos build) to the universal folder\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/BlockHook.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# Step 3. Copy Swift modules from iphonesimulator build (if it exists) to the copied framework directory\nSIMULATOR_SWIFT_MODULES_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/BlockHook.framework/Modules/BlockHook.swiftmodule/.\"\nif [ -d \"${SIMULATOR_SWIFT_MODULES_DIR}\" ]; then\ncp -R \"${SIMULATOR_SWIFT_MODULES_DIR}\" \"${UNIVERSAL_OUTPUTFOLDER}/BlockHook.framework/Modules/BlockHook.swiftmodule\"\nfi\n\n# Step 4. Create universal binary file using lipo and place the combined executable in the copied framework directory\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/BlockHook.framework/BlockHook\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/BlockHook.framework/BlockHook\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/BlockHook.framework/BlockHook\"\n\n# Step 5. Convenience step to copy the framework to the project's directory\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/BlockHook.framework\" \"${PROJECT_DIR}\"\n\n# Step 6. Convenience step to open the project's directory in Finder\nopen \"${PROJECT_DIR}\"\n";
+			shellScript = "#!/bin/sh\n\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/iOS\"\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/macOS\"\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/tvOS\"\n\nrm -r \"${PROJECT_DIR}/universal\"\n\n# Build \nxcodebuild -project libffi/libffi.xcodeproj -target \"libffi-iOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"BlockHook iOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -project libffi/libffi.xcodeproj -target \"libffi-Mac\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk macosx CODE_SIGNING_ALLOWED=NO BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"BlockHook macOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk macosx  BUILD_DIR=\"${BUILD_DIR}\"  BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -project libffi/libffi.xcodeproj -target \"libffi-tvOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk appletvos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"BlockHook tvOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk appletvos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\n\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/BlockHook.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/iOS/\"\ncp -R \"${BUILD_DIR}/${CONFIGURATION}/BlockHook.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/macOS/\"\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-appletvos/BlockHook.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/tvOS/\"\n\nmv \"${UNIVERSAL_OUTPUTFOLDER}\" \"${PROJECT_DIR}/universal\"\n\nopen \"${PROJECT_DIR}/universal\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -411,6 +414,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4E732282261FD24003D7063 /* BlockHook.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,7 +630,7 @@
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
@@ -656,7 +660,7 @@
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
 				PRODUCT_NAME = BlockHook;
@@ -690,7 +694,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.2;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -718,7 +722,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.2;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -738,6 +742,7 @@
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"/**";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
 				PRODUCT_NAME = BlockHook;
@@ -762,6 +767,7 @@
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"/**";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
 				PRODUCT_NAME = BlockHook;
