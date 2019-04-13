@@ -7,7 +7,12 @@
 //  Thanks to MABlockClosure : https://github.com/mikeash/MABlockClosure
 
 #import "BlockHook.h"
+#if TARGET_OS_IOS || TARGET_OS_TV
 #import <ffi.h>
+#elif TARGET_OS_OSX
+#import <ffi.h>
+#endif
+
 #import <assert.h>
 #import <objc/runtime.h>
 #import <dlfcn.h>
