@@ -1,8 +1,8 @@
-osx_image: xcode9.4
+osx_image: xcode10.0
 language: objective-c
 xcode_workspace: BlockHookWorkSpace
 xcode_scheme: BlockHook iOS
-xcode_sdk: iphoneos11.4
+xcode_sdk: iphoneos12.0
 env:
   global:
   - FRAMEWORK_NAME=BlockHook
