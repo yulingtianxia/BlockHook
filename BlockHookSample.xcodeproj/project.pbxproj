@@ -36,6 +36,13 @@
 		A4E732272261ED2F003D7063 /* ffi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E732122261E814003D7063 /* ffi.dylib */; };
 		A4E732282261FD24003D7063 /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
 		A4E732292261FD2A003D7063 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E7325F2263640D003D7063 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E7325E2263640D003D7063 /* AppDelegate.m */; };
+		A4E732622263640D003D7063 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E732612263640D003D7063 /* ViewController.m */; };
+		A4E732642263640E003D7063 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4E732632263640E003D7063 /* Assets.xcassets */; };
+		A4E732672263640E003D7063 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4E732652263640E003D7063 /* Main.storyboard */; };
+		A4E7326A2263640E003D7063 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E732692263640E003D7063 /* main.m */; };
+		A4E73278226370AF003D7063 /* BlockHook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E731FE2261E5A8003D7063 /* BlockHook.framework */; };
+		A4E73279226370AF003D7063 /* BlockHook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A4E731FE2261E5A8003D7063 /* BlockHook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A4F558952064EE4B00497FFE /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
 		A4F558962064EF1200497FFE /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4F557BE2060ED0A00497FFE /* libffi.a */; };
 /* End PBXBuildFile section */
@@ -47,6 +54,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = A4F558872064EE2A00497FFE;
 			remoteInfo = "BlockHook iOS";
+		};
+		A4E7327A226370AF003D7063 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A46E6BF320446489000D1DAA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A4E731FD2261E5A8003D7063;
+			remoteInfo = "BlockHook macOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -62,10 +76,21 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A4E7327C226370AF003D7063 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A4E73279226370AF003D7063 /* BlockHook.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A46E6BFB2044648A000D1DAA /* BlockHookSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlockHookSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A46E6BFB2044648A000D1DAA /* BlockHookSample iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BlockHookSample iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A46E6BFE2044648A000D1DAA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A46E6BFF2044648A000D1DAA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		A46E6C012044648A000D1DAA /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -83,6 +108,17 @@
 		A4E732142261E8C5003D7063 /* libffi.a */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libffi.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E7321D2261EA22003D7063 /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E732252261EA62003D7063 /* libffi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libffi.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4E7325B2263640D003D7063 /* BlockHookSample macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BlockHookSample macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4E7325D2263640D003D7063 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		A4E7325E2263640D003D7063 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		A4E732602263640D003D7063 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		A4E732612263640D003D7063 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		A4E732632263640E003D7063 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A4E732662263640E003D7063 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A4E732682263640E003D7063 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A4E732692263640E003D7063 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A4E7326B2263640E003D7063 /* BlockHookSampleMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BlockHookSampleMac.entitlements; sourceTree = "<group>"; };
+		A4E7327522636633003D7063 /* ffi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = ffi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4F557BE2060ED0A00497FFE /* libffi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libffi.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4F558882064EE2A00497FFE /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -112,6 +148,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A4E732582263640D003D7063 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4E73278226370AF003D7063 /* BlockHook.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4F558842064EE2A00497FFE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -127,7 +171,8 @@
 			isa = PBXGroup;
 			children = (
 				A46E6C14204464B7000D1DAA /* BlockHook */,
-				A46E6BFD2044648A000D1DAA /* BlockHookSample */,
+				A46E6BFD2044648A000D1DAA /* BlockHookSample-iOS */,
+				A4E7325C2263640D003D7063 /* BlockHookSample-macOS */,
 				A46E6BFC2044648A000D1DAA /* Products */,
 				A4F557BC2060ED0A00497FFE /* Frameworks */,
 			);
@@ -136,15 +181,16 @@
 		A46E6BFC2044648A000D1DAA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A46E6BFB2044648A000D1DAA /* BlockHookSample.app */,
+				A46E6BFB2044648A000D1DAA /* BlockHookSample iOS.app */,
 				A4F558882064EE2A00497FFE /* BlockHook.framework */,
 				A4E731FE2261E5A8003D7063 /* BlockHook.framework */,
 				A4E7321D2261EA22003D7063 /* BlockHook.framework */,
+				A4E7325B2263640D003D7063 /* BlockHookSample macOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A46E6BFD2044648A000D1DAA /* BlockHookSample */ = {
+		A46E6BFD2044648A000D1DAA /* BlockHookSample-iOS */ = {
 			isa = PBXGroup;
 			children = (
 				A46E6BFE2044648A000D1DAA /* AppDelegate.h */,
@@ -157,7 +203,7 @@
 				A46E6C0C2044648A000D1DAA /* Info.plist */,
 				A46E6C0D2044648A000D1DAA /* main.m */,
 			);
-			path = BlockHookSample;
+			path = "BlockHookSample-iOS";
 			sourceTree = "<group>";
 		};
 		A46E6C14204464B7000D1DAA /* BlockHook */ = {
@@ -170,9 +216,26 @@
 			path = BlockHook;
 			sourceTree = "<group>";
 		};
+		A4E7325C2263640D003D7063 /* BlockHookSample-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				A4E7325D2263640D003D7063 /* AppDelegate.h */,
+				A4E7325E2263640D003D7063 /* AppDelegate.m */,
+				A4E732602263640D003D7063 /* ViewController.h */,
+				A4E732612263640D003D7063 /* ViewController.m */,
+				A4E732632263640E003D7063 /* Assets.xcassets */,
+				A4E732652263640E003D7063 /* Main.storyboard */,
+				A4E732682263640E003D7063 /* Info.plist */,
+				A4E732692263640E003D7063 /* main.m */,
+				A4E7326B2263640E003D7063 /* BlockHookSampleMac.entitlements */,
+			);
+			path = "BlockHookSample-macOS";
+			sourceTree = "<group>";
+		};
 		A4F557BC2060ED0A00497FFE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A4E7327522636633003D7063 /* ffi.dylib */,
 				A4E732252261EA62003D7063 /* libffi.a */,
 				A4E732142261E8C5003D7063 /* libffi.a */,
 				A4E732122261E814003D7063 /* ffi.dylib */,
@@ -211,9 +274,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		A46E6BFA2044648A000D1DAA /* BlockHookSample */ = {
+		A46E6BFA2044648A000D1DAA /* BlockHookSample iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A46E6C112044648A000D1DAA /* Build configuration list for PBXNativeTarget "BlockHookSample" */;
+			buildConfigurationList = A46E6C112044648A000D1DAA /* Build configuration list for PBXNativeTarget "BlockHookSample iOS" */;
 			buildPhases = (
 				A46E6BF72044648A000D1DAA /* Sources */,
 				A46E6BF82044648A000D1DAA /* Frameworks */,
@@ -225,9 +288,9 @@
 			dependencies = (
 				A4E7320C2261E70C003D7063 /* PBXTargetDependency */,
 			);
-			name = BlockHookSample;
+			name = "BlockHookSample iOS";
 			productName = BlockHookSample;
-			productReference = A46E6BFB2044648A000D1DAA /* BlockHookSample.app */;
+			productReference = A46E6BFB2044648A000D1DAA /* BlockHookSample iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A4E731FD2261E5A8003D7063 /* BlockHook macOS */ = {
@@ -265,6 +328,25 @@
 			productName = "BlockHook tvOS";
 			productReference = A4E7321D2261EA22003D7063 /* BlockHook.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		A4E7325A2263640D003D7063 /* BlockHookSample macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4E7326C2263640E003D7063 /* Build configuration list for PBXNativeTarget "BlockHookSample macOS" */;
+			buildPhases = (
+				A4E732572263640D003D7063 /* Sources */,
+				A4E732582263640D003D7063 /* Frameworks */,
+				A4E732592263640D003D7063 /* Resources */,
+				A4E7327C226370AF003D7063 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A4E7327B226370AF003D7063 /* PBXTargetDependency */,
+			);
+			name = "BlockHookSample macOS";
+			productName = BlockHookSampleMac;
+			productReference = A4E7325B2263640D003D7063 /* BlockHookSample macOS.app */;
+			productType = "com.apple.product-type.application";
 		};
 		A4F558872064EE2A00497FFE /* BlockHook iOS */ = {
 			isa = PBXNativeTarget;
@@ -309,6 +391,10 @@
 						CreatedOnToolsVersion = 10.2;
 						ProvisioningStyle = Automatic;
 					};
+					A4E7325A2263640D003D7063 = {
+						CreatedOnToolsVersion = 10.2;
+						ProvisioningStyle = Automatic;
+					};
 					A4F558872064EE2A00497FFE = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
@@ -328,7 +414,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A46E6BFA2044648A000D1DAA /* BlockHookSample */,
+				A46E6BFA2044648A000D1DAA /* BlockHookSample iOS */,
+				A4E7325A2263640D003D7063 /* BlockHookSample macOS */,
 				A4F558872064EE2A00497FFE /* BlockHook iOS */,
 				A42E39592255FEBD00A42AFA /* ReleaseBlockHookKit */,
 				A4E731FD2261E5A8003D7063 /* BlockHook macOS */,
@@ -359,6 +446,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4E732592263640D003D7063 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4E732642263640E003D7063 /* Assets.xcassets in Resources */,
+				A4E732672263640E003D7063 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,6 +514,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A4E732572263640D003D7063 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4E732622263640D003D7063 /* ViewController.m in Sources */,
+				A4E7326A2263640E003D7063 /* main.m in Sources */,
+				A4E7325F2263640D003D7063 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4F558832064EE2A00497FFE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -433,6 +539,11 @@
 			isa = PBXTargetDependency;
 			target = A4F558872064EE2A00497FFE /* BlockHook iOS */;
 			targetProxy = A4E7320B2261E70C003D7063 /* PBXContainerItemProxy */;
+		};
+		A4E7327B226370AF003D7063 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A4E731FD2261E5A8003D7063 /* BlockHook macOS */;
+			targetProxy = A4E7327A226370AF003D7063 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -451,6 +562,14 @@
 				A46E6C0A2044648A000D1DAA /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		A4E732652263640E003D7063 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A4E732662263640E003D7063 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -588,8 +707,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi/build_iphoneos-arm64/include\"";
-				INFOPLIST_FILE = BlockHookSample/Info.plist;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "BlockHookSample-iOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -603,8 +722,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi/build_iphoneos-arm64/include\"";
-				INFOPLIST_FILE = BlockHookSample/Info.plist;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "BlockHookSample-iOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -728,6 +847,49 @@
 			};
 			name = Release;
 		};
+		A4E7326D2263640E003D7063 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = "BlockHookSample-macOS/BlockHookSampleMac.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "BlockHookSample-macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A4E7326E2263640E003D7063 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = "BlockHookSample-macOS/BlockHookSampleMac.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "BlockHookSample-macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		A4F558922064EE2A00497FFE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -799,7 +961,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A46E6C112044648A000D1DAA /* Build configuration list for PBXNativeTarget "BlockHookSample" */ = {
+		A46E6C112044648A000D1DAA /* Build configuration list for PBXNativeTarget "BlockHookSample iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A46E6C122044648A000D1DAA /* Debug */,
@@ -822,6 +984,15 @@
 			buildConfigurations = (
 				A4E732232261EA22003D7063 /* Debug */,
 				A4E732242261EA22003D7063 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A4E7326C2263640E003D7063 /* Build configuration list for PBXNativeTarget "BlockHookSample macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4E7326D2263640E003D7063 /* Debug */,
+				A4E7326E2263640E003D7063 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

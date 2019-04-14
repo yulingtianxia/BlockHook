@@ -7,7 +7,16 @@
 //
 
 #import "ViewController.h"
-#import "BlockHook.h"
+#import <BlockHook/BlockHook.h>
+
+//struct TestStruct {
+//    int32_t a;
+//    int32_t b;
+//    int32_t c;
+//    int32_t d;
+//    int32_t e;
+//    int32_t f;
+//};
 
 @interface ViewController ()
 
@@ -42,13 +51,25 @@
         NSLog(@"stack block:%@", z);
     }];
     
-//    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
-//        [token invokeOriginalBlock];
-//        NSLog(@"let me see original result: %d", *(int *)(token.retValue));
-//        // change the block imp and result
-//        *(int *)(token.retValue) = x * y;
-//        NSLog(@"hook instead: '+' -> '*'");
-//    }];
+    
+//    struct TestStruct (^StructReturnBlock)(void) = ^()
+//    {
+//        NSLog(@"This is a Global block for stret");
+//
+//        return (struct TestStruct){0,0,0,0,0};
+//    };
+//
+//    StructReturnBlock();
+    
+    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
+        [token invokeOriginalBlock];
+        NSLog(@"let me see original result: %d", *(int *)(token.retValue));
+        // change the block imp and result
+        *(int *)(token.retValue) = x * y;
+        NSLog(@"hook instead: '+' -> '*'");
+    }];
+    
+    tokenInstead.mangleName;
 
 //    BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
 //        // print args and result

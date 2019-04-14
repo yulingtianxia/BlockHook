@@ -55,66 +55,6 @@ struct _BHBlock
     struct _BHBlockDescriptor *descriptor;
 };
 
-static NSMapTable *block_invoke_mangle_cache;
-static pthread_mutex_t block_invoke_mangle_cache_mutex;
-
-static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t slide) {
-    Dl_info info;
-    if (dladdr(header, &info) == 0) {
-        return;
-    }
-    segment_command_t *cur_seg_cmd;
-    segment_command_t *linkedit_segment = NULL;
-    segment_command_t *pagezero_segment = NULL;
-    struct symtab_command* symtab_cmd = NULL;
-    
-    uintptr_t cur = (uintptr_t)header + sizeof(mach_header_t);
-    for (uint i = 0; i < header->ncmds; i++, cur += cur_seg_cmd->cmdsize) {
-        cur_seg_cmd = (segment_command_t *)cur;
-        if (cur_seg_cmd->cmd == LC_SEGMENT_ARCH_DEPENDENT) {
-            if (strcmp(cur_seg_cmd->segname, SEG_LINKEDIT) == 0) {
-                linkedit_segment = cur_seg_cmd;
-            }
-            else if (strcmp(SEG_PAGEZERO, cur_seg_cmd->segname) == 0) {
-                pagezero_segment = (segment_command_t*)cur_seg_cmd;
-            }
-        } else if (cur_seg_cmd->cmd == LC_SYMTAB) {
-            symtab_cmd = (struct symtab_command*)cur_seg_cmd;
-        }
-    }
-    
-    if (!symtab_cmd || !linkedit_segment ) {
-        return;
-    }
-    
-    uintptr_t linkedit_base = (uintptr_t)slide + linkedit_segment->vmaddr - linkedit_segment->fileoff;
-    nlist_t *symtab = (nlist_t *)(linkedit_base + symtab_cmd->symoff);
-    char *strtab = (char *)(linkedit_base + symtab_cmd->stroff);
-    
-    pthread_mutex_lock(&block_invoke_mangle_cache_mutex);
-    
-    if (!block_invoke_mangle_cache) {
-        block_invoke_mangle_cache = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsOpaqueMemory | NSMapTableObjectPointerPersonality valueOptions:NSPointerFunctionsCopyIn];
-    }
-    
-    for (uint i = 0; i < symtab_cmd->nsyms; i++) {
-        uint32_t strtab_offset = symtab[i].n_un.n_strx;
-        char *symbol_name = strtab + strtab_offset;
-        bool symbol_name_longer_than_1 = symbol_name[0] && symbol_name[1];
-        if (!symbol_name_longer_than_1) {
-            continue;
-        }
-        uintptr_t block_addr = (uintptr_t)info.dli_fbase + symtab[i].n_value - (pagezero_segment ? pagezero_segment->vmsize : 0);
-        NSString *symbolName = [NSString stringWithUTF8String:&symbol_name[1]];
-        NSRange range = [symbolName rangeOfString:@"_block_invoke"];
-        if (range.location != NSNotFound && range.location > 0) {
-            [block_invoke_mangle_cache setObject:symbolName forKey:(__bridge id)(void *)block_addr];
-        }
-    }
-    
-    pthread_mutex_unlock(&block_invoke_mangle_cache_mutex);
-}
-
 @interface BHDealloc : NSObject
 
 @property (nonatomic, strong) BHToken *token;
@@ -183,12 +123,6 @@ static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t sl
     }
 }
 
-+ (void)load
-{
-    pthread_mutex_init(&block_invoke_mangle_cache_mutex, NULL);
-    _dyld_register_func_for_add_image(_hunt_blocks_for_image);
-}
-
 - (BOOL)remove
 {
     [self setBlockDeadCallback:nil];
@@ -237,11 +171,14 @@ static void _hunt_blocks_for_image(const struct mach_header *header, intptr_t sl
 - (NSString *)mangleName
 {
     if (!_mangleName) {
-        pthread_mutex_lock(&block_invoke_mangle_cache_mutex);
         if (_originInvoke) {
-            _mangleName = [block_invoke_mangle_cache objectForKey:(__bridge id)_originInvoke];
+            Dl_info dlinfo;
+            memset(&dlinfo, 0, sizeof(dlinfo));
+            if (dladdr(_originInvoke, &dlinfo))
+            {
+                _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
+            }
         }
-        pthread_mutex_unlock(&block_invoke_mangle_cache_mutex);
     }
     return _mangleName;
 }
@@ -445,8 +382,12 @@ static int BHArgCount(const char *str)
 {
     int argCount;
     ffi_type **argTypes = [self _argsWithEncodeString:str getCount:&argCount];
-    
-    ffi_status status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argCount, [self _ffiArgForEncode: str], argTypes);
+#if TARGET_CPU_X86 || TARGET_CPU_X86_64
+    ffi_abi abi = FFI_LAST_ABI;
+#elif TARGET_CPU_ARM || TARGET_CPU_ARM64
+    ffi_abi abi = FFI_DEFAULT_ABI;
+#endif
+    ffi_status status = ffi_prep_cif(cif, abi, argCount, [self _ffiArgForEncode: str], argTypes);
     if(status != FFI_OK)
     {
         NSLog(@"Got result %ld from ffi_prep_cif", (long)status);
@@ -523,6 +464,9 @@ static int BHArgCount(const char *str)
         return nil;
     }
     struct _BHBlock *bh_block = (__bridge void *)block;
+    if ((bh_block->flags & BLOCK_HAS_STRET)) {
+        NSLog(@"Block has stret!");
+    }
     if (!(bh_block->flags & BLOCK_HAS_SIGNATURE)) {
         NSLog(@"Block has no signature! Required ABI.2010.3.16");
         return nil;
