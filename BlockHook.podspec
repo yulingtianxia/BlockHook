@@ -17,14 +17,14 @@ s.public_header_files = "BlockHook/*.h"
 
 s.ios.deployment_target = "8.0"
 s.osx.deployment_target = "10.8"
-s.tvos.deployment_target = "9.0"
-s.watchos.deployment_target = "1.0"
+#s.tvos.deployment_target = "9.0"
+#s.watchos.deployment_target = "1.0"
 s.requires_arc = true
 
 s.ios.vendored_libraries = "libffi/libffi.a"
-s.tvos.vendored_libraries = "libffi/libffi.a"
 s.osx.vendored_libraries = "libffi/libffi.a"
-s.watchos.vendored_libraries = "libffi/libffi.a"
+#s.tvos.vendored_libraries = "libffi/libffi.a"
+#s.watchos.vendored_libraries = "libffi/libffi.a"
 
 end
 
