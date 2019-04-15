@@ -1,8 +1,8 @@
-osx_image: xcode10.0
+osx_image: xcode10.2
 language: objective-c
-xcode_workspace: BlockHookWorkSpace
+xcode_project: BlockHookSample
 xcode_scheme: BlockHook iOS
-xcode_sdk: iphoneos12.0
+xcode_sdk: iphoneos12.2
 env:
   global:
   - FRAMEWORK_NAME=BlockHook
@@ -20,7 +20,7 @@ before_script:
 before_deploy:
 - carthage build --no-skip-current
 - carthage archive $FRAMEWORK_NAME
-script: xcodebuild -workspace BlockHookWorkSpace.xcworkspace -scheme "BlockHook iOS" -configuration Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
+script: xcodebuild -project BlockHookSample.xcodeproj -scheme "BlockHook iOS" -configuration Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
 deploy:
   provider: releases
   api_key:

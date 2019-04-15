@@ -6,22 +6,45 @@
 	objectVersion = 48;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		A42E39592255FEBD00A42AFA /* ReleaseBlockHookKit */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = A42E395A2255FEBE00A42AFA /* Build configuration list for PBXAggregateTarget "ReleaseBlockHookKit" */;
-			buildPhases = (
-				A42E395D2255FEC500A42AFA /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = ReleaseBlockHookKit;
-			productName = ReleaseBlockHookKit;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4619AF92264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
+		A4619AFA2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
+		A4619AFB2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
+		A4619AFC2264BC1C00A01C0B /* ffitarget.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AEE2264BC1C00A01C0B /* ffitarget.h */; };
+		A4619AFD2264BC1C00A01C0B /* ffitarget.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AEE2264BC1C00A01C0B /* ffitarget.h */; };
+		A4619AFE2264BC1C00A01C0B /* ffitarget.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AEE2264BC1C00A01C0B /* ffitarget.h */; };
+		A4619AFF2264BC1C00A01C0B /* ffi_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AEF2264BC1C00A01C0B /* ffi_arm.h */; };
+		A4619B002264BC1C00A01C0B /* ffi_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AEF2264BC1C00A01C0B /* ffi_arm.h */; };
+		A4619B012264BC1C00A01C0B /* ffi_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AEF2264BC1C00A01C0B /* ffi_arm.h */; };
+		A4619B022264BC1C00A01C0B /* ffi_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF02264BC1C00A01C0B /* ffi_i386.h */; };
+		A4619B032264BC1C00A01C0B /* ffi_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF02264BC1C00A01C0B /* ffi_i386.h */; };
+		A4619B042264BC1C00A01C0B /* ffi_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF02264BC1C00A01C0B /* ffi_i386.h */; };
+		A4619B052264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF12264BC1C00A01C0B /* ffitarget_x86_64.h */; };
+		A4619B062264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF12264BC1C00A01C0B /* ffitarget_x86_64.h */; };
+		A4619B072264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF12264BC1C00A01C0B /* ffitarget_x86_64.h */; };
+		A4619B082264BC1C00A01C0B /* ffi_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF22264BC1C00A01C0B /* ffi_x86_64.h */; };
+		A4619B092264BC1C00A01C0B /* ffi_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF22264BC1C00A01C0B /* ffi_x86_64.h */; };
+		A4619B0A2264BC1C00A01C0B /* ffi_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF22264BC1C00A01C0B /* ffi_x86_64.h */; };
+		A4619B0B2264BC1C00A01C0B /* ffitarget_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF32264BC1C00A01C0B /* ffitarget_arm.h */; };
+		A4619B0C2264BC1C00A01C0B /* ffitarget_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF32264BC1C00A01C0B /* ffitarget_arm.h */; };
+		A4619B0D2264BC1C00A01C0B /* ffitarget_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF32264BC1C00A01C0B /* ffitarget_arm.h */; };
+		A4619B0E2264BC1C00A01C0B /* ffitarget_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF42264BC1C00A01C0B /* ffitarget_i386.h */; };
+		A4619B0F2264BC1C00A01C0B /* ffitarget_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF42264BC1C00A01C0B /* ffitarget_i386.h */; };
+		A4619B102264BC1C00A01C0B /* ffitarget_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF42264BC1C00A01C0B /* ffitarget_i386.h */; };
+		A4619B112264BC1C00A01C0B /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF52264BC1C00A01C0B /* ffi_common.h */; };
+		A4619B122264BC1C00A01C0B /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF52264BC1C00A01C0B /* ffi_common.h */; };
+		A4619B132264BC1C00A01C0B /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF52264BC1C00A01C0B /* ffi_common.h */; };
+		A4619B142264BC1C00A01C0B /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi.a */; };
+		A4619B152264BC1C00A01C0B /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi.a */; };
+		A4619B162264BC1C00A01C0B /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi.a */; };
+		A4619B172264BC1C00A01C0B /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF72264BC1C00A01C0B /* ffi.h */; };
+		A4619B182264BC1C00A01C0B /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF72264BC1C00A01C0B /* ffi.h */; };
+		A4619B192264BC1C00A01C0B /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF72264BC1C00A01C0B /* ffi.h */; };
+		A4619B1A2264BC1C00A01C0B /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
+		A4619B1B2264BC1C00A01C0B /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
+		A4619B1C2264BC1C00A01C0B /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
+		A4619B262264C40200A01C0B /* BlockHook_watchOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619B242264C40200A01C0B /* BlockHook_watchOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A46E6C002044648A000D1DAA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6BFF2044648A000D1DAA /* AppDelegate.m */; };
 		A46E6C032044648A000D1DAA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C022044648A000D1DAA /* ViewController.m */; };
 		A46E6C062044648A000D1DAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A46E6C042044648A000D1DAA /* Main.storyboard */; };
@@ -32,8 +55,6 @@
 		A4E732072261E64C003D7063 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4E732092261E70C003D7063 /* BlockHook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4F558882064EE2A00497FFE /* BlockHook.framework */; };
 		A4E7320A2261E70C003D7063 /* BlockHook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A4F558882064EE2A00497FFE /* BlockHook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A4E732262261EA62003D7063 /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E732252261EA62003D7063 /* libffi.a */; };
-		A4E732272261ED2F003D7063 /* ffi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E732122261E814003D7063 /* ffi.dylib */; };
 		A4E732282261FD24003D7063 /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
 		A4E732292261FD2A003D7063 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4E7325F2263640D003D7063 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E7325E2263640D003D7063 /* AppDelegate.m */; };
@@ -44,7 +65,6 @@
 		A4E73278226370AF003D7063 /* BlockHook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E731FE2261E5A8003D7063 /* BlockHook.framework */; };
 		A4E73279226370AF003D7063 /* BlockHook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A4E731FE2261E5A8003D7063 /* BlockHook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A4F558952064EE4B00497FFE /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
-		A4F558962064EF1200497FFE /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4F557BE2060ED0A00497FFE /* libffi.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,6 +110,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_arm64.h; sourceTree = "<group>"; };
+		A4619AEE2264BC1C00A01C0B /* ffitarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget.h; sourceTree = "<group>"; };
+		A4619AEF2264BC1C00A01C0B /* ffi_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_arm.h; sourceTree = "<group>"; };
+		A4619AF02264BC1C00A01C0B /* ffi_i386.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_i386.h; sourceTree = "<group>"; };
+		A4619AF12264BC1C00A01C0B /* ffitarget_x86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_x86_64.h; sourceTree = "<group>"; };
+		A4619AF22264BC1C00A01C0B /* ffi_x86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_x86_64.h; sourceTree = "<group>"; };
+		A4619AF32264BC1C00A01C0B /* ffitarget_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_arm.h; sourceTree = "<group>"; };
+		A4619AF42264BC1C00A01C0B /* ffitarget_i386.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_i386.h; sourceTree = "<group>"; };
+		A4619AF52264BC1C00A01C0B /* ffi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_common.h; sourceTree = "<group>"; };
+		A4619AF62264BC1C00A01C0B /* libffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libffi.a; sourceTree = "<group>"; };
+		A4619AF72264BC1C00A01C0B /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
+		A4619AF82264BC1C00A01C0B /* ffi_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_arm64.h; sourceTree = "<group>"; };
+		A4619B222264C40100A01C0B /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4619B242264C40200A01C0B /* BlockHook_watchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockHook_watchOS.h; sourceTree = "<group>"; };
+		A4619B252264C40200A01C0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A46E6BFB2044648A000D1DAA /* BlockHookSample iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BlockHookSample iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A46E6BFE2044648A000D1DAA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A46E6BFF2044648A000D1DAA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -124,6 +159,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A4619B1F2264C40100A01C0B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A46E6BF82044648A000D1DAA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -136,7 +178,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4E732272261ED2F003D7063 /* ffi.dylib in Frameworks */,
+				A4619B152264BC1C00A01C0B /* libffi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,7 +186,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4E732262261EA62003D7063 /* libffi.a in Frameworks */,
+				A4619B162264BC1C00A01C0B /* libffi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,19 +202,49 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4F558962064EF1200497FFE /* libffi.a in Frameworks */,
+				A4619B142264BC1C00A01C0B /* libffi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A4619AEC2264BC1C00A01C0B /* libffi */ = {
+			isa = PBXGroup;
+			children = (
+				A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */,
+				A4619AEE2264BC1C00A01C0B /* ffitarget.h */,
+				A4619AEF2264BC1C00A01C0B /* ffi_arm.h */,
+				A4619AF02264BC1C00A01C0B /* ffi_i386.h */,
+				A4619AF12264BC1C00A01C0B /* ffitarget_x86_64.h */,
+				A4619AF22264BC1C00A01C0B /* ffi_x86_64.h */,
+				A4619AF32264BC1C00A01C0B /* ffitarget_arm.h */,
+				A4619AF42264BC1C00A01C0B /* ffitarget_i386.h */,
+				A4619AF52264BC1C00A01C0B /* ffi_common.h */,
+				A4619AF62264BC1C00A01C0B /* libffi.a */,
+				A4619AF72264BC1C00A01C0B /* ffi.h */,
+				A4619AF82264BC1C00A01C0B /* ffi_arm64.h */,
+			);
+			path = libffi;
+			sourceTree = "<group>";
+		};
+		A4619B232264C40200A01C0B /* BlockHook watchOS */ = {
+			isa = PBXGroup;
+			children = (
+				A4619B242264C40200A01C0B /* BlockHook_watchOS.h */,
+				A4619B252264C40200A01C0B /* Info.plist */,
+			);
+			path = "BlockHook watchOS";
+			sourceTree = "<group>";
+		};
 		A46E6BF220446489000D1DAA = {
 			isa = PBXGroup;
 			children = (
+				A4619AEC2264BC1C00A01C0B /* libffi */,
 				A46E6C14204464B7000D1DAA /* BlockHook */,
 				A46E6BFD2044648A000D1DAA /* BlockHookSample-iOS */,
 				A4E7325C2263640D003D7063 /* BlockHookSample-macOS */,
+				A4619B232264C40200A01C0B /* BlockHook watchOS */,
 				A46E6BFC2044648A000D1DAA /* Products */,
 				A4F557BC2060ED0A00497FFE /* Frameworks */,
 			);
@@ -186,6 +258,7 @@
 				A4E731FE2261E5A8003D7063 /* BlockHook.framework */,
 				A4E7321D2261EA22003D7063 /* BlockHook.framework */,
 				A4E7325B2263640D003D7063 /* BlockHookSample macOS.app */,
+				A4619B222264C40100A01C0B /* BlockHook.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -247,11 +320,30 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		A4619B1D2264C40100A01C0B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4619B262264C40200A01C0B /* BlockHook_watchOS.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4E731F92261E5A8003D7063 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4619B182264BC1C00A01C0B /* ffi.h in Headers */,
+				A4619B0C2264BC1C00A01C0B /* ffitarget_arm.h in Headers */,
+				A4619AFA2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */,
+				A4619B0F2264BC1C00A01C0B /* ffitarget_i386.h in Headers */,
+				A4619B092264BC1C00A01C0B /* ffi_x86_64.h in Headers */,
+				A4619B032264BC1C00A01C0B /* ffi_i386.h in Headers */,
+				A4619B062264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */,
+				A4619B1B2264BC1C00A01C0B /* ffi_arm64.h in Headers */,
+				A4619AFD2264BC1C00A01C0B /* ffitarget.h in Headers */,
 				A4E732072261E64C003D7063 /* BlockHook.h in Headers */,
+				A4619B002264BC1C00A01C0B /* ffi_arm.h in Headers */,
+				A4619B122264BC1C00A01C0B /* ffi_common.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,7 +351,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4619B192264BC1C00A01C0B /* ffi.h in Headers */,
+				A4619B0D2264BC1C00A01C0B /* ffitarget_arm.h in Headers */,
+				A4619AFB2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */,
+				A4619B102264BC1C00A01C0B /* ffitarget_i386.h in Headers */,
+				A4619B0A2264BC1C00A01C0B /* ffi_x86_64.h in Headers */,
+				A4619B042264BC1C00A01C0B /* ffi_i386.h in Headers */,
+				A4619B072264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */,
+				A4619B1C2264BC1C00A01C0B /* ffi_arm64.h in Headers */,
+				A4619AFE2264BC1C00A01C0B /* ffitarget.h in Headers */,
 				A4E732292261FD2A003D7063 /* BlockHook.h in Headers */,
+				A4619B012264BC1C00A01C0B /* ffi_arm.h in Headers */,
+				A4619B132264BC1C00A01C0B /* ffi_common.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,13 +370,42 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4619B172264BC1C00A01C0B /* ffi.h in Headers */,
+				A4619B0B2264BC1C00A01C0B /* ffitarget_arm.h in Headers */,
+				A4619AF92264BC1C00A01C0B /* ffitarget_arm64.h in Headers */,
+				A4619B0E2264BC1C00A01C0B /* ffitarget_i386.h in Headers */,
+				A4619B082264BC1C00A01C0B /* ffi_x86_64.h in Headers */,
+				A4619B022264BC1C00A01C0B /* ffi_i386.h in Headers */,
+				A4619B052264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */,
+				A4619B1A2264BC1C00A01C0B /* ffi_arm64.h in Headers */,
+				A4619AFC2264BC1C00A01C0B /* ffitarget.h in Headers */,
 				A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */,
+				A4619AFF2264BC1C00A01C0B /* ffi_arm.h in Headers */,
+				A4619B112264BC1C00A01C0B /* ffi_common.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		A4619B212264C40100A01C0B /* BlockHook watchOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4619B272264C40200A01C0B /* Build configuration list for PBXNativeTarget "BlockHook watchOS" */;
+			buildPhases = (
+				A4619B1D2264C40100A01C0B /* Headers */,
+				A4619B1E2264C40100A01C0B /* Sources */,
+				A4619B1F2264C40100A01C0B /* Frameworks */,
+				A4619B202264C40100A01C0B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "BlockHook watchOS";
+			productName = "BlockHook watchOS";
+			productReference = A4619B222264C40100A01C0B /* BlockHook.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		A46E6BFA2044648A000D1DAA /* BlockHookSample iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A46E6C112044648A000D1DAA /* Build configuration list for PBXNativeTarget "BlockHookSample iOS" */;
@@ -372,11 +504,11 @@
 		A46E6BF320446489000D1DAA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "杨萧玉";
 				TargetAttributes = {
-					A42E39592255FEBD00A42AFA = {
-						CreatedOnToolsVersion = 10.1;
+					A4619B212264C40100A01C0B = {
+						CreatedOnToolsVersion = 10.2;
 						ProvisioningStyle = Automatic;
 					};
 					A46E6BFA2044648A000D1DAA = {
@@ -417,14 +549,21 @@
 				A46E6BFA2044648A000D1DAA /* BlockHookSample iOS */,
 				A4E7325A2263640D003D7063 /* BlockHookSample macOS */,
 				A4F558872064EE2A00497FFE /* BlockHook iOS */,
-				A42E39592255FEBD00A42AFA /* ReleaseBlockHookKit */,
 				A4E731FD2261E5A8003D7063 /* BlockHook macOS */,
 				A4E7321C2261EA22003D7063 /* BlockHook tvOS */,
+				A4619B212264C40100A01C0B /* BlockHook watchOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A4619B202264C40100A01C0B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A46E6BF92044648A000D1DAA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -467,27 +606,14 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		A42E395D2255FEC500A42AFA /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
+/* Begin PBXSourcesBuildPhase section */
+		A4619B1E2264C40100A01C0B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/iOS\"\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/macOS\"\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}/tvOS\"\n\nrm -r \"${PROJECT_DIR}/universal\"\n\n# Build \nxcodebuild -project libffi/libffi.xcodeproj -target \"libffi-iOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"BlockHook iOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -project libffi/libffi.xcodeproj -target \"libffi-Mac\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk macosx CODE_SIGNING_ALLOWED=NO BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"BlockHook macOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk macosx  BUILD_DIR=\"${BUILD_DIR}\"  BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -project libffi/libffi.xcodeproj -target \"libffi-tvOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk appletvos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"BlockHook tvOS\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk appletvos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\n\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/BlockHook.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/iOS/\"\ncp -R \"${BUILD_DIR}/${CONFIGURATION}/BlockHook.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/macOS/\"\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-appletvos/BlockHook.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/tvOS/\"\n\nmv \"${UNIVERSAL_OUTPUTFOLDER}\" \"${PROJECT_DIR}/universal\"\n\nopen \"${PROJECT_DIR}/universal\"\n";
 		};
-/* End PBXShellScriptBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
 		A46E6BF72044648A000D1DAA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -575,21 +701,58 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		A42E395B2255FEBE00A42AFA /* Debug */ = {
+		A4619B282264C40200A01C0B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = BlockHook/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
+				PRODUCT_NAME = BlockHook;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 5.2;
 			};
 			name = Debug;
 		};
-		A42E395C2255FEBE00A42AFA /* Release */ = {
+		A4619B292264C40200A01C0B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = BlockHook/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
+				PRODUCT_NAME = BlockHook;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 5.2;
 			};
 			name = Release;
 		};
@@ -735,7 +898,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -749,6 +912,10 @@
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libffi",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -765,7 +932,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -779,6 +946,10 @@
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libffi",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
@@ -806,6 +977,10 @@
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libffi",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
@@ -835,6 +1010,10 @@
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libffi",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
 				PRODUCT_NAME = BlockHook;
@@ -906,6 +1085,10 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libffi",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
 				PRODUCT_NAME = BlockHook;
 				SKIP_INSTALL = YES;
@@ -931,6 +1114,10 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libffi",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
 				PRODUCT_NAME = BlockHook;
 				SKIP_INSTALL = YES;
@@ -943,11 +1130,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A42E395A2255FEBE00A42AFA /* Build configuration list for PBXAggregateTarget "ReleaseBlockHookKit" */ = {
+		A4619B272264C40200A01C0B /* Build configuration list for PBXNativeTarget "BlockHook watchOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A42E395B2255FEBE00A42AFA /* Debug */,
-				A42E395C2255FEBE00A42AFA /* Release */,
+				A4619B282264C40200A01C0B /* Debug */,
+				A4619B292264C40200A01C0B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

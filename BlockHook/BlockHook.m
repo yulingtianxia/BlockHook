@@ -382,12 +382,7 @@ static int BHArgCount(const char *str)
 {
     int argCount;
     ffi_type **argTypes = [self _argsWithEncodeString:str getCount:&argCount];
-#if TARGET_CPU_X86 || TARGET_CPU_X86_64
-    ffi_abi abi = FFI_LAST_ABI;
-#elif TARGET_CPU_ARM || TARGET_CPU_ARM64
-    ffi_abi abi = FFI_DEFAULT_ABI;
-#endif
-    ffi_status status = ffi_prep_cif(cif, abi, argCount, [self _ffiArgForEncode: str], argTypes);
+    ffi_status status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argCount, [self _ffiArgForEncode: str], argTypes);
     if(status != FFI_OK)
     {
         NSLog(@"Got result %ld from ffi_prep_cif", (long)status);
