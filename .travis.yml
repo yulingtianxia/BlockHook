@@ -9,13 +9,6 @@ env:
 before_install:
 - brew update
 - brew outdated carthage || brew upgrade carthage
-- cd libffi
-- git submodule init
-- git submodule update
-- "./autogen.sh"
-- "./configure"
-- python generate-darwin-source-and-headers.py
-- cd ..
 before_script:
 before_deploy:
 - carthage build --no-skip-current
