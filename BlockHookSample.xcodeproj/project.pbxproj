@@ -44,7 +44,9 @@
 		A4619B1A2264BC1C00A01C0B /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
 		A4619B1B2264BC1C00A01C0B /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
 		A4619B1C2264BC1C00A01C0B /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
-		A4619B262264C40200A01C0B /* BlockHook_watchOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619B242264C40200A01C0B /* BlockHook_watchOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4619B2A2264C74800A01C0B /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4619B2B2264C74D00A01C0B /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
+		A4619B2C2264C76E00A01C0B /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi.a */; };
 		A46E6C002044648A000D1DAA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6BFF2044648A000D1DAA /* AppDelegate.m */; };
 		A46E6C032044648A000D1DAA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C022044648A000D1DAA /* ViewController.m */; };
 		A46E6C062044648A000D1DAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A46E6C042044648A000D1DAA /* Main.storyboard */; };
@@ -123,8 +125,6 @@
 		A4619AF72264BC1C00A01C0B /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
 		A4619AF82264BC1C00A01C0B /* ffi_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_arm64.h; sourceTree = "<group>"; };
 		A4619B222264C40100A01C0B /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4619B242264C40200A01C0B /* BlockHook_watchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockHook_watchOS.h; sourceTree = "<group>"; };
-		A4619B252264C40200A01C0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A46E6BFB2044648A000D1DAA /* BlockHookSample iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BlockHookSample iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A46E6BFE2044648A000D1DAA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A46E6BFF2044648A000D1DAA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -163,6 +163,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4619B2C2264C76E00A01C0B /* libffi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,15 +229,6 @@
 			path = libffi;
 			sourceTree = "<group>";
 		};
-		A4619B232264C40200A01C0B /* BlockHook watchOS */ = {
-			isa = PBXGroup;
-			children = (
-				A4619B242264C40200A01C0B /* BlockHook_watchOS.h */,
-				A4619B252264C40200A01C0B /* Info.plist */,
-			);
-			path = "BlockHook watchOS";
-			sourceTree = "<group>";
-		};
 		A46E6BF220446489000D1DAA = {
 			isa = PBXGroup;
 			children = (
@@ -244,7 +236,6 @@
 				A46E6C14204464B7000D1DAA /* BlockHook */,
 				A46E6BFD2044648A000D1DAA /* BlockHookSample-iOS */,
 				A4E7325C2263640D003D7063 /* BlockHookSample-macOS */,
-				A4619B232264C40200A01C0B /* BlockHook watchOS */,
 				A46E6BFC2044648A000D1DAA /* Products */,
 				A4F557BC2060ED0A00497FFE /* Frameworks */,
 			);
@@ -324,7 +315,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4619B262264C40200A01C0B /* BlockHook_watchOS.h in Headers */,
+				A4619B2A2264C74800A01C0B /* BlockHook.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,6 +602,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4619B2B2264C74D00A01C0B /* BlockHook.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -713,9 +705,14 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libffi",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
@@ -741,9 +738,14 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libffi",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHook;
 				PRODUCT_NAME = BlockHook;
@@ -908,7 +910,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"/**";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
@@ -942,7 +944,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"/**";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
@@ -973,7 +975,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"/**";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1006,7 +1008,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"/**";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1080,7 +1082,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"/**";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1109,7 +1111,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"/**";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libffi\"";
 				INFOPLIST_FILE = BlockHook/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
