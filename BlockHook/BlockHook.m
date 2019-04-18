@@ -227,25 +227,30 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     token.args = NULL;
 }
 
-static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *len)
+static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *lenp)
 {
     const char *out = NSGetSizeAndAlignment(str, sizep, alignp);
-    if(len)
-        *len = out - str;
-    while(isdigit(*out))
+    if (lenp) {
+        *lenp = out - str;
+    }
+    while(*out == '}') {
         out++;
+    }
+    while(isdigit(*out)) {
+        out++;
+    }
     return out;
 }
 
-static int BHArgCount(const char *str)
+static int BHTypeCount(const char *str)
 {
-    int argcount = -1; // return type is the first one
+    int typeCount = 0;
     while(str && *str)
     {
         str = BHSizeAndAlignment(str, NULL, NULL, NULL);
-        argcount++;
+        typeCount++;
     }
-    return argcount;
+    return typeCount;
 }
 
 #pragma mark - Private Method
@@ -257,7 +262,25 @@ static int BHArgCount(const char *str)
     return [data mutableBytes];
 }
 
-- (ffi_type *)_ffiArgForEncode: (const char *)str
+- (ffi_type *)_ffiTypeForStructEncode:(const char *)str
+{
+    NSUInteger size, align;
+    long length;
+    BHSizeAndAlignment(str, &size, &align, &length);
+    ffi_type *structType = [self _allocate:size];
+    structType->type = FFI_TYPE_STRUCT;
+    structType->size = size;
+    structType->alignment = align;
+    // cut "struct="
+    while (str && *str && *str != '=') {
+        str++;
+    }
+    ffi_type **elements = [self _typesWithEncodeString:str + 1];
+    structType->elements = elements;
+    return structType;
+}
+
+- (ffi_type *)_ffiTypeForEncode:(const char *)str
 {
     #define SINT(type) do { \
         if(str[0] == @encode(type)[0]) \
@@ -309,20 +332,6 @@ static int BHArgCount(const char *str)
     
     #define PTR(type) COND(type, pointer)
     
-    #define STRUCT(structType, ...) do { \
-        if(strncmp(str, @encode(structType), strlen(@encode(structType))) == 0) \
-        { \
-            ffi_type *elementsLocal[] = { __VA_ARGS__, NULL }; \
-            ffi_type **elements = [self _allocate: sizeof(elementsLocal)]; \
-            memcpy(elements, elementsLocal, sizeof(elementsLocal)); \
-            \
-            ffi_type *structType = [self _allocate: sizeof(*structType)]; \
-            structType->type = FFI_TYPE_STRUCT; \
-            structType->elements = elements; \
-            return structType; \
-        } \
-    } while(0)
-    
     SINT(_Bool);
     SINT(signed char);
     UINT(unsigned char);
@@ -343,16 +352,10 @@ static int BHArgCount(const char *str)
     
     COND(void, void);
     
-    ffi_type *CGFloatFFI = sizeof(CGFloat) == sizeof(float) ? &ffi_type_float : &ffi_type_double;
-    STRUCT(CGRect, CGFloatFFI, CGFloatFFI, CGFloatFFI, CGFloatFFI);
-    STRUCT(CGPoint, CGFloatFFI, CGFloatFFI);
-    STRUCT(CGSize, CGFloatFFI, CGFloatFFI);
-    
-#if !TARGET_OS_IPHONE
-    STRUCT(NSRect, CGFloatFFI, CGFloatFFI, CGFloatFFI, CGFloatFFI);
-    STRUCT(NSPoint, CGFloatFFI, CGFloatFFI);
-    STRUCT(NSSize, CGFloatFFI, CGFloatFFI);
-#endif
+    if (*str == '{') {
+        ffi_type *structType = [self _ffiTypeForStructEncode:str];
+        return structType;
+    }
     
     NSLog(@"Unknown encode string %s", str);
     abort();
@@ -360,20 +363,33 @@ static int BHArgCount(const char *str)
 
 - (ffi_type **)_argsWithEncodeString:(const char *)str getCount:(int *)outCount
 {
-    int argCount = BHArgCount(str);
-    ffi_type **argTypes = [self _allocate: argCount * sizeof(*argTypes)];
+    // 第一个是返回值，需要排除
+    return [self _typesWithEncodeString:str getCount:outCount startIndex:1];
+}
+
+- (ffi_type **)_typesWithEncodeString:(const char *)str
+{
+    return [self _typesWithEncodeString:str getCount:NULL startIndex:0];
+}
+
+- (ffi_type **)_typesWithEncodeString:(const char *)str getCount:(int *)outCount startIndex:(int)start
+{
+    int argCount = BHTypeCount(str) - start;
+    ffi_type **argTypes = [self _allocate:argCount * sizeof(*argTypes)];
     
-    int i = -1; // 第一个是返回值，需要排除
+    int i = -start;
     while(str && *str)
     {
         const char *next = BHSizeAndAlignment(str, NULL, NULL, NULL);
         if(i >= 0)
-            argTypes[i] = [self _ffiArgForEncode: str];
+            argTypes[i] = [self _ffiTypeForEncode:str];
         i++;
         str = next;
     }
     
-    *outCount = argCount;
+    if (outCount) {
+        *outCount = argCount;
+    }
     
     return argTypes;
 }
@@ -382,7 +398,8 @@ static int BHArgCount(const char *str)
 {
     int argCount;
     ffi_type **argTypes = [self _argsWithEncodeString:str getCount:&argCount];
-    ffi_status status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argCount, [self _ffiArgForEncode: str], argTypes);
+    ffi_type *returnType = [self _ffiTypeForEncode:str];
+    ffi_status status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argCount, returnType, argTypes);
     if(status != FFI_OK)
     {
         NSLog(@"Got result %ld from ffi_prep_cif", (long)status);
