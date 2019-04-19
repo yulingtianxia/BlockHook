@@ -14,7 +14,7 @@ before_deploy:
 - carthage build --no-skip-current
 - carthage archive $FRAMEWORK_NAME
 script:
-- xcodebuild -project BlockHookSample.xcodeproj -scheme "BlockHook iOS" -configuration Release -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2' ONLY_ACTIVE_ARCH=NO GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES build test
+- xcodebuild -project BlockHookSample.xcodeproj -scheme "BlockHookSample iOS" -configuration Release -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2' ONLY_ACTIVE_ARCH=NO GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES build test
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 deploy:
