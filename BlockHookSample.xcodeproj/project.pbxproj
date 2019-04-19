@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A4399BB2226A20BC00BF15CA /* BlockHookSample_iOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSample_iOSTests.m */; };
+		A4399BC0226A277300BF15CA /* BlockHookSample_macOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BBF226A277300BF15CA /* BlockHookSample_macOSTests.m */; };
 		A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4619AF92264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
 		A4619AFA2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
@@ -79,6 +81,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		A4399BB4226A20BC00BF15CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A46E6BF320446489000D1DAA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A46E6BFA2044648A000D1DAA;
+			remoteInfo = "BlockHookSample iOS";
+		};
+		A4399BC2226A277300BF15CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A46E6BF320446489000D1DAA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A4E7325A2263640D003D7063;
+			remoteInfo = "BlockHookSample macOS";
+		};
 		A4E7320B2261E70C003D7063 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A46E6BF320446489000D1DAA /* Project object */;
@@ -121,6 +137,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A4399BAF226A20BC00BF15CA /* BlockHookSample iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BlockHookSample iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4399BB1226A20BC00BF15CA /* BlockHookSample_iOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHookSample_iOSTests.m; sourceTree = "<group>"; };
+		A4399BB3226A20BC00BF15CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A4399BBD226A277300BF15CA /* BlockHookSample macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BlockHookSample macOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4399BBF226A277300BF15CA /* BlockHookSample_macOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHookSample_macOSTests.m; sourceTree = "<group>"; };
+		A4399BC1226A277300BF15CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_arm64.h; sourceTree = "<group>"; };
 		A4619AEE2264BC1C00A01C0B /* ffitarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget.h; sourceTree = "<group>"; };
 		A4619AEF2264BC1C00A01C0B /* ffi_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_arm.h; sourceTree = "<group>"; };
@@ -168,6 +190,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A4399BAC226A20BC00BF15CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4399BBA226A277300BF15CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4619B1F2264C40100A01C0B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -219,6 +255,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A4399BB0226A20BC00BF15CA /* BlockHookSample iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				A4399BB1226A20BC00BF15CA /* BlockHookSample_iOSTests.m */,
+				A4399BB3226A20BC00BF15CA /* Info.plist */,
+			);
+			path = "BlockHookSample iOSTests";
+			sourceTree = "<group>";
+		};
+		A4399BBE226A277300BF15CA /* BlockHookSample macOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				A4399BBF226A277300BF15CA /* BlockHookSample_macOSTests.m */,
+				A4399BC1226A277300BF15CA /* Info.plist */,
+			);
+			path = "BlockHookSample macOSTests";
+			sourceTree = "<group>";
+		};
 		A4619AEC2264BC1C00A01C0B /* libffi */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +299,8 @@
 				A46E6C14204464B7000D1DAA /* BlockHook */,
 				A46E6BFD2044648A000D1DAA /* BlockHookSample-iOS */,
 				A4E7325C2263640D003D7063 /* BlockHookSample-macOS */,
+				A4399BB0226A20BC00BF15CA /* BlockHookSample iOSTests */,
+				A4399BBE226A277300BF15CA /* BlockHookSample macOSTests */,
 				A46E6BFC2044648A000D1DAA /* Products */,
 				A4F557BC2060ED0A00497FFE /* Frameworks */,
 			);
@@ -259,6 +315,8 @@
 				A4E7321D2261EA22003D7063 /* BlockHook.framework */,
 				A4E7325B2263640D003D7063 /* BlockHookSample macOS.app */,
 				A4619B222264C40100A01C0B /* BlockHook.framework */,
+				A4399BAF226A20BC00BF15CA /* BlockHookSample iOSTests.xctest */,
+				A4399BBD226A277300BF15CA /* BlockHookSample macOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -399,6 +457,42 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		A4399BAE226A20BC00BF15CA /* BlockHookSample iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4399BB8226A20BC00BF15CA /* Build configuration list for PBXNativeTarget "BlockHookSample iOSTests" */;
+			buildPhases = (
+				A4399BAB226A20BC00BF15CA /* Sources */,
+				A4399BAC226A20BC00BF15CA /* Frameworks */,
+				A4399BAD226A20BC00BF15CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A4399BB5226A20BC00BF15CA /* PBXTargetDependency */,
+			);
+			name = "BlockHookSample iOSTests";
+			productName = "BlockHookSample iOSTests";
+			productReference = A4399BAF226A20BC00BF15CA /* BlockHookSample iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A4399BBC226A277300BF15CA /* BlockHookSample macOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4399BC4226A277300BF15CA /* Build configuration list for PBXNativeTarget "BlockHookSample macOSTests" */;
+			buildPhases = (
+				A4399BB9226A277300BF15CA /* Sources */,
+				A4399BBA226A277300BF15CA /* Frameworks */,
+				A4399BBB226A277300BF15CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A4399BC3226A277300BF15CA /* PBXTargetDependency */,
+			);
+			name = "BlockHookSample macOSTests";
+			productName = "BlockHookSample macOSTests";
+			productReference = A4399BBD226A277300BF15CA /* BlockHookSample macOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A4619B212264C40100A01C0B /* BlockHook watchOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A4619B272264C40200A01C0B /* Build configuration list for PBXNativeTarget "BlockHook watchOS" */;
@@ -518,6 +612,16 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "杨萧玉";
 				TargetAttributes = {
+					A4399BAE226A20BC00BF15CA = {
+						CreatedOnToolsVersion = 10.2.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = A46E6BFA2044648A000D1DAA;
+					};
+					A4399BBC226A277300BF15CA = {
+						CreatedOnToolsVersion = 10.2.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = A4E7325A2263640D003D7063;
+					};
 					A4619B212264C40100A01C0B = {
 						CreatedOnToolsVersion = 10.2;
 						ProvisioningStyle = Automatic;
@@ -563,11 +667,27 @@
 				A4E731FD2261E5A8003D7063 /* BlockHook macOS */,
 				A4E7321C2261EA22003D7063 /* BlockHook tvOS */,
 				A4619B212264C40100A01C0B /* BlockHook watchOS */,
+				A4399BAE226A20BC00BF15CA /* BlockHookSample iOSTests */,
+				A4399BBC226A277300BF15CA /* BlockHookSample macOSTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A4399BAD226A20BC00BF15CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4399BBB226A277300BF15CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4619B202264C40100A01C0B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -618,6 +738,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A4399BAB226A20BC00BF15CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4399BB2226A20BC00BF15CA /* BlockHookSample_iOSTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4399BB9226A277300BF15CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4399BC0226A277300BF15CA /* BlockHookSample_macOSTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4619B1E2264C40100A01C0B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -671,6 +807,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		A4399BB5226A20BC00BF15CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A46E6BFA2044648A000D1DAA /* BlockHookSample iOS */;
+			targetProxy = A4399BB4226A20BC00BF15CA /* PBXContainerItemProxy */;
+		};
+		A4399BC3226A277300BF15CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A4E7325A2263640D003D7063 /* BlockHookSample macOS */;
+			targetProxy = A4399BC2226A277300BF15CA /* PBXContainerItemProxy */;
+		};
 		A4E7320C2261E70C003D7063 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A4F558872064EE2A00497FFE /* BlockHook iOS */;
@@ -711,6 +857,84 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		A4399BB6226A20BC00BF15CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				INFOPLIST_FILE = "BlockHookSample iOSTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yulingtianxia.BlockHookSample-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlockHookSample iOS.app/BlockHookSample iOS";
+			};
+			name = Debug;
+		};
+		A4399BB7226A20BC00BF15CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				INFOPLIST_FILE = "BlockHookSample iOSTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yulingtianxia.BlockHookSample-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlockHookSample iOS.app/BlockHookSample iOS";
+			};
+			name = Release;
+		};
+		A4399BC5226A277300BF15CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				INFOPLIST_FILE = "BlockHookSample macOSTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yulingtianxia.BlockHookSample-macOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlockHookSample macOS.app/Contents/MacOS/BlockHookSample macOS";
+			};
+			name = Debug;
+		};
+		A4399BC6226A277300BF15CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				INFOPLIST_FILE = "BlockHookSample macOSTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yulingtianxia.BlockHookSample-macOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlockHookSample macOS.app/Contents/MacOS/BlockHookSample macOS";
+			};
+			name = Release;
+		};
 		A4619B282264C40200A01C0B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1154,6 +1378,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A4399BB8226A20BC00BF15CA /* Build configuration list for PBXNativeTarget "BlockHookSample iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4399BB6226A20BC00BF15CA /* Debug */,
+				A4399BB7226A20BC00BF15CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A4399BC4226A277300BF15CA /* Build configuration list for PBXNativeTarget "BlockHookSample macOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4399BC5226A277300BF15CA /* Debug */,
+				A4399BC6226A277300BF15CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A4619B272264C40200A01C0B /* Build configuration list for PBXNativeTarget "BlockHook watchOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
