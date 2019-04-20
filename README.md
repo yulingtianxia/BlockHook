@@ -4,11 +4,12 @@
 </a>
 </p>
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5ba94898dd8146a6beb7b4a6cc46e3fd)](https://app.codacy.com/app/yulingtianxia/BlockHook?utm_source=github.com&utm_medium=referral&utm_content=yulingtianxia/BlockHook&utm_campaign=Badge_Grade_Dashboard)
+[![Platform](https://img.shields.io/cocoapods/p/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
 [![CI Status](http://img.shields.io/travis/yulingtianxia/BlockHook.svg?style=flat)](https://travis-ci.org/yulingtianxia/BlockHook)
 [![Version](https://img.shields.io/cocoapods/v/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Platform](https://img.shields.io/cocoapods/p/BlockHook.svg?style=flat)](http://cocoapods.org/pods/BlockHook)
+[![codecov](https://codecov.io/gh/yulingtianxia/BlockHook/branch/master/graph/badge.svg)](https://codecov.io/gh/yulingtianxia/BlockHook)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5ba94898dd8146a6beb7b4a6cc46e3fd)](https://app.codacy.com/app/yulingtianxia/BlockHook?utm_source=github.com&utm_medium=referral&utm_content=yulingtianxia/BlockHook&utm_campaign=Badge_Grade_Dashboard)
 [![GitHub release](https://img.shields.io/github/release/yulingtianxia/blockhook.svg)](https://github.com/yulingtianxia/BlockHook/releases)
 [![Twitter Follow](https://img.shields.io/twitter/follow/yulingtianxia.svg?style=social&label=Follow)](https://twitter.com/yulingtianxia)
 
