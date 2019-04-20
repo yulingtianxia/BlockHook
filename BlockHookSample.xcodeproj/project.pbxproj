@@ -297,8 +297,8 @@
 			children = (
 				A4619AEC2264BC1C00A01C0B /* libffi */,
 				A46E6C14204464B7000D1DAA /* BlockHook */,
-				A46E6BFD2044648A000D1DAA /* BlockHookSample-iOS */,
-				A4E7325C2263640D003D7063 /* BlockHookSample-macOS */,
+				A46E6BFD2044648A000D1DAA /* BlockHookSample iOS */,
+				A4E7325C2263640D003D7063 /* BlockHookSample macOS */,
 				A4399BB0226A20BC00BF15CA /* BlockHookSample iOSTests */,
 				A4399BBE226A277300BF15CA /* BlockHookSample macOSTests */,
 				A46E6BFC2044648A000D1DAA /* Products */,
@@ -321,7 +321,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A46E6BFD2044648A000D1DAA /* BlockHookSample-iOS */ = {
+		A46E6BFD2044648A000D1DAA /* BlockHookSample iOS */ = {
 			isa = PBXGroup;
 			children = (
 				A46E6BFE2044648A000D1DAA /* AppDelegate.h */,
@@ -334,7 +334,7 @@
 				A46E6C0C2044648A000D1DAA /* Info.plist */,
 				A46E6C0D2044648A000D1DAA /* main.m */,
 			);
-			path = "BlockHookSample-iOS";
+			path = "BlockHookSample iOS";
 			sourceTree = "<group>";
 		};
 		A46E6C14204464B7000D1DAA /* BlockHook */ = {
@@ -347,7 +347,7 @@
 			path = BlockHook;
 			sourceTree = "<group>";
 		};
-		A4E7325C2263640D003D7063 /* BlockHookSample-macOS */ = {
+		A4E7325C2263640D003D7063 /* BlockHookSample macOS */ = {
 			isa = PBXGroup;
 			children = (
 				A4E7325D2263640D003D7063 /* AppDelegate.h */,
@@ -360,7 +360,7 @@
 				A4E732692263640E003D7063 /* main.m */,
 				A4E7326B2263640E003D7063 /* BlockHookSampleMac.entitlements */,
 			);
-			path = "BlockHookSample-macOS";
+			path = "BlockHookSample macOS";
 			sourceTree = "<group>";
 		};
 		A4F557BC2060ED0A00497FFE /* Frameworks */ = {
@@ -1117,7 +1117,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
 				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "BlockHookSample-iOS/Info.plist";
+				INFOPLIST_FILE = "BlockHookSample iOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1132,7 +1132,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
 				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "BlockHookSample-iOS/Info.plist";
+				INFOPLIST_FILE = "BlockHookSample iOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1277,13 +1277,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_ENTITLEMENTS = "BlockHookSample-macOS/BlockHookSampleMac.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "BlockHookSample macOS/BlockHookSampleMac.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
 				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "BlockHookSample-macOS/Info.plist";
+				INFOPLIST_FILE = "BlockHookSample macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1299,13 +1299,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_ENTITLEMENTS = "BlockHookSample-macOS/BlockHookSampleMac.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "BlockHookSample macOS/BlockHookSampleMac.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
 				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "BlockHookSample-macOS/Info.plist";
+				INFOPLIST_FILE = "BlockHookSample macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
