@@ -24,8 +24,12 @@ struct TestStruct {
 
 @implementation BlockHookSample_iOSTests
 
+struct TestStruct _testRect;
+
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    int e = 5;
+    _testRect = (struct TestStruct){1, 2.0, 3.0, 4, &e, CGRectMake(0, 0, 0, 0)};
 }
 
 - (void)tearDown {
@@ -47,18 +51,20 @@ struct TestStruct {
 }
 
 - (void)testStructReturn {
-    struct TestStruct (^StructReturnBlock)(void) = ^()
+    struct TestStruct * (^StructReturnBlock)(void) = ^()
     {
         NSLog(@"This is a Global block for stret");
-        int e = 5;
-        return (struct TestStruct){1, 2.0, 3.0, 4, &e, CGRectMake(0, 0, 0, 0)};
+        
+        struct TestStruct *result = &_testRect;
+        return result;
     };
     
     [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
         [token invokeOriginalBlock];
+        (**(struct TestStruct **)(token.retValue)).a = 100;
     }];
     
-    StructReturnBlock();
+    struct TestStruct *result = StructReturnBlock();
 }
 
 - (void)testStructArg {
