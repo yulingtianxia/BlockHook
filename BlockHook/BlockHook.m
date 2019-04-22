@@ -271,12 +271,16 @@ static int BHTypeCount(const char *str)
     structType->type = FFI_TYPE_STRUCT;
     structType->size = size;
     structType->alignment = align;
+    
+    const char *temp = [[[NSString stringWithUTF8String:str] substringWithRange:NSMakeRange(0, length)] UTF8String];
+    
     // cut "struct="
-    while (str && *str && *str != '=') {
-        str++;
+    while (temp && *temp && *temp != '=') {
+        temp++;
     }
-    ffi_type **elements = [self _typesWithEncodeString:str + 1];
+    ffi_type **elements = [self _typesWithEncodeString:temp + 1];
     structType->elements = elements;
+    
     return structType;
 }
 
@@ -351,7 +355,6 @@ static int BHTypeCount(const char *str)
     COND(double, double);
     
     COND(void, void);
-    
     if (*str == '{') {
         ffi_type *structType = [self _ffiTypeForStructEncode:str];
         return structType;
@@ -381,7 +384,7 @@ static int BHTypeCount(const char *str)
     while(str && *str)
     {
         const char *next = BHSizeAndAlignment(str, NULL, NULL, NULL);
-        if(i >= 0)
+        if(i >= 0 || i < argCount)
             argTypes[i] = [self _ffiTypeForEncode:str];
         i++;
         str = next;
@@ -475,7 +478,7 @@ static int BHTypeCount(const char *str)
         NSLog(@"Not Block!");
         return nil;
     }
-    struct _BHBlock *bh_block = (__bridge void *)block;
+    struct _BHBlock *bh_block = (__bridge void *)self;
     if ((bh_block->flags & BLOCK_HAS_STRET)) {
         NSLog(@"Block has stret!");
     }
