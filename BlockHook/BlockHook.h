@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BHToken : NSObject
 
-@property (nonatomic) BlockHookMode mode;
+@property (nonatomic, readonly) BlockHookMode mode;
 /**
  Arguments of invoking the block. Need type casting.
  */

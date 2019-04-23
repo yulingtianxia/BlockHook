@@ -80,6 +80,7 @@ struct _BHBlock
     void *_replacementInvoke;
     ffi_closure *_closure;
 }
+@property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableArray *allocations;
 @property (nonatomic, weak) id block;
 @property (nonatomic) NSUInteger numberOfArguments;
@@ -140,14 +141,6 @@ struct _BHBlock
         return YES;
     }
     return NO;
-}
-
-- (void)setMode:(BlockHookMode)mode
-{
-    _mode = mode;
-    if (BlockHookModeDead == mode) {
-        [self setBlockDeadCallback:self.hookBlock];
-    }
 }
 
 - (void)setHookBlock:(id)hookBlock
