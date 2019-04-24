@@ -91,6 +91,7 @@ struct _BHBlock
  if block is kind of `__NSStackBlock__` class.
  */
 @property (nonatomic, getter=isStackBlock) BOOL stackBlock;
+@property (nonatomic, getter=hasStret) BOOL stret;
 
 - (id)initWithBlock:(id)block;
 
@@ -395,8 +396,18 @@ static int BHTypeCount(const char *str)
 - (int)_prepCIF:(ffi_cif *)cif withEncodeString:(const char *)str
 {
     int argCount;
-    ffi_type **argTypes = [self _argsWithEncodeString:str getCount:&argCount];
-    ffi_type *returnType = [self _ffiTypeForEncode:str];
+    ffi_type **argTypes;
+    ffi_type *returnType;
+    struct _BHBlock *bh_block = (__bridge void *)self.block;
+    if ((bh_block->flags & BLOCK_HAS_STRET)) {
+        argTypes = [self _typesWithEncodeString:str getCount:&argCount startIndex:0];
+        argTypes[0] = &ffi_type_pointer;
+        returnType = &ffi_type_void;
+    }
+    else {
+        argTypes = [self _argsWithEncodeString:str getCount:&argCount];
+        returnType = [self _ffiTypeForEncode:str];
+    }
     ffi_status status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argCount, returnType, argTypes);
     if (status != FFI_OK) {
         NSLog(@"Got result %ld from ffi_prep_cif", (long)status);
@@ -472,9 +483,6 @@ static int BHTypeCount(const char *str)
         return nil;
     }
     struct _BHBlock *bh_block = (__bridge void *)self;
-    if ((bh_block->flags & BLOCK_HAS_STRET)) {
-        NSLog(@"Block has stret!");
-    }
     if (!(bh_block->flags & BLOCK_HAS_SIGNATURE)) {
         NSLog(@"Block has no signature! Required ABI.2010.3.16");
         return nil;
@@ -482,6 +490,10 @@ static int BHTypeCount(const char *str)
     BHToken *token = [[BHToken alloc] initWithBlock:self];
     token.mode = mode;
     token.hookBlock = block;
+    if ((bh_block->flags & BLOCK_HAS_STRET)) {
+        NSLog(@"Block has stret!");
+        token.stret = YES;
+    }
     if ([self isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
         NSLog(@"Stack Block! I suggest you copy it first!");
         token.stackBlock = YES;
