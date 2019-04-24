@@ -42,12 +42,15 @@ struct TestStruct _testRect;
         [token invokeOriginalBlock];
         NSLog(@"hook stack block succeed!");
     }];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (block) {
-            block();
-        }
-        [tokenInstead remove];
-    });
+    
+    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHToken *token){
+        NSLog(@"stack block dead!");
+    }];
+    
+    if (block) {
+        block();
+    }
+    [tokenInstead remove];
 }
 
 - (void)testStructReturn {
@@ -108,6 +111,8 @@ struct TestStruct _testRect;
         NSLog(@"hook instead: '+' -> '*'");
     }];
     
+    NSAssert([tokenInstead.mangleName isEqualToString:@"__41-[BlockHookSample_iOSTests testHookBlock]_block_invoke"], @"Wrong mangle name!");
+    
     BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
         // print args and result
         NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(token.retValue));
@@ -129,7 +134,7 @@ struct TestStruct _testRect;
     NSLog(@"hooked result:%d", ret);
     // remove all tokens when you don't need.
     // reversed order of hook.
-    [tokenBefore remove];
+    [block block_removeHook:tokenBefore];
     [tokenAfter remove];
     [tokenInstead remove];
     NSLog(@"remove tokens, original block");

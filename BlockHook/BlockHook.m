@@ -98,10 +98,10 @@ struct _BHBlock
 
 @implementation BHToken
 
-- (id)initWithBlock:(id)block
+- (instancetype)initWithBlock:(id)block
 {
-    if((self = [self init]))
-    {
+    self = [super init];
+    if (self) {
         _allocations = [[NSMutableArray alloc] init];
         _block = block;
         _originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(block)];
@@ -118,7 +118,7 @@ struct _BHBlock
 - (void)dealloc
 {
     [self remove];
-    if(_closure) {
+    if (_closure) {
         ffi_closure_free(_closure);
         _closure = NULL;
     }
@@ -196,8 +196,9 @@ static const char *BHBlockTypeEncodeString(id blockObj)
     assert(block->flags & BLOCK_HAS_SIGNATURE);
     
     int index = 0;
-    if(block->flags & BLOCK_HAS_COPY_DISPOSE)
+    if (block->flags & BLOCK_HAS_COPY_DISPOSE) {
         index += 2;
+    }
     
     return descriptor->rest[index];
 }
@@ -377,8 +378,9 @@ static int BHTypeCount(const char *str)
     while(str && *str)
     {
         const char *next = BHSizeAndAlignment(str, NULL, NULL, NULL);
-        if(i >= 0 && i < argCount)
+        if (i >= 0 && i < argCount) {
             argTypes[i] = [self _ffiTypeForEncode:str];
+        }
         i++;
         str = next;
     }
@@ -396,8 +398,7 @@ static int BHTypeCount(const char *str)
     ffi_type **argTypes = [self _argsWithEncodeString:str getCount:&argCount];
     ffi_type *returnType = [self _ffiTypeForEncode:str];
     ffi_status status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argCount, returnType, argTypes);
-    if(status != FFI_OK)
-    {
+    if (status != FFI_OK) {
         NSLog(@"Got result %ld from ffi_prep_cif", (long)status);
         abort();
     }
@@ -407,8 +408,7 @@ static int BHTypeCount(const char *str)
 - (void)_prepClosure
 {
     ffi_status status = ffi_prep_closure_loc(_closure, &_cif, BHFFIClosureFunc, (__bridge void *)(self), _replacementInvoke);
-    if(status != FFI_OK)
-    {
+    if (status != FFI_OK) {
         NSLog(@"ffi_prep_closure returned %d", (int)status);
         abort();
     }
