@@ -377,7 +377,7 @@ static int BHTypeCount(const char *str)
     while(str && *str)
     {
         const char *next = BHSizeAndAlignment(str, NULL, NULL, NULL);
-        if(i >= 0 || i < argCount)
+        if(i >= 0 && i < argCount)
             argTypes[i] = [self _ffiTypeForEncode:str];
         i++;
         str = next;
