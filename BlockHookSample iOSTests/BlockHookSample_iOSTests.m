@@ -15,7 +15,20 @@ struct TestStruct {
     float c;
     char d;
     int *e;
-    CGRect f;
+    CGRect *f;
+};
+
+struct Block_descriptor {
+    void *reserved;
+    uintptr_t size;
+};
+
+struct Block_layout {
+    void *isa;
+    int32_t flags; // contains ref count
+    int32_t reserved;
+    void  *invoke;
+    struct Block_descriptor *descriptor;
 };
 
 @interface BlockHookSample_iOSTests : XCTestCase
@@ -29,7 +42,7 @@ struct TestStruct _testRect;
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
     int e = 5;
-    _testRect = (struct TestStruct){1, 2.0, 3.0, 4, &e, CGRectMake(0, 0, 0, 0)};
+    _testRect = (struct TestStruct){1, 2.0, 3.0, 4, &e, NULL};
 }
 
 - (void)tearDown {
@@ -64,7 +77,7 @@ struct TestStruct _testRect;
     
     [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
         [token invokeOriginalBlock];
-        (*(struct TestStruct *)(token.retValue)).a = 100;
+        (**(struct TestStruct **)(token.args[0])).a = 100;
     }];
     
     struct TestStruct result = StructReturnBlock();
@@ -84,7 +97,7 @@ struct TestStruct _testRect;
         [token invokeOriginalBlock];
     }];
     int e = 5;
-    StructReturnBlock((struct TestStruct){1, 2.0, 3.0, 4, &e, CGRectMake(0, 0, 0, 0)});
+    StructReturnBlock((struct TestStruct){1, 2.0, 3.0, 4, &e, NULL});
 }
 
 - (void)testStackBlock {
@@ -136,7 +149,7 @@ struct TestStruct _testRect;
     // reversed order of hook.
     [block block_removeHook:tokenBefore];
     [tokenAfter remove];
-    [tokenInstead remove];
+    [block block_removeHook:tokenInstead];
     NSLog(@"remove tokens, original block");
     ret = block(3, 5);
     NSAssert(ret == 8, @"remove hook failed!");

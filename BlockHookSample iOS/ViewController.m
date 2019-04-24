@@ -30,7 +30,6 @@ struct Block_layout {
     struct Block_layout (^testblock3)(void) = ^()
     {
         NSLog(@"This is a Global block for stret");
-        
         return (struct Block_layout){0,1,2,0,0};
     };
     [testblock3 block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
