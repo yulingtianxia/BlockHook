@@ -15,7 +15,7 @@ struct TestStruct {
     float c;
     char d;
     int *e;
-    CGRect f;
+    CGRect *f;
 };
 
 @interface BlockHookSample_macOSTests : XCTestCase
@@ -24,8 +24,12 @@ struct TestStruct {
 
 @implementation BlockHookSample_macOSTests
 
+struct TestStruct _testRect;
+
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    int e = 5;
+    _testRect = (struct TestStruct){1, 2.0, 3.0, 4, &e, NULL};
 }
 
 - (void)tearDown {
@@ -43,34 +47,53 @@ struct TestStruct {
         [token invokeOriginalBlock];
         NSLog(@"hook stack block succeed!");
     }];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (block) {
-            block();
-        }
-        [tokenInstead remove];
-    });
+    
+    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHToken *token){
+        NSLog(@"stack block dead!");
+    }];
+    
+    if (block) {
+        block();
+    }
+    [tokenInstead remove];
 }
 
 - (void)testStructReturn {
     struct TestStruct (^StructReturnBlock)(void) = ^()
     {
-        NSLog(@"This is a Global block for stret");
-        int e = 5;
-        return (struct TestStruct){1, 2.0, 3.0, 4, &e, CGRectMake(0, 0, 0, 0)};
+        struct TestStruct result = _testRect;
+        return result;
     };
     
     [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
         [token invokeOriginalBlock];
+        (**(struct TestStruct **)(token.retValue)).a = 100;
     }];
     
-    StructReturnBlock();
+    struct TestStruct result = StructReturnBlock();
+    NSAssert(result.a == 100, @"Modify return struct failed!");
+}
+
+- (void)testStructPointerReturn {
+    struct TestStruct * (^StructReturnBlock)(void) = ^()
+    {
+        struct TestStruct *result = &_testRect;
+        return result;
+    };
+    
+    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
+        [token invokeOriginalBlock];
+        (**(struct TestStruct **)(token.retValue)).a = 100;
+    }];
+    
+    struct TestStruct *result = StructReturnBlock();
+    NSAssert(result->a == 100, @"Modify return struct failed!");
 }
 
 - (void)testStructArg {
     void (^StructReturnBlock)(struct TestStruct) = ^(struct TestStruct test)
     {
-        NSLog(@"Struct Arg member a: %d", test.a);
-        NSAssert(test.a == 100, @"change struct member failed!");
+        NSAssert(test.a == 100, @"Modify struct member failed!");
     };
     
     [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, struct TestStruct test){
@@ -78,8 +101,21 @@ struct TestStruct {
         (*(struct TestStruct *)(token.args[1])).a = 100;
         [token invokeOriginalBlock];
     }];
-    int e = 5;
-    StructReturnBlock((struct TestStruct){1, 2.0, 3.0, 4, &e, CGRectMake(0, 0, 0, 0)});
+    StructReturnBlock(_testRect);
+}
+
+- (void)testStructPointerArg {
+    void (^StructReturnBlock)(struct TestStruct *) = ^(struct TestStruct *test)
+    {
+        NSAssert(test->a == 100, @"Modify struct member failed!");
+    };
+    
+    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, struct TestStruct test){
+        // Hook 改参数
+        (**(struct TestStruct **)(token.args[1])).a = 100;
+        [token invokeOriginalBlock];
+    }];
+    StructReturnBlock(&_testRect);
 }
 
 - (void)testStackBlock {
@@ -106,6 +142,8 @@ struct TestStruct {
         NSLog(@"hook instead: '+' -> '*'");
     }];
     
+    NSAssert([tokenInstead.mangleName isEqualToString:@"__43-[BlockHookSample_macOSTests testHookBlock]_block_invoke"], @"Wrong mangle name!");
+    
     BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
         // print args and result
         NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(token.retValue));
@@ -127,9 +165,9 @@ struct TestStruct {
     NSLog(@"hooked result:%d", ret);
     // remove all tokens when you don't need.
     // reversed order of hook.
-    [tokenBefore remove];
+    [block block_removeHook:tokenBefore];
     [tokenAfter remove];
-    [tokenInstead remove];
+    [block block_removeHook:tokenInstead];
     NSLog(@"remove tokens, original block");
     ret = block(3, 5);
     NSAssert(ret == 8, @"remove hook failed!");

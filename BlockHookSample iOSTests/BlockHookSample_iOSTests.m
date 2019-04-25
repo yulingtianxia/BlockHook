@@ -18,19 +18,6 @@ struct TestStruct {
     CGRect *f;
 };
 
-struct Block_descriptor {
-    void *reserved;
-    uintptr_t size;
-};
-
-struct Block_layout {
-    void *isa;
-    int32_t flags; // contains ref count
-    int32_t reserved;
-    void  *invoke;
-    struct Block_descriptor *descriptor;
-};
-
 @interface BlockHookSample_iOSTests : XCTestCase
 
 @end
@@ -75,7 +62,7 @@ struct TestStruct _testRect;
     
     [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
         [token invokeOriginalBlock];
-        (**(struct TestStruct **)(token.args[0])).a = 100;
+        (**(struct TestStruct **)(token.retValue)).a = 100;
     }];
     
     struct TestStruct result = StructReturnBlock();
