@@ -8,28 +8,8 @@
 
 #import "BlockHook.h"
 #import <ffi.h>
-#import <assert.h>
 #import <objc/runtime.h>
 #import <dlfcn.h>
-#import <mach-o/dyld.h>
-#import <mach-o/nlist.h>
-#import <pthread.h>
-
-#if TARGET_OS_IPHONE
-#import <CoreGraphics/CoreGraphics.h>
-#endif
-
-#ifdef __LP64__
-typedef struct mach_header_64 mach_header_t;
-typedef struct segment_command_64 segment_command_t;
-typedef struct nlist_64 nlist_t;
-#define LC_SEGMENT_ARCH_DEPENDENT LC_SEGMENT_64
-#else
-typedef struct mach_header mach_header_t;
-typedef struct segment_command segment_command_t;
-typedef struct nlist nlist_t;
-#define LC_SEGMENT_ARCH_DEPENDENT LC_SEGMENT
-#endif
 
 enum {
     BLOCK_HAS_COPY_DISPOSE =  (1 << 25),
@@ -198,7 +178,7 @@ static const char *BHBlockTypeEncodeString(id blockObj)
     struct _BHBlock *block = (__bridge void *)blockObj;
     struct _BHBlockDescriptor *descriptor = block->descriptor;
     
-    assert(block->flags & BLOCK_HAS_SIGNATURE);
+    NSCAssert((block->flags & BLOCK_HAS_SIGNATURE) > 0, @"Block has no signature! Required ABI.2010.3.16");
     
     int index = 0;
     if (block->flags & BLOCK_HAS_COPY_DISPOSE) {
@@ -356,7 +336,6 @@ static int BHTypeCount(const char *str)
     PTR(SEL);
     PTR(void *);
     PTR(char *);
-    PTR(void (*)(void));
     
     COND(float, float);
     COND(double, double);

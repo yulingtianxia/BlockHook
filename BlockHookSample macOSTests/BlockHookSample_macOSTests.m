@@ -59,18 +59,19 @@ struct TestStruct _testRect;
 }
 
 - (void)testStructReturn {
-    struct TestStruct (^StructReturnBlock)(void) = ^()
+    struct TestStruct (^StructReturnBlock)(int) = ^(int x)
     {
         struct TestStruct result = _testRect;
         return result;
     };
     
-    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
+    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x){
         [token invokeOriginalBlock];
         (**(struct TestStruct **)(token.retValue)).a = 100;
+        NSAssert(x == 8, @"Wrong arg!");
     }];
     
-    struct TestStruct result = StructReturnBlock();
+    struct TestStruct result = StructReturnBlock(8);
     NSAssert(result.a == 100, @"Modify return struct failed!");
 }
 
