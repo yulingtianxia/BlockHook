@@ -87,6 +87,10 @@ struct _BHBlock
 @property (nonatomic) id hookBlock;
 @property (nonatomic, nullable, readwrite) NSString *mangleName;
 @property (nonatomic) NSMethodSignature *originalBlockSignature;
+
+@property (nonatomic) void *_Nullable *_Null_unspecified realArgs;
+@property (nonatomic, nullable) void *realRetValue;
+
 /**
  if block is kind of `__NSStackBlock__` class.
  */
@@ -180,7 +184,7 @@ struct _BHBlock
 - (void)invokeOriginalBlock
 {
     if (_originInvoke) {
-        ffi_call(&_cif, _originInvoke, self.retValue, self.args);
+        ffi_call(&_cif, _originInvoke, self.realRetValue, self.realArgs);
     }
     else {
         NSLog(@"You had lost your originInvoke! Please check the order of removing tokens!");
@@ -207,16 +211,24 @@ static const char *BHBlockTypeEncodeString(id blockObj)
 static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata)
 {
     BHToken *token = (__bridge BHToken *)(userdata);
-    token.retValue = ret;
-    token.args = args;
-    if (BlockHookModeBefore == token.mode) {
-        [token invokeHookBlockWithArgs:args];
+    if (token.hasStret) {
+        token.retValue = args[0];
+        token.args = args + 1;
     }
-    if (!(BlockHookModeInstead == token.mode && [token invokeHookBlockWithArgs:args])) {
+    else {
+        token.retValue = ret;
+        token.args = args;
+    }
+    token.realRetValue = ret;
+    token.realArgs = args;
+    if (BlockHookModeBefore == token.mode) {
+        [token invokeHookBlock];
+    }
+    if (!(BlockHookModeInstead == token.mode && [token invokeHookBlock])) {
         [token invokeOriginalBlock];
     }
     if (BlockHookModeAfter == token.mode) {
-        [token invokeHookBlockWithArgs:args];
+        [token invokeHookBlock];
     }
     token.retValue = NULL;
     token.args = NULL;
@@ -403,6 +415,8 @@ static int BHTypeCount(const char *str)
         argTypes = [self _typesWithEncodeString:str getCount:&argCount startIndex:0];
         argTypes[0] = &ffi_type_pointer;
         returnType = &ffi_type_void;
+        self.stret = YES;
+        NSLog(@"Block has stret!");
     }
     else {
         argTypes = [self _argsWithEncodeString:str getCount:&argCount];
@@ -428,7 +442,7 @@ static int BHTypeCount(const char *str)
     ((__bridge struct _BHBlock *)self.block)->invoke = _replacementInvoke;
 }
 
-- (BOOL)invokeHookBlockWithArgs:(void **)args
+- (BOOL)invokeHookBlock
 {
     if ((!self.isStackBlock && !self.block) || !self.hookBlock) {
         return NO;
@@ -437,6 +451,7 @@ static int BHTypeCount(const char *str)
     NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:hookBlockSignature];
     
     // origin block invoke func arguments: block(self), ...
+    // origin block invoke func arguments (x86 struct return): struct*, block(self), ...
     // hook block signature arguments: block(self), token, ...
     
     if (hookBlockSignature.numberOfArguments > self.numberOfArguments + 1) {
@@ -458,7 +473,7 @@ static int BHTypeCount(const char *str)
             NSLog(@"Failed to allocate memory for block invocation.");
             return NO;
         }
-        memcpy(argBuf, args[idx - 1], argSize);
+        memcpy(argBuf, self.args[idx - 1], argSize);
         [blockInvocation setArgument:argBuf atIndex:idx];
     }
     
@@ -490,10 +505,6 @@ static int BHTypeCount(const char *str)
     BHToken *token = [[BHToken alloc] initWithBlock:self];
     token.mode = mode;
     token.hookBlock = block;
-    if ((bh_block->flags & BLOCK_HAS_STRET)) {
-        NSLog(@"Block has stret!");
-        token.stret = YES;
-    }
     if ([self isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
         NSLog(@"Stack Block! I suggest you copy it first!");
         token.stackBlock = YES;
