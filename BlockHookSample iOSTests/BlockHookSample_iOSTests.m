@@ -69,8 +69,6 @@ struct TestStruct _testRect;
 - (void)testStructReturn {
     struct TestStruct (^StructReturnBlock)(void) = ^()
     {
-        NSLog(@"This is a Global block for stret");
-        
         struct TestStruct result = _testRect;
         return result;
     };
@@ -84,10 +82,25 @@ struct TestStruct _testRect;
     NSAssert(result.a == 100, @"Modify return struct failed!");
 }
 
+- (void)testStructPointerReturn {
+    struct TestStruct * (^StructReturnBlock)(void) = ^()
+    {
+        struct TestStruct *result = &_testRect;
+        return result;
+    };
+    
+    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
+        [token invokeOriginalBlock];
+        (**(struct TestStruct **)(token.retValue)).a = 100;
+    }];
+    
+    struct TestStruct *result = StructReturnBlock();
+    NSAssert(result->a == 100, @"Modify return struct failed!");
+}
+
 - (void)testStructArg {
     void (^StructReturnBlock)(struct TestStruct) = ^(struct TestStruct test)
     {
-        NSLog(@"Struct Arg member a: %d", test.a);
         NSAssert(test.a == 100, @"Modify struct member failed!");
     };
     
@@ -96,8 +109,21 @@ struct TestStruct _testRect;
         (*(struct TestStruct *)(token.args[1])).a = 100;
         [token invokeOriginalBlock];
     }];
-    int e = 5;
-    StructReturnBlock((struct TestStruct){1, 2.0, 3.0, 4, &e, NULL});
+    StructReturnBlock(_testRect);
+}
+
+- (void)testStructPointerArg {
+    void (^StructReturnBlock)(struct TestStruct *) = ^(struct TestStruct *test)
+    {
+        NSAssert(test->a == 100, @"Modify struct member failed!");
+    };
+    
+    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, struct TestStruct test){
+        // Hook 改参数
+        (**(struct TestStruct **)(token.args[1])).a = 100;
+        [token invokeOriginalBlock];
+    }];
+    StructReturnBlock(&_testRect);
 }
 
 - (void)testStackBlock {
