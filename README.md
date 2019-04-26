@@ -23,33 +23,19 @@ Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockH
 
 ## 🌟 Features
 
-- [x] Easy to use.
-- [x] Keep your code clear.
-- [x] Reserve the whole arguments.
+- [x] Easy to use. Keep your code clear.
 - [x] Support 4 hook modes: Before, Instead, After and Dead.
-- [x] Use tokens to change hook mode dynamically.
-- [x] Modify return value.
+- [x] Let you modify return value and arguments.
 - [x] Support invoking original implementation.
+- [x] Reserve the whole arguments.
 - [x] Self-managed tokens.
+- [x] Support custom struct.
 - [x] Support Carthage & CocoaPods.
 
 ## 🔮 Example
 
-BlockHook needs libffi, which is a submodule in this project. You should use `--recursive` when clone this sample, or you can use these commands get the submodule.
-
-```
-cd libffi
-git submodule init
-git submodule update
-```
-
-If targets in Xcode fails to compile, you need do these in libffi folder:
-
-- run `./autogen.sh`
-- run `./configure`
-- run `python generate-darwin-source-and-headers.py`
-
-The sample project "BlockHookSample" just only support iOS platform. You must build libffi for every architecture you need.
+BlockHook needs libffi, which supports iOS and macOS.
+You can run `BlockHookSample iOS` or `BlockHookSample macOS` target.
 
 ## 🐒 How to use
 
@@ -141,7 +127,7 @@ To integrate BlockHook into your Xcode project using CocoaPods, specify it in yo
 
 ```
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '9.0'
+platform :ios, '8.0'
 use_frameworks!
 target 'MyApp' do
 	pod 'BlockHook'
@@ -173,7 +159,7 @@ To integrate BlockHook into your Xcode project using Carthage, specify it in you
 github "yulingtianxia/BlockHook"
 ```
 
-Run `carthage update` to build the framework and drag the built `BlockHookKit.framework` into your Xcode project.
+Run `carthage update` to build the framework and drag the built `BlockHook.framework` into your Xcode project.
 
 ### Manual
 
