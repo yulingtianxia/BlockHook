@@ -26,6 +26,6 @@ comment:
   require_changes: no
 
 ignore:
-  - "BlockHookSample iOS/**/*"
-  - "BlockHookSample macOS/**/*"
+  - "BlockHookSample iOS/*.m"
+  - "BlockHookSample macOS/*.m"
   - "libffi/*.h"
