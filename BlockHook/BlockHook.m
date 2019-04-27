@@ -192,7 +192,9 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 {
     BHToken *token = (__bridge BHToken *)(userdata);
     if (token.hasStret) {
-        token.retValue = args[0];
+        // The first arg contains address of a pointer of returned struct.
+        token.retValue = *((void **)args[0]);
+        // Other args move backwards.
         token.args = args + 1;
     }
     else {

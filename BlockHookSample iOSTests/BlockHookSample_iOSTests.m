@@ -62,7 +62,7 @@ struct TestStruct _testRect;
     
     [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x){
         [token invokeOriginalBlock];
-        (**(struct TestStruct **)(token.retValue)).a = 100;
+        (*(struct TestStruct *)(token.retValue)).a = 100;
         NSAssert(x == 8, @"Wrong arg!");
     }];
     
