@@ -214,6 +214,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     }
     token.retValue = NULL;
     token.args = NULL;
+    token.realRetValue = NULL;
+    token.realArgs = NULL;
 }
 
 static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *lenp)
