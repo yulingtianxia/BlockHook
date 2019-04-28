@@ -20,6 +20,7 @@ Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockH
 ## 📚 Article
 
 - [Hook Objective-C Block with Libffi](http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/)
+- [BlockHook with Struct](http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/)
 
 ## 🌟 Features
 
