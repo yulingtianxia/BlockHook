@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A4399BB2226A20BC00BF15CA /* BlockHookSample_iOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSample_iOSTests.m */; };
-		A4399BC0226A277300BF15CA /* BlockHookSample_macOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BBF226A277300BF15CA /* BlockHookSample_macOSTests.m */; };
+		A41F8F782282F70900EF6553 /* BlockHookSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */; };
+		A4399BB2226A20BC00BF15CA /* BlockHookSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */; };
 		A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4619AF92264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
 		A4619AFA2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
@@ -138,11 +138,9 @@
 
 /* Begin PBXFileReference section */
 		A4399BAF226A20BC00BF15CA /* BlockHookSample iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BlockHookSample iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4399BB1226A20BC00BF15CA /* BlockHookSample_iOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHookSample_iOSTests.m; sourceTree = "<group>"; };
+		A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHookSampleTests.m; sourceTree = "<group>"; };
 		A4399BB3226A20BC00BF15CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4399BBD226A277300BF15CA /* BlockHookSample macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BlockHookSample macOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4399BBF226A277300BF15CA /* BlockHookSample_macOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHookSample_macOSTests.m; sourceTree = "<group>"; };
-		A4399BC1226A277300BF15CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_arm64.h; sourceTree = "<group>"; };
 		A4619AEE2264BC1C00A01C0B /* ffitarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget.h; sourceTree = "<group>"; };
 		A4619AEF2264BC1C00A01C0B /* ffi_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_arm.h; sourceTree = "<group>"; };
@@ -255,22 +253,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A4399BB0226A20BC00BF15CA /* BlockHookSample iOSTests */ = {
+		A4399BB0226A20BC00BF15CA /* BlockHookSampleTests */ = {
 			isa = PBXGroup;
 			children = (
-				A4399BB1226A20BC00BF15CA /* BlockHookSample_iOSTests.m */,
+				A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */,
 				A4399BB3226A20BC00BF15CA /* Info.plist */,
 			);
-			path = "BlockHookSample iOSTests";
-			sourceTree = "<group>";
-		};
-		A4399BBE226A277300BF15CA /* BlockHookSample macOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				A4399BBF226A277300BF15CA /* BlockHookSample_macOSTests.m */,
-				A4399BC1226A277300BF15CA /* Info.plist */,
-			);
-			path = "BlockHookSample macOSTests";
+			path = BlockHookSampleTests;
 			sourceTree = "<group>";
 		};
 		A4619AEC2264BC1C00A01C0B /* libffi */ = {
@@ -299,8 +288,7 @@
 				A46E6C14204464B7000D1DAA /* BlockHook */,
 				A46E6BFD2044648A000D1DAA /* BlockHookSample iOS */,
 				A4E7325C2263640D003D7063 /* BlockHookSample macOS */,
-				A4399BB0226A20BC00BF15CA /* BlockHookSample iOSTests */,
-				A4399BBE226A277300BF15CA /* BlockHookSample macOSTests */,
+				A4399BB0226A20BC00BF15CA /* BlockHookSampleTests */,
 				A46E6BFC2044648A000D1DAA /* Products */,
 				A4F557BC2060ED0A00497FFE /* Frameworks */,
 			);
@@ -742,7 +730,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4399BB2226A20BC00BF15CA /* BlockHookSample_iOSTests.m in Sources */,
+				A4399BB2226A20BC00BF15CA /* BlockHookSampleTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -750,7 +738,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4399BC0226A277300BF15CA /* BlockHookSample_macOSTests.m in Sources */,
+				A41F8F782282F70900EF6553 /* BlockHookSampleTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -864,7 +852,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				INFOPLIST_FILE = "BlockHookSample iOSTests/Info.plist";
+				INFOPLIST_FILE = BlockHookSampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -883,7 +871,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				INFOPLIST_FILE = "BlockHookSample iOSTests/Info.plist";
+				INFOPLIST_FILE = BlockHookSampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
@@ -903,7 +891,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				INFOPLIST_FILE = "BlockHookSample macOSTests/Info.plist";
+				INFOPLIST_FILE = BlockHookSampleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -924,7 +912,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
-				INFOPLIST_FILE = "BlockHookSample macOSTests/Info.plist";
+				INFOPLIST_FILE = BlockHookSampleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;

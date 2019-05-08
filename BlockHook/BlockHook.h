@@ -20,17 +20,32 @@ typedef void(^BHDeadBlock)(BHToken * _Nullable token);
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BHToken : NSObject
+@interface BHInvocation : NSObject
 
-@property (nonatomic, readonly) BlockHookMode mode;
+/**
+ Token for hook.
+ */
+@property (nonatomic, readonly) BHToken *token;
 /**
  Arguments of invoking the block. Need type casting.
  */
-@property (nonatomic) void *_Nullable *_Null_unspecified args;
+@property (nonatomic, readonly) void *_Nullable *_Null_unspecified args;
 /**
  Return value of invoking the block. Need type casting.
  */
-@property (nonatomic, nullable) void *retValue;
+@property (nonatomic, nullable, readonly) void *retValue;
+
+/**
+ Invoke original implementation of the block.
+ */
+- (void)invokeOriginalBlock;
+
+@end
+
+@interface BHToken : NSObject
+
+@property (nonatomic, readonly) BlockHookMode mode;
+
 /**
  Mangle name of the invoke function.
  */
@@ -42,11 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return remove successfully
  */
 - (BOOL)remove;
-
-/**
- Invoke original implementation of the block.
- */
-- (void)invokeOriginalBlock;
 
 @end
 

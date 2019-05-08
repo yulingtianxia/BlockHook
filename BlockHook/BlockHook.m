@@ -68,9 +68,6 @@ struct _BHBlock
 @property (nonatomic, nullable, readwrite) NSString *mangleName;
 @property (nonatomic) NSMethodSignature *originalBlockSignature;
 
-@property (nonatomic) void *_Nullable *_Null_unspecified realArgs;
-@property (nonatomic, nullable) void *realRetValue;
-
 /**
  if block is kind of `__NSStackBlock__` class.
  */
@@ -78,6 +75,23 @@ struct _BHBlock
 @property (nonatomic, getter=hasStret) BOOL stret;
 
 - (id)initWithBlock:(id)block;
+- (void)invokeOriginalBlockWithArgs:(void **)args retValue:(void *)retValue;
+
+@end
+
+@interface BHInvocation ()
+
+@property (nonatomic, readwrite) BHToken *token;
+@property (nonatomic, readwrite) void *_Nullable *_Null_unspecified args;
+@property (nonatomic, nullable, readwrite) void *retValue;
+
+@end
+@implementation BHInvocation
+
+- (void)invokeOriginalBlock
+{
+    [self.token invokeOriginalBlockWithArgs:self.args retValue:self.retValue];
+}
 
 @end
 
@@ -161,10 +175,10 @@ struct _BHBlock
     return _mangleName;
 }
 
-- (void)invokeOriginalBlock
+- (void)invokeOriginalBlockWithArgs:(void **)args retValue:(void *)retValue
 {
     if (_originInvoke) {
-        ffi_call(&_cif, _originInvoke, self.realRetValue, self.realArgs);
+        ffi_call(&_cif, _originInvoke, retValue, args);
     }
     else {
         NSLog(@"You had lost your originInvoke! Please check the order of removing tokens!");
@@ -191,31 +205,23 @@ static const char *BHBlockTypeEncodeString(id blockObj)
 static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata)
 {
     BHToken *token = (__bridge BHToken *)(userdata);
+    void *userRet = ret;
+    void **userArgs = args;
     if (token.hasStret) {
         // The first arg contains address of a pointer of returned struct.
-        token.retValue = *((void **)args[0]);
+        userRet = *((void **)args[0]);
         // Other args move backwards.
-        token.args = args + 1;
+        userArgs = args + 1;
     }
-    else {
-        token.retValue = ret;
-        token.args = args;
-    }
-    token.realRetValue = ret;
-    token.realArgs = args;
     if (BlockHookModeBefore == token.mode) {
-        [token invokeHookBlock];
+        [token invokeHookBlockWithArgs:userArgs retValue:userRet];
     }
-    if (!(BlockHookModeInstead == token.mode && [token invokeHookBlock])) {
-        [token invokeOriginalBlock];
+    if (!(BlockHookModeInstead == token.mode && [token invokeHookBlockWithArgs:userArgs retValue:userRet])) {
+        [token invokeOriginalBlockWithArgs:args retValue:ret];
     }
     if (BlockHookModeAfter == token.mode) {
-        [token invokeHookBlock];
+        [token invokeHookBlockWithArgs:userArgs retValue:userRet];
     }
-    token.retValue = NULL;
-    token.args = NULL;
-    token.realRetValue = NULL;
-    token.realArgs = NULL;
 }
 
 static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *lenp)
@@ -425,7 +431,7 @@ static int BHTypeCount(const char *str)
     ((__bridge struct _BHBlock *)self.block)->invoke = _replacementInvoke;
 }
 
-- (BOOL)invokeHookBlock
+- (BOOL)invokeHookBlockWithArgs:(void **)args retValue:(void *)retValue
 {
     if ((!self.isStackBlock && !self.block) || !self.hookBlock) {
         return NO;
@@ -435,17 +441,22 @@ static int BHTypeCount(const char *str)
     
     // origin block invoke func arguments: block(self), ...
     // origin block invoke func arguments (x86 struct return): struct*, block(self), ...
-    // hook block signature arguments: block(self), token, ...
+    // hook block signature arguments: block(self), invocation, ...
     
     if (hookBlockSignature.numberOfArguments > self.numberOfArguments + 1) {
         NSLog(@"Block has too many arguments. Not calling %@", self);
         return NO;
     }
     
+    BHInvocation *invocation = nil;
     if (hookBlockSignature.numberOfArguments > 1) {
-        [blockInvocation setArgument:(void *)&self atIndex:1];
+        invocation = [BHInvocation new];
+        invocation.args = args;
+        invocation.retValue = retValue;
+        invocation.token = self;
+        [blockInvocation setArgument:(void *)&invocation atIndex:1];
     }
-
+    
     void *argBuf = NULL;
     for (NSUInteger idx = 2; idx < hookBlockSignature.numberOfArguments; idx++) {
         const char *type = [self.originalBlockSignature getArgumentTypeAtIndex:idx - 1];
@@ -456,7 +467,7 @@ static int BHTypeCount(const char *str)
             NSLog(@"Failed to allocate memory for block invocation.");
             return NO;
         }
-        memcpy(argBuf, self.args[idx - 1], argSize);
+        memcpy(argBuf, args[idx - 1], argSize);
         [blockInvocation setArgument:argBuf atIndex:idx];
     }
     

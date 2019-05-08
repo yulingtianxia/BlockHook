@@ -1,6 +1,6 @@
 //
-//  BlockHookSample_macOSTests.m
-//  BlockHookSample macOSTests
+//  BlockHookSampleTests.m
+//  BlockHookSample iOSTests
 //
 //  Created by 杨萧玉 on 2019/4/19.
 //  Copyright © 2019 杨萧玉. All rights reserved.
@@ -18,11 +18,11 @@ struct TestStruct {
     CGRect *f;
 };
 
-@interface BlockHookSample_macOSTests : XCTestCase
+@interface BlockHookSampleTests : XCTestCase
 
 @end
 
-@implementation BlockHookSample_macOSTests
+@implementation BlockHookSampleTests
 
 struct TestStruct _testRect;
 
@@ -36,15 +36,9 @@ struct TestStruct _testRect;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
 - (void)performBlock:(void(^)(void))block
 {
-    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
-        [token invokeOriginalBlock];
+    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation){
         NSLog(@"hook stack block succeed!");
     }];
     
@@ -65,9 +59,8 @@ struct TestStruct _testRect;
         return result;
     };
     
-    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x){
-        [token invokeOriginalBlock];
-        (*(struct TestStruct *)(token.retValue)).a = 100;
+    [StructReturnBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x){
+        (*(struct TestStruct *)(invocation.retValue)).a = 100;
         NSAssert(x == 8, @"Wrong arg!");
     }];
     
@@ -82,9 +75,8 @@ struct TestStruct _testRect;
         return result;
     };
     
-    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token){
-        [token invokeOriginalBlock];
-        (**(struct TestStruct **)(token.retValue)).a = 100;
+    [StructReturnBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation){
+        (**(struct TestStruct **)(invocation.retValue)).a = 100;
     }];
     
     struct TestStruct *result = StructReturnBlock();
@@ -97,10 +89,9 @@ struct TestStruct _testRect;
         NSAssert(test.a == 100, @"Modify struct member failed!");
     };
     
-    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, struct TestStruct test){
+    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
         // Hook 改参数
-        (*(struct TestStruct *)(token.args[1])).a = 100;
-        [token invokeOriginalBlock];
+        (*(struct TestStruct *)(invocation.args[1])).a = 100;
     }];
     StructReturnBlock(_testRect);
 }
@@ -111,10 +102,9 @@ struct TestStruct _testRect;
         NSAssert(test->a == 100, @"Modify struct member failed!");
     };
     
-    [StructReturnBlock block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, struct TestStruct test){
+    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
         // Hook 改参数
-        (**(struct TestStruct **)(token.args[1])).a = 100;
-        [token invokeOriginalBlock];
+        (**(struct TestStruct **)(invocation.args[1])).a = 100;
     }];
     StructReturnBlock(&_testRect);
 }
@@ -135,27 +125,27 @@ struct TestStruct _testRect;
         return result;
     };
     
-    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHToken *token, int x, int y){
-        [token invokeOriginalBlock];
-        NSLog(@"let me see original result: %d", *(int *)(token.retValue));
+    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y){
+        [invocation invokeOriginalBlock];
+        NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
         // change the block imp and result
-        *(int *)(token.retValue) = x * y;
+        *(int *)(invocation.retValue) = x * y;
         NSLog(@"hook instead: '+' -> '*'");
     }];
     
-    NSAssert([tokenInstead.mangleName isEqualToString:@"__43-[BlockHookSample_macOSTests testHookBlock]_block_invoke"], @"Wrong mangle name!");
+    NSAssert([tokenInstead.mangleName isEqualToString:@"__37-[BlockHookSampleTests testHookBlock]_block_invoke"], @"Wrong mangle name!");
     
-    BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token, int x, int y){
+    BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y){
         // print args and result
-        NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(token.retValue));
+        NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(invocation.retValue));
     }];
     
-    BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(id token){
+    BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation){
         // BHToken has to be the first arg.
-        NSLog(@"hook before block! token:%@", token);
+        NSLog(@"hook before block! invocation:%@", invocation);
     }];
     
-    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(id token){
+    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHToken *token){
         // BHToken is the only arg.
         NSLog(@"block dead! token:%@", token);
     }];
