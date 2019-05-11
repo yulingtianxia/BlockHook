@@ -106,10 +106,16 @@ struct _BHBlock
         _originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(block)];
         _closure = ffi_closure_alloc(sizeof(ffi_closure), &_replacementInvoke);
         _numberOfArguments = [self _prepCIF:&_cif withEncodeString:BHBlockTypeEncodeString(_block)];
+        
+        if ([block isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
+            NSLog(@"Hooking StackBlock causes a memory leak! I suggest you copy it first!");
+            self.stackBlock = YES;
+        }
+        
         BHDealloc *bhDealloc = [BHDealloc new];
         bhDealloc.token = self;
-        objc_setAssociatedObject(block, NSSelectorFromString([NSString stringWithFormat:@"%p", self]), bhDealloc, OBJC_ASSOCIATION_RETAIN);
         [self _prepClosure];
+        objc_setAssociatedObject(block, _replacementInvoke, bhDealloc, OBJC_ASSOCIATION_RETAIN);
     }
     return self;
 }
@@ -125,12 +131,12 @@ struct _BHBlock
 
 - (BOOL)remove
 {
+    if (self.isStackBlock) {
+        NSLog(@"Can't remove token for StackBlock!");
+        return NO;
+    }
     [self setBlockDeadCallback:nil];
     if (_originInvoke) {
-        if (self.isStackBlock) {
-            NSLog(@"Can't remove token for StackBlock!");
-            return NO;
-        }
         if (self.block) {
             ((__bridge struct _BHBlock *)self.block)->invoke = _originInvoke;
         }
@@ -156,7 +162,7 @@ struct _BHBlock
         NSLog(@"Can't set BlockDeadCallback for StackBlock!");
         return;
     }
-    BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, NSSelectorFromString([NSString stringWithFormat:@"%p", self]));
+    BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, _replacementInvoke);
     bhDealloc.deadBlock = deadBlock;
 }
 
@@ -499,10 +505,6 @@ static int BHTypeCount(const char *str)
     BHToken *token = [[BHToken alloc] initWithBlock:self];
     token.mode = mode;
     token.hookBlock = block;
-    if ([self isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
-        NSLog(@"Stack Block! I suggest you copy it first!");
-        token.stackBlock = YES;
-    }
     return token;
 }
 
