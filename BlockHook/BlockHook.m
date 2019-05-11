@@ -11,6 +11,10 @@
 #import <objc/runtime.h>
 #import <dlfcn.h>
 
+#if !__has_feature(objc_arc)
+#error
+#endif
+
 enum {
     BLOCK_HAS_COPY_DISPOSE =  (1 << 25),
     BLOCK_HAS_CTOR =          (1 << 26), // helpers have C++ code
