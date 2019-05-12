@@ -77,6 +77,7 @@ struct _BHBlock
  */
 @property (nonatomic, getter=isStackBlock) BOOL stackBlock;
 @property (nonatomic, getter=hasStret) BOOL stret;
+@property (nonatomic, nullable, readwrite) BHToken *next;
 
 - (id)initWithBlock:(id)block;
 - (void)invokeOriginalBlockWithArgs:(void **)args retValue:(void *)retValue;
@@ -133,6 +134,15 @@ struct _BHBlock
     }
 }
 
+- (BHToken *)next
+{
+    if (!_next) {
+        BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, _originInvoke);
+        _next = bhDealloc.token;
+    }
+    return _next;
+}
+
 - (BOOL)remove
 {
     if (self.isStackBlock) {
@@ -142,11 +152,24 @@ struct _BHBlock
     [self setBlockDeadCallback:nil];
     if (_originInvoke) {
         if (self.block) {
-            ((__bridge struct _BHBlock *)self.block)->invoke = _originInvoke;
+            BHToken *current = [self.block block_currentHookToken];
+            BHToken *last = nil;
+            while (current) {
+                if (current == self) {
+                    if (last) { // remove middle token
+                        last->_originInvoke = _originInvoke;
+                    }
+                    else { // remove head(current) token
+                        ((__bridge struct _BHBlock *)self.block)->invoke = _originInvoke;
+                    }
+                    break;
+                }
+                last = current;
+                current = [current next];
+            }
         }
-#if DEBUG
         _originInvoke = NULL;
-#endif
+        objc_setAssociatedObject(self.block, _replacementInvoke, nil, OBJC_ASSOCIATION_RETAIN);
         return YES;
     }
     return NO;
@@ -173,13 +196,15 @@ struct _BHBlock
 - (NSString *)mangleName
 {
     if (!_mangleName) {
-        if (_originInvoke) {
-            Dl_info dlinfo;
-            memset(&dlinfo, 0, sizeof(dlinfo));
-            if (dladdr(_originInvoke, &dlinfo))
-            {
-                _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
-            }
+        Dl_info dlinfo;
+        memset(&dlinfo, 0, sizeof(dlinfo));
+        BHToken *firstToken = [self.block block_currentHookToken];
+        while ([firstToken next]) {
+            firstToken = [firstToken next];
+        }
+        if (firstToken && dladdr(firstToken->_originInvoke, &dlinfo))
+        {
+            _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
         }
     }
     return _mangleName;
@@ -493,12 +518,20 @@ static int BHTypeCount(const char *str)
 
 @implementation NSObject (BlockHook)
 
+- (BOOL)block_checkValid
+{
+    BOOL valid = [self isKindOfClass:NSClassFromString(@"NSBlock")];
+    if (!valid) {
+        NSLog(@"Not Block!");
+    }
+    return valid;
+}
+
 - (BHToken *)block_hookWithMode:(BlockHookMode)mode
                      usingBlock:(id)block
 {
     // __NSStackBlock__ -> __NSStackBlock -> NSBlock
-    if (!block || ![self isKindOfClass:NSClassFromString(@"NSBlock")]) {
-        NSLog(@"Not Block!");
+    if (!block || ![self block_checkValid]) {
         return nil;
     }
     struct _BHBlock *bh_block = (__bridge void *)self;
@@ -512,9 +545,25 @@ static int BHTypeCount(const char *str)
     return token;
 }
 
-- (BOOL)block_removeHook:(BHToken *)token
+- (void)block_removeAllHook
 {
-    return [token remove];
+    if (![self block_checkValid]) {
+        return;
+    }
+    BHToken *token = nil;
+    while ((token = [self block_currentHookToken])) {
+        [token remove];
+    }
+}
+
+- (BHToken *)block_currentHookToken
+{
+    if (![self block_checkValid]) {
+        return nil;
+    }
+    struct _BHBlock *bh_block = (__bridge void *)self;
+    BHDealloc *bhDealloc = objc_getAssociatedObject(self, bh_block->invoke);
+    return bhDealloc.token;
 }
 
 @end

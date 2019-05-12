@@ -7,7 +7,6 @@
 //
 
 #import "ViewController.h"
-#import <BlockHook/BlockHook.h>
 
 @implementation ViewController
 

@@ -47,7 +47,9 @@ You can hook a block using 4 modes (before/instead/after/dead). This method retu
                      usingBlock:(id)block
 ```
 
-BlockHook is easy to use. Its APIs take example by Aspects. Here is a full set of usage of BlockHook.
+BlockHook is easy to use. Its APIs take example by Aspects. [Here](https://github.com/yulingtianxia/BlockHook/blob/master/BlockHookSampleTests/BlockHookSampleTests.m) is a full set of usage of BlockHook.
+
+This is an example for hooking block in all modes. You can change block return value from 8 to 15. Then remove some hook and check if it is successful. Finally we get callback when block dealloc. 
 
 ```
 NSObject *z = NSObject.new;
@@ -84,11 +86,8 @@ NSLog(@"hooked block");
 int ret = block(3, 5);
 NSAssert(ret == 15, @"hook failed!");
 NSLog(@"hooked result:%d", ret);
-// remove all tokens when you don't need.
-// reversed order of hook.
-[block block_removeHook:tokenBefore];
-[tokenAfter remove];
-[block block_removeHook:tokenInstead];
+// remove token.
+[tokenInstead remove];
 NSLog(@"remove tokens, original block");
 ret = block(3, 5);
 NSAssert(ret == 8, @"remove hook failed!");
@@ -100,16 +99,18 @@ Here is the log:
 
 ```
 hooked block
-hook before block! invocation:<BHInvocation: 0x60000024c240>
-3 + 5 = 8, z is a NSObject: <NSObject: 0x600000010b90>
+hook before block! invocation:<BHInvocation: 0x600003668940>
+3 + 5 = 8, z is a NSObject: <NSObject: 0x6000034245a0>
 let me see original result: 8
 hook instead: '+' -> '*'
 hook after block! 3 * 5 = 15
 hooked result:15
 remove tokens, original block
-3 + 5 = 8, z is a NSObject: <NSObject: 0x600000010b90>
+hook before block! invocation:<BHInvocation: 0x60000366c7c0>
+3 + 5 = 8, z is a NSObject: <NSObject: 0x6000034245a0>
+hook after block! 3 * 5 = 8
 original result:8
-block dead! token:<BHToken: 0x600002c20500>
+block dead! token:<BHToken: 0x600000422910>
 ```
 
 ## 📲 Installation

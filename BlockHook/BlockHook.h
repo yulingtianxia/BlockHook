@@ -44,7 +44,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BHToken : NSObject
 
+/**
+ Mode you want to insert your custom logic: Before, Instead, After or Dead.
+ */
 @property (nonatomic, readonly) BlockHookMode mode;
+
+/**
+ Next token in hook list.
+ */
+@property (nonatomic, nullable, readonly) BHToken *next;
 
 /**
  Mangle name of the invoke function.
@@ -54,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Remove token will revert the hook.
 
- @return remove successfully
+ @return If it is successful.
  */
 - (BOOL)remove;
 
@@ -62,9 +70,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (BlockHook)
 
+/**
+ Hook this block.
+
+ @param mode BlockHookMode
+ @param block Implement your custom logic here.
+ @return Token for hook.
+ */
 - (nullable BHToken *)block_hookWithMode:(BlockHookMode)mode
-                     usingBlock:(id)block;
-- (BOOL)block_removeHook:(BHToken *)token;
+                              usingBlock:(id)block;
+
+/**
+ Remove all hook.
+ */
+- (void)block_removeAllHook;
+
+/**
+ Block may be hooked more than once. The current token represents the last time.
+
+ @return BHToken instance.
+ */
+- (nullable BHToken *)block_currentHookToken;
 
 @end
 
