@@ -66,7 +66,7 @@ struct _BHBlock
 }
 @property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableArray *allocations;
-@property (nonatomic, weak) id block;
+@property (nonatomic, weak, readwrite) id block;
 @property (nonatomic) NSUInteger numberOfArguments;
 @property (nonatomic) id hookBlock;
 @property (nonatomic, nullable, readwrite) NSString *mangleName;

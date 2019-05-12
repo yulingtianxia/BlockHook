@@ -50,6 +50,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BlockHookMode mode;
 
 /**
+ Block hooked.
+ */
+@property (nonatomic, weak, readonly) id block;
+
+/**
  Next token in hook list.
  */
 @property (nonatomic, nullable, readonly) BHToken *next;
