@@ -28,6 +28,7 @@ Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockH
 - [x] Support 4 hook modes: Before, Instead, After and Dead.
 - [x] Let you modify return value and arguments.
 - [x] Support invoking original implementation.
+- [x] Remove hook at any time.
 - [x] Provide block mangle name.
 - [x] Self-managed tokens.
 - [x] Support custom struct.
