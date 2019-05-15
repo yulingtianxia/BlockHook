@@ -158,6 +158,7 @@ struct _BHBlock
                 if (current == self) {
                     if (last) { // remove middle token
                         last->_originInvoke = _originInvoke;
+                        last.next = nil;
                     }
                     else { // remove head(current) token
                         ((__bridge struct _BHBlock *)self.block)->invoke = _originInvoke;
