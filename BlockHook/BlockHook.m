@@ -61,7 +61,7 @@ struct _BHBlock
 @interface BHInvokeLock : NSObject
 
 @property (nonatomic) dispatch_semaphore_t semaphore;
-@property (nonatomic) os_unfair_lock unfair_lock API_AVAILABLE(ios(10.0), macos(10.12));
+@property (nonatomic) os_unfair_lock unfair_lock OS_UNFAIR_LOCK_AVAILABILITY;
 - (void)lock;
 - (void)unlock;
 
