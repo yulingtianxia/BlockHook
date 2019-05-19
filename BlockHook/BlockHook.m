@@ -172,10 +172,13 @@ struct _BHBlock
     if (self) {
         _allocations = [[NSMutableArray alloc] init];
         _block = block;
-        _originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(block)];
+        const char *encode = BHBlockTypeEncodeString(block);
+        _numberOfArguments = [self _prepCIF:&_cif withEncodeString:encode];
+        if (_numberOfArguments == -1) { // Unknown encode.
+            return nil;
+        }
+        _originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:encode];
         _closure = ffi_closure_alloc(sizeof(ffi_closure), &_replacementInvoke);
-        _numberOfArguments = [self _prepCIF:&_cif withEncodeString:BHBlockTypeEncodeString(_block)];
-        
         if ([block isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
             NSLog(@"Hooking StackBlock causes a memory leak! I suggest you copy it first!");
             self.stackBlock = YES;
@@ -384,6 +387,9 @@ static int BHTypeCount(const char *str)
         temp++;
     }
     ffi_type **elements = [self _typesWithEncodeString:temp + 1];
+    if (!elements) {
+        return nil;
+    }
     structType->elements = elements;
     
     return structType;
@@ -465,7 +471,7 @@ static int BHTypeCount(const char *str)
     }
     
     NSLog(@"Unknown encode string %s", str);
-    abort();
+    return nil;
 }
 
 - (ffi_type **)_argsWithEncodeString:(const char *)str getCount:(int *)outCount
@@ -489,7 +495,16 @@ static int BHTypeCount(const char *str)
     {
         const char *next = BHSizeAndAlignment(str, NULL, NULL, NULL);
         if (i >= 0 && i < argCount) {
-            argTypes[i] = [self _ffiTypeForEncode:str];
+            ffi_type *argType = [self _ffiTypeForEncode:str];
+            if (argType) {
+                argTypes[i] = argType;
+            }
+            else {
+                if (outCount) {
+                    *outCount = -1;
+                }
+                return nil;
+            }
         }
         i++;
         str = next;
@@ -510,6 +525,9 @@ static int BHTypeCount(const char *str)
     struct _BHBlock *bh_block = (__bridge void *)self.block;
     if ((bh_block->flags & BLOCK_HAS_STRET)) {
         argTypes = [self _typesWithEncodeString:str getCount:&argCount startIndex:0];
+        if (!argTypes) { // Error!
+            return -1;
+        }
         argTypes[0] = &ffi_type_pointer;
         returnType = &ffi_type_void;
         self.stret = YES;
@@ -517,7 +535,13 @@ static int BHTypeCount(const char *str)
     }
     else {
         argTypes = [self _argsWithEncodeString:str getCount:&argCount];
+        if (!argTypes) { // Error!
+            return -1;
+        }
         returnType = [self _ffiTypeForEncode:str];
+    }
+    if (!returnType) { // Error!
+        return -1;
     }
     ffi_status status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argCount, returnType, argTypes);
     if (status != FFI_OK) {
