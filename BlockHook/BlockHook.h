@@ -97,6 +97,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable BHToken *)block_currentHookToken;
 
+/**
+ Current invoke function of block.
+
+ @return Pointer to invoke function.
+ */
+- (void *)block_currentInvokeFunction;
+
 @end
 
 NS_ASSUME_NONNULL_END

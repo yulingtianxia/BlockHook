@@ -635,13 +635,19 @@ static int BHTypeCount(const char *str)
     if (![self block_checkValid]) {
         return nil;
     }
+    void *invoke = [self block_currentInvokeFunction];
+    BHDealloc *bhDealloc = objc_getAssociatedObject(self, invoke);
+    return bhDealloc.token;
+}
+
+- (void *)block_currentInvokeFunction
+{
     struct _BHBlock *bh_block = (__bridge void *)self;
     BHInvokeLock *lock = [self invokeLock];
     [lock lock];
     void *invoke = bh_block->invoke;
     [lock unlock];
-    BHDealloc *bhDealloc = objc_getAssociatedObject(self, invoke);
-    return bhDealloc.token;
+    return invoke;
 }
 
 @end
