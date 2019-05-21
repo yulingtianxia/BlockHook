@@ -276,7 +276,6 @@ struct _BHBlock
         while ([firstToken next]) {
             firstToken = [firstToken next];
         }
-        // TODO: threadsafe
         if (firstToken && dladdr(firstToken.originInvoke, &dlinfo))
         {
             _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
@@ -287,7 +286,6 @@ struct _BHBlock
 
 - (void)invokeOriginalBlockWithArgs:(void **)args retValue:(void *)retValue
 {
-    // TODO: threadsafe
     if (self.originInvoke) {
         ffi_call(&_cif, self.originInvoke, retValue, args);
     }
@@ -465,6 +463,20 @@ static int BHTypeCount(const char *str)
     COND(double, double);
     
     COND(void, void);
+    
+    // Ignore Method Encodings
+    switch (*str) {
+        case 'r':
+        case 'R':
+        case 'n':
+        case 'N':
+        case 'o':
+        case 'O':
+        case 'V':
+            return [self _ffiTypeForEncode:str + 1];
+    }
+    
+    // Struct Type Encodings
     if (*str == '{') {
         ffi_type *structType = [self _ffiTypeForStructEncode:str];
         return structType;

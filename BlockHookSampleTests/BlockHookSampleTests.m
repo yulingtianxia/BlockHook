@@ -126,10 +126,11 @@ struct TestStruct _testRect;
     const char *(^protocolBlock)(id<CALayerDelegate>, int(^)(int, int)) = ^(id<CALayerDelegate> delegate, int(^block)(int, int)) {
         return (const char *)"test protocol";
     };
-    BHToken *token = [protocolBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, id<CALayerDelegate> delegate){
-        
+    BHToken *token = [protocolBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, id<CALayerDelegate> delegate, int(^block)(int x, int y)){
+        NSLog(@"%@ %@ %@", invocation, delegate, block);
     }];
-    protocolBlock(nil, block);
+    id z = [NSObject new];
+    protocolBlock(z, block);
 }
 
 - (void)testHookBlock {
