@@ -272,7 +272,7 @@ struct _BHBlock
     if (!_mangleName) {
         Dl_info dlinfo;
         memset(&dlinfo, 0, sizeof(dlinfo));
-        BHToken *firstToken = [self.block block_currentHookToken];
+        BHToken *firstToken = self;
         while ([firstToken next]) {
             firstToken = [firstToken next];
         }
