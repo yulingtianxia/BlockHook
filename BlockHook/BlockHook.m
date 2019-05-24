@@ -270,14 +270,17 @@ struct _BHBlock
 - (NSString *)mangleName
 {
     if (!_mangleName) {
-        if (self.next) {
-            return self.next.mangleName;
+        NSString *mangleName = self.next.mangleName;
+        if (mangleName.length > 0) {
+            _mangleName = mangleName;
         }
-        Dl_info dlinfo;
-        memset(&dlinfo, 0, sizeof(dlinfo));
-        if (dladdr(self.originInvoke, &dlinfo))
-        {
-            _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
+        else {
+            Dl_info dlinfo;
+            memset(&dlinfo, 0, sizeof(dlinfo));
+            if (dladdr(self.originInvoke, &dlinfo))
+            {
+                _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
+            }
         }
     }
     return _mangleName;
