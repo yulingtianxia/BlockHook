@@ -277,7 +277,7 @@ struct _BHBlock
         else {
             Dl_info dlinfo;
             memset(&dlinfo, 0, sizeof(dlinfo));
-            if (dladdr(self.originInvoke, &dlinfo))
+            if (dladdr(self.originInvoke, &dlinfo) && dlinfo.dli_sname)
             {
                 _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
             }
