@@ -270,13 +270,12 @@ struct _BHBlock
 - (NSString *)mangleName
 {
     if (!_mangleName) {
+        if (self.next) {
+            return self.next.mangleName;
+        }
         Dl_info dlinfo;
         memset(&dlinfo, 0, sizeof(dlinfo));
-        BHToken *firstToken = self;
-        while ([firstToken next]) {
-            firstToken = [firstToken next];
-        }
-        if (firstToken && dladdr(firstToken.originInvoke, &dlinfo))
+        if (dladdr(self.originInvoke, &dlinfo))
         {
             _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
         }
