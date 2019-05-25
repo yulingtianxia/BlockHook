@@ -58,16 +58,14 @@ struct _BHBlock
 
 @end
 
-@interface BHInvokeLock : NSObject
+@interface BHLock : NSObject<NSLocking>
 
 @property (nonatomic) dispatch_semaphore_t semaphore;
 @property (nonatomic) os_unfair_lock unfair_lock OS_UNFAIR_LOCK_AVAILABILITY;
-- (void)lock;
-- (void)unlock;
 
 @end
 
-@implementation BHInvokeLock
+@implementation BHLock
 
 - (instancetype)init
 {
@@ -102,20 +100,20 @@ struct _BHBlock
 
 @end
 
-@interface NSObject (BHInvokeLock)
+@interface NSObject (BHLock)
 
-- (BHInvokeLock *)invokeLock;
+- (BHLock *)bh_lockForKey:(const void * _Nonnull)key;
 
 @end
 
-@implementation NSObject (BHInvokeLock)
+@implementation NSObject (BHLock)
 
-- (BHInvokeLock *)invokeLock
+- (BHLock *)bh_lockForKey:(const void * _Nonnull)key
 {
-    BHInvokeLock *lock = objc_getAssociatedObject(self, _cmd);
+    BHLock *lock = objc_getAssociatedObject(self, key);
     if (!lock) {
-        lock = [BHInvokeLock new];
-        objc_setAssociatedObject(self, _cmd, lock, OBJC_ASSOCIATION_RETAIN);
+        lock = [BHLock new];
+        objc_setAssociatedObject(self, key, lock, OBJC_ASSOCIATION_RETAIN);
     }
     return lock;
 }
@@ -166,6 +164,8 @@ struct _BHBlock
 
 @implementation BHToken
 
+@synthesize next = _next;
+
 - (instancetype)initWithBlock:(id)block mode:(BlockHookMode)mode aspectBlockBlock:(id)aspectBlock
 {
     self = [super init];
@@ -208,11 +208,23 @@ struct _BHBlock
 
 - (BHToken *)next
 {
+    BHLock *lock = [self.block bh_lockForKey:@selector(next)];
+    [lock lock];
     if (!_next) {
         BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, self.originInvoke);
         _next = bhDealloc.token;
     }
-    return _next;
+    BHToken *result = _next;
+    [lock unlock];
+    return result;
+}
+
+- (void)setNext:(BHToken *)next
+{
+    BHLock *lock = [self.block bh_lockForKey:@selector(next)];
+    [lock lock];
+    _next = next;
+    [lock unlock];
 }
 
 - (BOOL)remove
@@ -234,7 +246,7 @@ struct _BHBlock
                         last.next = nil;
                     }
                     else { // remove head(current) token
-                        BHInvokeLock *lock = [self.block invokeLock];
+                        BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
                         [lock lock];
                         ((__bridge struct _BHBlock *)self.block)->invoke = self.originInvoke;
                         [lock unlock];
@@ -569,7 +581,7 @@ static int BHTypeCount(const char *str)
     }
     // exchange invoke func imp
     struct _BHBlock *block = (__bridge struct _BHBlock *)self.block;
-    BHInvokeLock *lock = [self.block invokeLock];
+    BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
     [lock lock];
     self.originInvoke = block->invoke;
     block->invoke = _replacementInvoke;
@@ -677,7 +689,7 @@ static int BHTypeCount(const char *str)
 - (void *)block_currentInvokeFunction
 {
     struct _BHBlock *bh_block = (__bridge void *)self;
-    BHInvokeLock *lock = [self invokeLock];
+    BHLock *lock = [self bh_lockForKey:_cmd];
     [lock lock];
     void *invoke = bh_block->invoke;
     [lock unlock];
