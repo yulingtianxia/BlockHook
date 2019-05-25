@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BlockHookMode mode;
 
 /**
- Block hooked.
+ Block be hooked.
  */
 @property (nonatomic, weak, readonly) id block;
 
@@ -65,6 +65,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, readonly) NSString *mangleName;
 
 /**
+ Aspect Block.
+ */
+@property (nonatomic, readonly) id aspectBlock;
+
+/**
  Remove token will revert the hook.
 
  @return If it is successful.
@@ -73,17 +78,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+ BlockHook Category.
+ Method receiver must be a block.
+ */
 @interface NSObject (BlockHook)
 
 /**
  Hook this block.
 
  @param mode BlockHookMode
- @param block Implement your custom logic here.
+ @param aspectBlock Implement your custom logic here.
  @return Token for hook.
  */
 - (nullable BHToken *)block_hookWithMode:(BlockHookMode)mode
-                              usingBlock:(id)block;
+                              usingBlock:(id)aspectBlock;
 
 /**
  Remove all hook.
