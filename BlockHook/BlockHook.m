@@ -573,10 +573,11 @@ static int BHTypeCount(const char *str)
         abort();
     }
     // exchange invoke func imp
+    struct _BHBlock *block = (__bridge struct _BHBlock *)self.block;
     BHInvokeLock *lock = [self.block invokeLock];
     [lock lock];
-    self.originInvoke = ((__bridge struct _BHBlock *)self.block)->invoke;
-    ((__bridge struct _BHBlock *)self.block)->invoke = _replacementInvoke;
+    self.originInvoke = block->invoke;
+    block->invoke = _replacementInvoke;
     [lock unlock];
 }
 
@@ -630,7 +631,35 @@ static int BHTypeCount(const char *str)
 
 @end
 
+//static void *(*_bh_StackBlock_retain_origin)(void *obj, SEL cmd) = NULL;
+//void *_bh_StackBlock_retain_replace(void *obj, SEL cmd)
+//{
+//    BHToken *token = [((__bridge id)obj) block_currentHookToken];
+//    if (token) {
+//        token.stackRetainCount++;
+//    }
+//    return _bh_StackBlock_retain_origin(obj, cmd);
+//}
+//
+//static void (*_bh_StackBlock_release_origin)(void *obj, SEL cmd) = NULL;
+//void _bh_StackBlock_release_replace(void *obj, SEL cmd)
+//{
+//    BHToken *token = [((__bridge id)obj) block_currentHookToken];
+//    token.stackRetainCount--;
+//    NSInteger count = CFGetRetainCount(obj);
+//    if (count == 1) {
+////        [token remove];
+//    }
+//    _bh_StackBlock_release_origin(obj, cmd);
+//}
+
 @implementation NSObject (BlockHook)
+
+//+ (void)load
+//{
+//    _bh_StackBlock_retain_origin = (void *(*)(void *, SEL))class_replaceMethod(NSClassFromString(@"__NSStackBlock"), sel_registerName("retain"), (IMP)_bh_StackBlock_retain_replace, nil);
+//    _bh_StackBlock_release_origin = (void (*)(void *, SEL))class_replaceMethod(NSClassFromString(@"__NSStackBlock"), sel_registerName("release"), (IMP)_bh_StackBlock_release_replace, nil);
+//}
 
 - (BOOL)block_checkValid
 {

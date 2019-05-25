@@ -37,6 +37,13 @@ struct TestStruct _testRect;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
+- (void)foo:(void(^)(void))block
+{
+    if (block) {
+        block();
+    }
+}
+
 - (void)performBlock:(void(^)(void))block
 {
     BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation){
@@ -47,9 +54,7 @@ struct TestStruct _testRect;
         NSLog(@"stack block dead!");
     }];
     
-    if (block) {
-        block();
-    }
+    [self foo:block];
     [tokenInstead remove];
 }
 
