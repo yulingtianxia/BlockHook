@@ -40,23 +40,7 @@ struct _BHBlock
     struct _BHBlockDescriptor *descriptor;
 };
 
-@interface BHDealloc : NSObject
-
-@property (nonatomic, strong) BHToken *token;
-@property (nonatomic, nullable) BHDeadBlock deadBlock;
-
-@end
-
-@implementation BHDealloc
-
-- (void)dealloc
-{
-    if (self.deadBlock) {
-        self.deadBlock(self.token);
-    }
-}
-
-@end
+typedef void(^BHDeadBlock)(BHToken * _Nullable token);
 
 @interface BHLock : NSObject<NSLocking>
 
@@ -134,6 +118,7 @@ struct _BHBlock
 @property (nonatomic, nullable, readwrite) NSString *mangleName;
 @property (nonatomic) NSMethodSignature *originalBlockSignature;
 @property (atomic) void *originInvoke;
+@property (nonatomic, nullable) BHDeadBlock deadBlock;
 
 /**
  if block is kind of `__NSStackBlock__` class.
@@ -183,15 +168,13 @@ struct _BHBlock
             NSLog(@"Hooking StackBlock causes a memory leak! I suggest you copy it first!");
             self.stackBlock = YES;
         }
-        
-        BHDealloc *bhDealloc = [BHDealloc new];
-        bhDealloc.token = self;
+
         [self _prepClosure];
-        objc_setAssociatedObject(block, _replacementInvoke, bhDealloc, OBJC_ASSOCIATION_RETAIN);
+        objc_setAssociatedObject(block, _replacementInvoke, self, OBJC_ASSOCIATION_RETAIN);
         _mode = mode;
         _aspectBlock = aspectBlock;
         if (BlockHookModeDead == self.mode) {
-            [self setBlockDeadCallback:aspectBlock];
+            self.deadBlock = aspectBlock;
         }
     }
     return self;
@@ -199,6 +182,9 @@ struct _BHBlock
 
 - (void)dealloc
 {
+    if (self.deadBlock) {
+        self.deadBlock(self);
+    }
     [self remove];
     if (_closure) {
         ffi_closure_free(_closure);
@@ -211,8 +197,7 @@ struct _BHBlock
     BHLock *lock = [self.block bh_lockForKey:@selector(next)];
     [lock lock];
     if (!_next) {
-        BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, self.originInvoke);
-        _next = bhDealloc.token;
+        _next = objc_getAssociatedObject(self.block, self.originInvoke);
     }
     BHToken *result = _next;
     [lock unlock];
@@ -233,8 +218,7 @@ struct _BHBlock
         NSLog(@"Can't remove token for StackBlock!");
         return NO;
     }
-    
-    [self setBlockDeadCallback:nil];
+    self.deadBlock = nil;
     if (self.originInvoke) {
         if (self.block) {
             BHToken *current = [self.block block_currentHookToken];
@@ -264,14 +248,13 @@ struct _BHBlock
     return NO;
 }
 
-- (void)setBlockDeadCallback:(BHDeadBlock)deadBlock
+- (void)setDeadBlock:(BHDeadBlock)deadBlock
 {
     if (self.isStackBlock) {
         NSLog(@"Can't set BlockDeadCallback for StackBlock!");
         return;
     }
-    BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, _replacementInvoke);
-    bhDealloc.deadBlock = deadBlock;
+    _deadBlock = deadBlock;
 }
 
 - (NSString *)mangleName
@@ -682,8 +665,7 @@ static int BHTypeCount(const char *str)
         return nil;
     }
     void *invoke = [self block_currentInvokeFunction];
-    BHDealloc *bhDealloc = objc_getAssociatedObject(self, invoke);
-    return bhDealloc.token;
+    return objc_getAssociatedObject(self, invoke);
 }
 
 - (void *)block_currentInvokeFunction
