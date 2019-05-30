@@ -69,6 +69,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) id aspectBlock;
 
 /**
+ A dictionary containing user-defined information relating to the token.
+ */
+@property (nonatomic, nullable) NSMutableDictionary *userInfo;
+
+/**
  Remove token will revert the hook.
 
  @return If it is successful.
