@@ -80,9 +80,9 @@ BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:
     NSLog(@"hook before block! invocation:%@", invocation);
 }];
     
-__unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHToken *token){
+__unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation){
     // BHToken is the only arg.
-    NSLog(@"block dead! token:%@", token);
+    NSLog(@"block dead! token:%@", invocation.token);
 }];
     
 NSLog(@"hooked block");

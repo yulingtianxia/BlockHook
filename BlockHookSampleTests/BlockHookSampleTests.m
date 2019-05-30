@@ -46,11 +46,11 @@ struct TestStruct _testRect;
 
 - (void)performBlock:(void(^)(void))block
 {
-    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation){
+    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeAfter usingBlock:^{
         NSLog(@"hook stack block succeed!");
     }];
     
-    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHToken *token){
+    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^{
         NSLog(@"stack block dead!");
     }];
     
@@ -149,9 +149,9 @@ struct TestStruct _testRect;
         return result;
     };
     
-    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHToken *token){
+    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation){
         // BHToken is the only arg.
-        NSLog(@"block dead! token:%@", token);
+        NSLog(@"block dead! token:%@", invocation.token);
     }];
     
     BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y){
@@ -196,9 +196,9 @@ struct TestStruct _testRect;
         return result;
     };
     
-    [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHToken *token){
+    [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation){
         // BHToken is the only arg.
-        NSLog(@"block dead! token:%@", token);
+        NSLog(@"block dead! token:%@", invocation.token);
     }];
     
     [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y){

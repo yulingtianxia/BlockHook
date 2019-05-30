@@ -40,8 +40,6 @@ struct _BHBlock
     struct _BHBlockDescriptor *descriptor;
 };
 
-typedef void(^BHDeadBlock)(BHToken * _Nullable token);
-
 @interface BHLock : NSObject<NSLocking>
 
 @property (nonatomic) dispatch_semaphore_t semaphore;
@@ -113,12 +111,11 @@ typedef void(^BHDeadBlock)(BHToken * _Nullable token);
 @property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableArray *allocations;
 @property (nonatomic, weak, readwrite) id block;
-@property (nonatomic) NSUInteger numberOfArguments;
 @property (nonatomic, readwrite) id aspectBlock;
 @property (nonatomic, nullable, readwrite) NSString *mangleName;
 @property (nonatomic) NSMethodSignature *originalBlockSignature;
+@property (nonatomic) NSMethodSignature *aspectBlockSignature;
 @property (atomic) void *originInvoke;
-@property (nonatomic, nullable) BHDeadBlock deadBlock;
 
 /**
  if block is kind of `__NSStackBlock__` class.
@@ -158,10 +155,22 @@ typedef void(^BHDeadBlock)(BHToken * _Nullable token);
         _allocations = [[NSMutableArray alloc] init];
         _block = block;
         const char *encode = BHBlockTypeEncodeString(block);
-        _numberOfArguments = [self _prepCIF:&_cif withEncodeString:encode];
-        if (_numberOfArguments == -1) { // Unknown encode.
+        // Check block encoding types valid.
+        NSUInteger numberOfArguments = [self _prepCIF:&_cif withEncodeString:encode];
+        if (numberOfArguments == -1) { // Unknown encode.
             return nil;
         }
+        // Check aspectBlock valid.
+        _aspectBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(aspectBlock)];
+        
+        // origin block invoke func arguments: block(self), ...
+        // origin block invoke func arguments (x86 struct return): struct*, block(self), ...
+        // hook block signature arguments: block(self), invocation, ...
+        if ((mode == BlockHookModeDead && _aspectBlockSignature.numberOfArguments > 2)
+            || _aspectBlockSignature.numberOfArguments > numberOfArguments + 1) {
+            NSLog(@"Block has too many arguments. Not calling %@", self);
+        }
+        
         _originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:encode];
         _closure = ffi_closure_alloc(sizeof(ffi_closure), &_replacementInvoke);
         if ([block isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
@@ -173,17 +182,21 @@ typedef void(^BHDeadBlock)(BHToken * _Nullable token);
         objc_setAssociatedObject(block, _replacementInvoke, self, OBJC_ASSOCIATION_RETAIN);
         _mode = mode;
         _aspectBlock = aspectBlock;
-        if (BlockHookModeDead == self.mode) {
-            self.deadBlock = aspectBlock;
-        }
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if (self.deadBlock) {
-        self.deadBlock(self);
+    if (BlockHookModeDead == self.mode) {
+        BHInvocation *invocation = nil;
+        NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:self.aspectBlockSignature];
+        if (self.aspectBlockSignature.numberOfArguments == 2) {
+            invocation = [BHInvocation new];
+            invocation.token = self;
+            [blockInvocation setArgument:(void *)&invocation atIndex:1];
+        }
+        [blockInvocation invokeWithTarget:self.aspectBlock];
     }
     [self remove];
     if (_closure) {
@@ -218,7 +231,6 @@ typedef void(^BHDeadBlock)(BHToken * _Nullable token);
         NSLog(@"Can't remove token for StackBlock!");
         return NO;
     }
-    self.deadBlock = nil;
     if (self.originInvoke) {
         if (self.block) {
             BHToken *current = [self.block block_currentHookToken];
@@ -246,15 +258,6 @@ typedef void(^BHDeadBlock)(BHToken * _Nullable token);
         return YES;
     }
     return NO;
-}
-
-- (void)setDeadBlock:(BHDeadBlock)deadBlock
-{
-    if (self.isStackBlock) {
-        NSLog(@"Can't set BlockDeadCallback for StackBlock!");
-        return;
-    }
-    _deadBlock = deadBlock;
 }
 
 - (NSString *)mangleName
@@ -573,23 +576,13 @@ static int BHTypeCount(const char *str)
 
 - (BOOL)invokeAspectBlockWithArgs:(void **)args retValue:(void *)retValue
 {
-    if ((!self.isStackBlock && !self.block) || !self.aspectBlock) {
-        return NO;
-    }
-    NSMethodSignature *aspectBlockSignature = [NSMethodSignature signatureWithObjCTypes:BHBlockTypeEncodeString(self.aspectBlock)];
-    NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:aspectBlockSignature];
-    
-    // origin block invoke func arguments: block(self), ...
-    // origin block invoke func arguments (x86 struct return): struct*, block(self), ...
-    // hook block signature arguments: block(self), invocation, ...
-    
-    if (aspectBlockSignature.numberOfArguments > self.numberOfArguments + 1) {
-        NSLog(@"Block has too many arguments. Not calling %@", self);
+    if (!self.isStackBlock && !self.block) {
         return NO;
     }
     
+    NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:self.aspectBlockSignature];
     BHInvocation *invocation = nil;
-    if (aspectBlockSignature.numberOfArguments > 1) {
+    if (self.aspectBlockSignature.numberOfArguments > 1) {
         invocation = [BHInvocation new];
         invocation.args = args;
         invocation.retValue = retValue;
@@ -598,7 +591,7 @@ static int BHTypeCount(const char *str)
     }
     
     void *argBuf = NULL;
-    for (NSUInteger idx = 2; idx < aspectBlockSignature.numberOfArguments; idx++) {
+    for (NSUInteger idx = 2; idx < self.aspectBlockSignature.numberOfArguments; idx++) {
         const char *type = [self.originalBlockSignature getArgumentTypeAtIndex:idx - 1];
         NSUInteger argSize;
         NSGetSizeAndAlignment(type, &argSize, NULL);
