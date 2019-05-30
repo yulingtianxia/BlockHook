@@ -232,4 +232,31 @@ struct TestStruct _testRect;
     NSAssert([block block_currentHookToken] == nil, @"remove all hook failed!");
 }
 
+- (void)testOverstepArgs
+{
+    NSObject *z = NSObject.new;
+    int(^block)(int x, int y) = ^int(int x, int y) {
+        int result = x + y;
+        NSLog(@"%d + %d = %d, z is a NSObject: %@", x, y, result, z);
+        return result;
+    };
+    
+    BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation, int a){
+        // BHToken is the only arg.
+        NSLog(@"block dead! token:%@", invocation.token);
+    }];
+    
+    NSAssert(tokenDead == nil, @"Overstep args for DeadMode not pass!.");
+    
+    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y, int a){
+        [invocation invokeOriginalBlock];
+        NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
+        // change the block imp and result
+        *(int *)(invocation.retValue) = x * y;
+        NSLog(@"hook instead: '+' -> '*'");
+    }];
+    
+    NSAssert(tokenInstead == nil, @"Overstep args for InsteadMode not pass!.");
+}
+
 @end

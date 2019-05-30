@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  A dictionary containing user-defined information relating to the token.
  */
-@property (nonatomic, nullable) NSMutableDictionary *userInfo;
+@property (nonatomic, readonly) NSMutableDictionary *userInfo;
 
 /**
  Remove token will revert the hook.
@@ -92,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
  Hook this block.
 
  @param mode BlockHookMode
- @param aspectBlock Implement your custom logic here.
+ @param aspectBlock Implement your custom logic here. Argument list: BHInvocation comes in first, followed by other arguments when block invoking.
  @return Token for hook.
  */
 - (nullable BHToken *)block_hookWithMode:(BlockHookMode)mode

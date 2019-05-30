@@ -116,6 +116,7 @@ struct _BHBlock
 @property (nonatomic) NSMethodSignature *originalBlockSignature;
 @property (nonatomic) NSMethodSignature *aspectBlockSignature;
 @property (atomic) void *originInvoke;
+@property (nonatomic, readwrite) NSMutableDictionary *userInfo;
 
 /**
  if block is kind of `__NSStackBlock__` class.
@@ -169,8 +170,9 @@ struct _BHBlock
         if ((mode == BlockHookModeDead && _aspectBlockSignature.numberOfArguments > 2)
             || _aspectBlockSignature.numberOfArguments > numberOfArguments + 1) {
             NSLog(@"Block has too many arguments. Not calling %@", self);
+            return nil;
         }
-        
+        _userInfo = [NSMutableDictionary dictionary];
         _originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:encode];
         _closure = ffi_closure_alloc(sizeof(ffi_closure), &_replacementInvoke);
         if ([block isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
