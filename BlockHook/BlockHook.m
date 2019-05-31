@@ -43,7 +43,6 @@ struct _BHBlock
 @interface BHLock : NSObject<NSLocking>
 
 @property (nonatomic) dispatch_semaphore_t semaphore;
-@property (nonatomic) os_unfair_lock unfair_lock OS_UNFAIR_LOCK_AVAILABILITY;
 
 @end
 
@@ -53,31 +52,19 @@ struct _BHBlock
 {
     self = [super init];
     if (self) {
-        if (@available(iOS 10.0, macOS 10.12, *)) {
-            _unfair_lock = OS_UNFAIR_LOCK_INIT;
-        } else {
-            _semaphore = dispatch_semaphore_create(1);
-        }
+        _semaphore = dispatch_semaphore_create(1);
     }
     return self;
 }
 
 - (void)lock
 {
-    if (@available(iOS 10.0, macOS 10.12, *)) {
-        os_unfair_lock_lock(&_unfair_lock);
-    } else {
-        dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
-    }
+    dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
 }
 
 - (void)unlock
 {
-    if (@available(iOS 10.0, macOS 10.12, *)) {
-        os_unfair_lock_unlock(&_unfair_lock);
-    } else {
-        dispatch_semaphore_signal(self.semaphore);
-    }
+    dispatch_semaphore_signal(self.semaphore);
 }
 
 @end
