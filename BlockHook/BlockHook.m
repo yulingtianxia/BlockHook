@@ -285,8 +285,6 @@ static const char *BHBlockTypeEncodeString(id blockObj)
     struct _BHBlock *block = (__bridge void *)blockObj;
     struct _BHBlockDescriptor *descriptor = block->descriptor;
     
-    NSCAssert((block->flags & BLOCK_HAS_SIGNATURE) > 0, @"Block has no signature! Required ABI.2010.3.16");
-    
     int index = 0;
     if (block->flags & BLOCK_HAS_COPY_DISPOSE) {
         index += 2;
@@ -527,7 +525,6 @@ static int BHTypeCount(const char *str)
         argTypes[0] = &ffi_type_pointer;
         returnType = &ffi_type_void;
         self.stret = YES;
-        NSLog(@"Block has stret!");
     }
     else {
         argTypes = [self _argsWithEncodeString:str getCount:&argCount];
@@ -609,7 +606,7 @@ static int BHTypeCount(const char *str)
 {
     BOOL valid = [self isKindOfClass:NSClassFromString(@"NSBlock")];
     if (!valid) {
-        NSLog(@"Not Block!");
+        NSLog(@"Not Block! %@", self);
     }
     return valid;
 }
@@ -623,21 +620,20 @@ static int BHTypeCount(const char *str)
     }
     struct _BHBlock *bh_block = (__bridge void *)self;
     if (!(bh_block->flags & BLOCK_HAS_SIGNATURE)) {
-        NSLog(@"Block has no signature! Required ABI.2010.3.16");
+        NSLog(@"Block has no signature! Required ABI.2010.3.16. %@", self);
         return nil;
     }
     Dl_info dlinfo;
     memset(&dlinfo, 0, sizeof(dlinfo));
     if (dladdr(bh_block->invoke, &dlinfo) && dlinfo.dli_sname)
     {
-        NSString *mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
 #ifdef __linux__
-        NSString *functionName = @"__dispatch_block_create_block_invoke";
+        char *functionName = "__dispatch_block_create_block_invoke";
 #else
-        NSString *functionName = @"___dispatch_block_create_block_invoke";
+        char *functionName = "___dispatch_block_create_block_invoke";
 #endif
-        if ([mangleName isEqualToString:functionName]) {
-            NSLog(@"Block has private data! Can't be hooked!");
+        if (strcmp(functionName, dlinfo.dli_sname) == 0) {
+            NSLog(@"Block has private data! Can't be hooked! %@", self);
             return nil;
         }
     }
