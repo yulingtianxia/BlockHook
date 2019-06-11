@@ -626,6 +626,21 @@ static int BHTypeCount(const char *str)
         NSLog(@"Block has no signature! Required ABI.2010.3.16");
         return nil;
     }
+    Dl_info dlinfo;
+    memset(&dlinfo, 0, sizeof(dlinfo));
+    if (dladdr(bh_block->invoke, &dlinfo) && dlinfo.dli_sname)
+    {
+        NSString *mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
+#ifdef __linux__
+        NSString *functionName = @"__dispatch_block_create_block_invoke";
+#else
+        NSString *functionName = @"___dispatch_block_create_block_invoke";
+#endif
+        if ([mangleName isEqualToString:functionName]) {
+            NSLog(@"Block has private data! Can't be hooked!");
+            return nil;
+        }
+    }
     BHToken *token = [[BHToken alloc] initWithBlock:self mode:mode aspectBlockBlock:aspectBlock];
     return token;
 }
