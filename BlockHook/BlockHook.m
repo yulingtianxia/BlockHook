@@ -16,6 +16,8 @@
 #error
 #endif
 
+#pragma mark - Block Layout
+
 enum {
     BLOCK_HAS_COPY_DISPOSE =  (1 << 25),
     BLOCK_HAS_CTOR =          (1 << 26), // helpers have C++ code
@@ -24,21 +26,131 @@ enum {
     BLOCK_HAS_SIGNATURE =     (1 << 30),
 };
 
-struct _BHBlockDescriptor
+typedef void(*BHBlockCopyFunction)(void *, const void *);
+typedef void(*BHBlockDisposeFunction)(const void *);
+typedef void(*BHBlockInvokeFunction)(void *, ...);
+
+struct _BHBlockDescriptor1
 {
-    unsigned long reserved;
-    unsigned long size;
-    void *rest[1];
+    uintptr_t reserved;
+    uintptr_t size;
+};
+
+struct _BHBlockDescriptor2 {
+    // requires BLOCK_HAS_COPY_DISPOSE
+    BHBlockCopyFunction copy;
+    BHBlockDisposeFunction dispose;
+};
+
+struct _BHBlockDescriptor3 {
+    // requires BLOCK_HAS_SIGNATURE
+    const char *signature;
+    const char *layout;     // contents depend on BLOCK_HAS_EXTENDED_LAYOUT
 };
 
 struct _BHBlock
 {
     void *isa;
-    int flags;
-    int reserved;
-    void *invoke;
-    struct _BHBlockDescriptor *descriptor;
+    volatile int32_t flags; // contains ref count
+    int32_t reserved;
+    BHBlockInvokeFunction invoke;
+    struct _BHBlockDescriptor1 *descriptor;
 };
+
+#pragma mark - Helper Function
+
+__unused static struct _BHBlockDescriptor1 * _bh_Block_descriptor_1(struct _BHBlock *aBlock)
+{
+    return aBlock->descriptor;
+}
+
+__unused static struct _BHBlockDescriptor2 * _bh_Block_descriptor_2(struct _BHBlock *aBlock)
+{
+    if (! (aBlock->flags & BLOCK_HAS_COPY_DISPOSE)) return nil;
+    uint8_t *desc = (uint8_t *)aBlock->descriptor;
+    desc += sizeof(struct _BHBlockDescriptor1);
+    return (struct _BHBlockDescriptor2 *)desc;
+}
+
+static struct _BHBlockDescriptor3 * _bh_Block_descriptor_3(struct _BHBlock *aBlock)
+{
+    if (! (aBlock->flags & BLOCK_HAS_SIGNATURE)) return nil;
+    uint8_t *desc = (uint8_t *)aBlock->descriptor;
+    desc += sizeof(struct _BHBlockDescriptor1);
+    if (aBlock->flags & BLOCK_HAS_COPY_DISPOSE) {
+        desc += sizeof(struct _BHBlockDescriptor2);
+    }
+    return (struct _BHBlockDescriptor3 *)desc;
+}
+
+OS_OBJECT_DECL_CLASS(voucher);
+
+struct dispatch_block_private_data_s {
+    unsigned long dbpd_magic;
+    dispatch_block_flags_t dbpd_flags;
+    unsigned int volatile dbpd_atomic_flags;
+    int volatile dbpd_performed;
+    unsigned long dbpd_priority;
+    voucher_t dbpd_voucher;
+    dispatch_block_t dbpd_block;
+    dispatch_group_t dbpd_group;
+    dispatch_queue_t dbpd_queue;
+    mach_port_t dbpd_thread;
+};
+
+typedef struct dispatch_block_private_data_s *dispatch_block_private_data_t;
+
+#define DISPATCH_BLOCK_PRIVATE_DATA_MAGIC 0xD159B10C // 0xDISPatch_BLOCk
+
+DISPATCH_ALWAYS_INLINE
+static inline dispatch_block_private_data_t
+bh_dispatch_block_get_private_data(struct _BHBlock *block)
+{
+    // Keep in sync with _dispatch_block_create implementation
+    uint8_t *x = (uint8_t *)block;
+    // x points to base of struct Block_layout
+    x += sizeof(struct _BHBlock);
+    // x points to base of captured dispatch_block_private_data_s object
+    dispatch_block_private_data_t dbpd = (dispatch_block_private_data_t)x;
+    if (dbpd->dbpd_magic != DISPATCH_BLOCK_PRIVATE_DATA_MAGIC) {
+        return nil;
+    }
+    return dbpd;
+}
+
+static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *lenp)
+{
+    const char *out = NSGetSizeAndAlignment(str, sizep, alignp);
+    if (lenp) {
+        *lenp = out - str;
+    }
+    while(*out == '}') {
+        out++;
+    }
+    while(isdigit(*out)) {
+        out++;
+    }
+    return out;
+}
+
+static int BHTypeCount(const char *str)
+{
+    int typeCount = 0;
+    while(str && *str)
+    {
+        str = BHSizeAndAlignment(str, NULL, NULL, NULL);
+        typeCount++;
+    }
+    return typeCount;
+}
+
+static const char *BHBlockTypeEncodeString(id blockObj)
+{
+    struct _BHBlock *block = (__bridge void *)blockObj;
+    return _bh_Block_descriptor_3(block)->signature;
+}
+
+static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata);
 
 @interface BHLock : NSObject<NSLocking>
 
@@ -162,6 +274,8 @@ struct _BHBlock
         _userInfo = [NSMutableDictionary dictionary];
         _originalBlockSignature = [NSMethodSignature signatureWithObjCTypes:encode];
         _closure = ffi_closure_alloc(sizeof(ffi_closure), &_replacementInvoke);
+        
+        // __NSStackBlock__ -> __NSStackBlock -> NSBlock
         if ([block isKindOfClass:NSClassFromString(@"__NSStackBlock")]) {
             NSLog(@"Hooking StackBlock causes a memory leak! I suggest you copy it first!");
             self.stackBlock = YES;
@@ -276,69 +390,6 @@ struct _BHBlock
     else {
         NSLog(@"You had lost your originInvoke! Please check the order of removing tokens!");
     }
-}
-
-#pragma mark - Help Function
-
-static const char *BHBlockTypeEncodeString(id blockObj)
-{
-    struct _BHBlock *block = (__bridge void *)blockObj;
-    struct _BHBlockDescriptor *descriptor = block->descriptor;
-    
-    int index = 0;
-    if (block->flags & BLOCK_HAS_COPY_DISPOSE) {
-        index += 2;
-    }
-    
-    return descriptor->rest[index];
-}
-
-static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata)
-{
-    BHToken *token = (__bridge BHToken *)(userdata);
-    void *userRet = ret;
-    void **userArgs = args;
-    if (token.hasStret) {
-        // The first arg contains address of a pointer of returned struct.
-        userRet = *((void **)args[0]);
-        // Other args move backwards.
-        userArgs = args + 1;
-    }
-    if (BlockHookModeBefore == token.mode) {
-        [token invokeAspectBlockWithArgs:userArgs retValue:userRet];
-    }
-    if (!(BlockHookModeInstead == token.mode && [token invokeAspectBlockWithArgs:userArgs retValue:userRet])) {
-        [token invokeOriginalBlockWithArgs:args retValue:ret];
-    }
-    if (BlockHookModeAfter == token.mode) {
-        [token invokeAspectBlockWithArgs:userArgs retValue:userRet];
-    }
-}
-
-static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *lenp)
-{
-    const char *out = NSGetSizeAndAlignment(str, sizep, alignp);
-    if (lenp) {
-        *lenp = out - str;
-    }
-    while(*out == '}') {
-        out++;
-    }
-    while(isdigit(*out)) {
-        out++;
-    }
-    return out;
-}
-
-static int BHTypeCount(const char *str)
-{
-    int typeCount = 0;
-    while(str && *str)
-    {
-        str = BHSizeAndAlignment(str, NULL, NULL, NULL);
-        typeCount++;
-    }
-    return typeCount;
 }
 
 #pragma mark - Private Method
@@ -614,15 +665,15 @@ static int BHTypeCount(const char *str)
 - (BHToken *)block_hookWithMode:(BlockHookMode)mode
                      usingBlock:(id)aspectBlock
 {
-    // __NSStackBlock__ -> __NSStackBlock -> NSBlock
     if (!aspectBlock || ![self block_checkValid]) {
         return nil;
     }
     struct _BHBlock *bh_block = (__bridge void *)self;
-    if (!(bh_block->flags & BLOCK_HAS_SIGNATURE)) {
+    if (!_bh_Block_descriptor_3(bh_block)) {
         NSLog(@"Block has no signature! Required ABI.2010.3.16. %@", self);
         return nil;
     }
+    // Handle blocks have private data.
     Dl_info dlinfo;
     memset(&dlinfo, 0, sizeof(dlinfo));
     if (dladdr(bh_block->invoke, &dlinfo) && dlinfo.dli_sname)
@@ -633,12 +684,13 @@ static int BHTypeCount(const char *str)
         char *functionName = "___dispatch_block_create_block_invoke";
 #endif
         if (strcmp(functionName, dlinfo.dli_sname) == 0) {
-            NSLog(@"Block has private data! Can't be hooked! %@", self);
-            return nil;
+            id privateDataBlock = bh_dispatch_block_get_private_data(bh_block)->dbpd_block;
+            if (privateDataBlock) {
+                return [privateDataBlock block_hookWithMode:mode usingBlock:aspectBlock];
+            }
         }
     }
-    BHToken *token = [[BHToken alloc] initWithBlock:self mode:mode aspectBlockBlock:aspectBlock];
-    return token;
+    return [[BHToken alloc] initWithBlock:self mode:mode aspectBlockBlock:aspectBlock];
 }
 
 - (void)block_removeAllHook
@@ -672,3 +724,27 @@ static int BHTypeCount(const char *str)
 }
 
 @end
+
+#pragma mark - Hook Function
+
+static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata)
+{
+    BHToken *token = (__bridge BHToken *)(userdata);
+    void *userRet = ret;
+    void **userArgs = args;
+    if (token.hasStret) {
+        // The first arg contains address of a pointer of returned struct.
+        userRet = *((void **)args[0]);
+        // Other args move backwards.
+        userArgs = args + 1;
+    }
+    if (BlockHookModeBefore == token.mode) {
+        [token invokeAspectBlockWithArgs:userArgs retValue:userRet];
+    }
+    if (!(BlockHookModeInstead == token.mode && [token invokeAspectBlockWithArgs:userArgs retValue:userRet])) {
+        [token invokeOriginalBlockWithArgs:args retValue:ret];
+    }
+    if (BlockHookModeAfter == token.mode) {
+        [token invokeAspectBlockWithArgs:userArgs retValue:userRet];
+    }
+}
