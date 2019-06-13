@@ -259,4 +259,21 @@ struct TestStruct _testRect;
     NSAssert(tokenInstead == nil, @"Overstep args for InsteadMode not pass!.");
 }
 
+- (void)testDispatchBlock {
+    
+    dispatch_queue_t queue = dispatch_queue_create("queue", DISPATCH_QUEUE_SERIAL);
+    dispatch_block_t block2 = dispatch_block_create(0, ^{
+        NSLog(@"block2 ");
+    });
+    
+    BHToken *token = [block2 block_hookWithMode:BlockHookModeAfter
+                    usingBlock:^(BHInvocation *invocation){
+                        NSLog(@"dispatch_block_t: Hook After");
+                    }];
+//    dispatch_block_cancel(block2);
+    dispatch_async(queue, block2);
+    //取消执行block2
+//    dispatch_block_cancel(block2);
+}
+
 @end

@@ -103,9 +103,32 @@ typedef struct dispatch_block_private_data_s *dispatch_block_private_data_t;
 #define DISPATCH_BLOCK_PRIVATE_DATA_MAGIC 0xD159B10C // 0xDISPatch_BLOCk
 
 DISPATCH_ALWAYS_INLINE
+static inline bool
+bh_dispatch_block_has_private_data(struct _BHBlock *block)
+{
+    Dl_info dlinfo;
+    memset(&dlinfo, 0, sizeof(dlinfo));
+    if (dladdr(block->invoke, &dlinfo) && dlinfo.dli_sname)
+    {
+#ifdef __linux__
+        char *functionName = "__dispatch_block_create_block_invoke";
+#else
+        char *functionName = "___dispatch_block_create_block_invoke";
+#endif
+        if (strcmp(functionName, dlinfo.dli_sname) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+DISPATCH_ALWAYS_INLINE
 static inline dispatch_block_private_data_t
 bh_dispatch_block_get_private_data(struct _BHBlock *block)
 {
+    if (!bh_dispatch_block_has_private_data(block)) {
+        return nil;
+    }
     // Keep in sync with _dispatch_block_create implementation
     uint8_t *x = (uint8_t *)block;
     // x points to base of struct Block_layout
@@ -674,21 +697,9 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         return nil;
     }
     // Handle blocks have private data.
-    Dl_info dlinfo;
-    memset(&dlinfo, 0, sizeof(dlinfo));
-    if (dladdr(bh_block->invoke, &dlinfo) && dlinfo.dli_sname)
-    {
-#ifdef __linux__
-        char *functionName = "__dispatch_block_create_block_invoke";
-#else
-        char *functionName = "___dispatch_block_create_block_invoke";
-#endif
-        if (strcmp(functionName, dlinfo.dli_sname) == 0) {
-            id privateDataBlock = bh_dispatch_block_get_private_data(bh_block)->dbpd_block;
-            if (privateDataBlock) {
-                return [privateDataBlock block_hookWithMode:mode usingBlock:aspectBlock];
-            }
-        }
+    dispatch_block_private_data_t dbpd = bh_dispatch_block_get_private_data(bh_block);
+    if (dbpd && dbpd->dbpd_block) {
+        return [dbpd->dbpd_block block_hookWithMode:mode usingBlock:aspectBlock];
     }
     return [[BHToken alloc] initWithBlock:self mode:mode aspectBlockBlock:aspectBlock];
 }
@@ -708,6 +719,10 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 {
     if (![self block_checkValid]) {
         return nil;
+    }
+    dispatch_block_private_data_t dbpd = bh_dispatch_block_get_private_data((__bridge struct _BHBlock *)(self));
+    if (dbpd && dbpd->dbpd_block) {
+        return [dbpd->dbpd_block block_currentHookToken];
     }
     void *invoke = [self block_currentInvokeFunction];
     return objc_getAssociatedObject(self, invoke);
