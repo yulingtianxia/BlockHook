@@ -103,32 +103,9 @@ typedef struct dispatch_block_private_data_s *dispatch_block_private_data_t;
 #define DISPATCH_BLOCK_PRIVATE_DATA_MAGIC 0xD159B10C // 0xDISPatch_BLOCk
 
 DISPATCH_ALWAYS_INLINE
-static inline bool
-bh_dispatch_block_has_private_data(struct _BHBlock *block)
-{
-    Dl_info dlinfo;
-    memset(&dlinfo, 0, sizeof(dlinfo));
-    if (dladdr(block->invoke, &dlinfo) && dlinfo.dli_sname)
-    {
-#ifdef __linux__
-        char *functionName = "__dispatch_block_create_block_invoke";
-#else
-        char *functionName = "___dispatch_block_create_block_invoke";
-#endif
-        if (strcmp(functionName, dlinfo.dli_sname) == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
-DISPATCH_ALWAYS_INLINE
 static inline dispatch_block_private_data_t
 bh_dispatch_block_get_private_data(struct _BHBlock *block)
 {
-    if (!bh_dispatch_block_has_private_data(block)) {
-        return nil;
-    }
     // Keep in sync with _dispatch_block_create implementation
     uint8_t *x = (uint8_t *)block;
     // x points to base of struct Block_layout

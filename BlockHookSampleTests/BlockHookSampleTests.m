@@ -259,20 +259,23 @@ struct TestStruct _testRect;
     NSAssert(tokenInstead == nil, @"Overstep args for InsteadMode not pass!.");
 }
 
-- (void)testDispatchBlock {
-    
+- (void)testDispatchBlockCreate {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Wait for block invoke."];
     dispatch_queue_t queue = dispatch_queue_create("queue", DISPATCH_QUEUE_SERIAL);
-    dispatch_block_t block2 = dispatch_block_create(0, ^{
-        NSLog(@"block2 ");
+    dispatch_block_t block = dispatch_block_create(0, ^{
+        NSLog(@"I'm dispatch_block_t");
+        [expectation fulfill];
     });
-    block2();
     
-    BHToken *token = [block2 block_hookWithMode:BlockHookModeAfter
+    __unused BHToken *token = [block block_hookWithMode:BlockHookModeAfter
                     usingBlock:^(BHInvocation *invocation){
                         NSLog(@"dispatch_block_t: Hook After");
+                        
                     }];
-    dispatch_block_cancel(block2);
-    dispatch_async(queue, block2);
+    NSAssert(token != nil, @"Hook dispatch_block_create not pass!.");
+    dispatch_async(queue, block);
+    [self waitForExpectations:@[expectation] timeout:30];
+    dispatch_block_cancel(block);
 }
 
 @end
