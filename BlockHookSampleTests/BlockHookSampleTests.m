@@ -265,15 +265,14 @@ struct TestStruct _testRect;
     dispatch_block_t block2 = dispatch_block_create(0, ^{
         NSLog(@"block2 ");
     });
+    block2();
     
     BHToken *token = [block2 block_hookWithMode:BlockHookModeAfter
                     usingBlock:^(BHInvocation *invocation){
                         NSLog(@"dispatch_block_t: Hook After");
                     }];
-//    dispatch_block_cancel(block2);
+    dispatch_block_cancel(block2);
     dispatch_async(queue, block2);
-    //取消执行block2
-//    dispatch_block_cancel(block2);
 }
 
 @end
