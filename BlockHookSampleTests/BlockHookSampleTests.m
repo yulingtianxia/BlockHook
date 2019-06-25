@@ -19,21 +19,6 @@ struct TestStruct {
     uint64_t g;
 };
 
-struct FakePoint {
-    CGFloat x;
-    CGFloat y;
-};
-
-struct FakeSize {
-    CGFloat w;
-    CGFloat h;
-};
-
-struct FakeRect {
-    struct FakePoint origin;
-    struct FakeSize size;
-};
-
 @interface BlockHookSampleTests : XCTestCase
 
 @end
@@ -85,7 +70,7 @@ struct TestStruct _testRect;
         NSAssert(x == 8, @"Wrong arg!");
     }];
     
-    struct TestStruct result = StructReturnBlock(8);
+    __unused struct TestStruct result = StructReturnBlock(8);
     NSAssert(result.a == 100, @"Modify return struct failed!");
 }
 
@@ -118,17 +103,17 @@ struct TestStruct _testRect;
 }
 
 - (void)testCGRectArgAndRet {
-    struct FakeRect (^StructReturnBlock)(struct FakeRect) = ^(struct FakeRect test)
+    CGRect (^StructReturnBlock)(CGRect) = ^(CGRect test)
     {
-//        NSAssert(test.origin.x == 100, @"Modify struct member failed!");
+        NSAssert(test.origin.x == 100, @"Modify struct member failed!");
         return test;
     };
     
-    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct FakeRect test){
+    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, CGRect test){
         // Hook 改参数
-//        (*(CGRect *)(invocation.args[1])).origin.x = 100;
+        (*(CGRect *)(invocation.args[1])).origin.x = 100;
     }];
-    StructReturnBlock((struct FakeRect){1,2,3,4});
+    StructReturnBlock((CGRect){1,2,3,4});
 }
 
 - (void)testStructPointerArg {

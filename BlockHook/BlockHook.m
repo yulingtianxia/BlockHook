@@ -394,7 +394,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (void *)_allocate:(size_t)howmuch
 {
     NSMutableData *data = [NSMutableData dataWithLength:howmuch];
-    [_allocations addObject: data];
+    [self.allocations addObject: data];
     return [data mutableBytes];
 }
 
@@ -419,13 +419,46 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     if (!elements) {
         return nil;
     }
-    // TODO: flate elements.
+    // flatten elements.
+    int totalCount = elementCount;
     for (int i = 0; i < elementCount; i++) {
-        
+        ffi_type *element = elements[i];
+        if (FFI_TYPE_STRUCT == element->type) {
+            totalCount += [self _countForFFIElements:element->elements totalSize:element->size];
+            totalCount--;
+        }
     }
-    structType->elements = elements;
-    
+    ffi_type **allElements = [self _allocate:totalCount * sizeof(*allElements)];
+    int childIndex = 0;
+    int currentIndex = 0;
+    while (childIndex < totalCount && currentIndex < elementCount) {
+        ffi_type *element = elements[currentIndex++];
+        if (FFI_TYPE_STRUCT == element->type) {
+            int count = [self _countForFFIElements:element->elements totalSize:element->size];
+            for (int i = 0; i < count; i++, childIndex++) {
+                allElements[childIndex] = element->elements[i];
+            }
+        }
+        else {
+            allElements[childIndex++] = element;
+        }
+    }
+    structType->elements = allElements;
     return structType;
+}
+
+- (int)_countForFFIElements:(ffi_type **)elements totalSize:(NSUInteger)size
+{
+    int count = 0;
+    while (size > 0) {
+        size -= elements[count]->size;
+        count++;
+    }
+    if (size < 0) {
+        size --;
+        NSLog(@"FFI Elements Wrong Size!");
+    }
+    return count;
 }
 
 - (ffi_type *)_ffiTypeForEncode:(const char *)str
