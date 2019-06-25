@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSUInteger, BlockHookMode) {
-    BlockHookModeAfter,
-    BlockHookModeInstead,
-    BlockHookModeBefore,
-    BlockHookModeDead,
+typedef NS_OPTIONS(NSUInteger, BlockHookMode) {
+    BlockHookModeBefore = 1 << 0,
+    BlockHookModeInstead = 1 << 1,
+    BlockHookModeAfter = 1 << 2,
+    BlockHookModeDead = 1 << 3,
 };
 
 @class BHToken;
@@ -33,6 +33,11 @@ NS_ASSUME_NONNULL_BEGIN
  Return value of invoking the block. Need type casting.
  */
 @property (nonatomic, nullable, readonly) void *retValue;
+/**
+ Mode you want to insert your custom logic: Before, Instead, After OR Dead.
+ This is NOT a bit mask. Just check equality.
+ */
+@property (nonatomic, readonly) BlockHookMode mode;
 
 /**
  Invoke original implementation of the block.
@@ -44,7 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BHToken : NSObject
 
 /**
- Mode you want to insert your custom logic: Before, Instead, After or Dead.
+ Mode you want to insert your custom logic: Before, Instead, After AND Dead.
+ This is NS_OPTIONS, so you can use bitmask.
  */
 @property (nonatomic, readonly) BlockHookMode mode;
 

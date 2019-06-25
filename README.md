@@ -62,40 +62,41 @@ int(^block)(int x, int y) = ^int(int x, int y) {
     return result;
 };
     
-BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y){
-    [invocation invokeOriginalBlock];
-    NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
-    // change the block imp and result
-    *(int *)(invocation.retValue) = x * y;
-    NSLog(@"hook instead: '+' -> '*'");
-}];
-    
-BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y){
-    // print args and result
-    NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(invocation.retValue));
-}];
-    
-BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation){
-    // BHToken has to be the first arg.
-    NSLog(@"hook before block! invocation:%@", invocation);
-}];
-    
-__unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation){
-    // BHToken is the only arg.
+BHToken *token = [block block_hookWithMode:BlockHookModeDead|BlockHookModeBefore|BlockHookModeInstead|BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y) {
     NSLog(@"block dead! token:%@", invocation.token);
+    switch (invocation.mode) {
+        case BlockHookModeBefore:
+            // BHToken has to be the first arg.
+            NSLog(@"hook before block! invocation:%@", invocation);
+            break;
+        case BlockHookModeInstead:
+            [invocation invokeOriginalBlock];
+            NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
+            // change the block imp and result
+            *(int *)(invocation.retValue) = x * y;
+            NSLog(@"hook instead: '+' -> '*'");
+            break;
+        case BlockHookModeAfter:
+            // print args and result
+            NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(invocation.retValue));
+            break;
+        case BlockHookModeDead:
+            // BHToken is the only arg.
+            NSLog(@"block dead! token:%@", invocation.token);
+            break;
+        default:
+            break;
+    }
 }];
     
 NSLog(@"hooked block");
 int ret = block(3, 5);
-NSAssert(ret == 15, @"hook failed!");
 NSLog(@"hooked result:%d", ret);
 // remove token.
-[tokenInstead remove];
+[token remove];
 NSLog(@"remove tokens, original block");
 ret = block(3, 5);
-NSAssert(ret == 8, @"remove hook failed!");
 NSLog(@"original result:%d", ret);
-//        [tokenDead remove];
 ```
 
 Here is the log:

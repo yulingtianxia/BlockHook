@@ -244,9 +244,10 @@ struct TestStruct _testRect;
     BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation, int a){
         // BHToken is the only arg.
         NSLog(@"block dead! token:%@", invocation.token);
+        NSAssert(a == 0, @"Overstep args for DeadMode not pass!.");
     }];
     
-    NSAssert(tokenDead == nil, @"Overstep args for DeadMode not pass!.");
+    NSAssert(tokenDead != nil, @"Overstep args for DeadMode not pass!.");
     
     BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y, int a){
         [invocation invokeOriginalBlock];
@@ -254,9 +255,10 @@ struct TestStruct _testRect;
         // change the block imp and result
         *(int *)(invocation.retValue) = x * y;
         NSLog(@"hook instead: '+' -> '*'");
+        NSAssert(a == 0, @"Overstep args for DeadMode not pass!.");
     }];
     
-    NSAssert(tokenInstead == nil, @"Overstep args for InsteadMode not pass!.");
+    NSAssert(tokenInstead != nil, @"Overstep args for InsteadMode not pass!.");
 }
 
 - (void)testDispatchBlockCreate {
@@ -276,6 +278,53 @@ struct TestStruct _testRect;
     dispatch_async(queue, block);
     [self waitForExpectations:@[expectation] timeout:30];
     dispatch_block_cancel(block);
+}
+
+- (void)testMultiModeHook {
+    NSObject *z = NSObject.new;
+    int(^block)(int x, int y) = ^int(int x, int y) {
+        int result = x + y;
+        NSLog(@"%d + %d = %d, z is a NSObject: %@", x, y, result, z);
+        return result;
+    };
+    
+    BHToken *token = [block block_hookWithMode:BlockHookModeDead|BlockHookModeBefore|BlockHookModeInstead|BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y) {
+        NSLog(@"block dead! token:%@", invocation.token);
+        switch (invocation.mode) {
+            case BlockHookModeBefore:
+                // BHToken has to be the first arg.
+                NSLog(@"hook before block! invocation:%@", invocation);
+                break;
+            case BlockHookModeInstead:
+                [invocation invokeOriginalBlock];
+                NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
+                // change the block imp and result
+                *(int *)(invocation.retValue) = x * y;
+                NSLog(@"hook instead: '+' -> '*'");
+                break;
+            case BlockHookModeAfter:
+                // print args and result
+                NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(invocation.retValue));
+                break;
+            case BlockHookModeDead:
+                // BHToken is the only arg.
+                NSLog(@"block dead! token:%@", invocation.token);
+                break;
+            default:
+                break;
+        }
+    }];
+    
+    NSLog(@"hooked block");
+    int ret = block(3, 5);
+    NSAssert(ret == 15, @"hook failed!");
+    NSLog(@"hooked result:%d", ret);
+    // remove token.
+    [token remove];
+    NSLog(@"remove tokens, original block");
+    ret = block(3, 5);
+    NSAssert(ret == 8, @"remove hook failed!");
+    NSLog(@"original result:%d", ret);
 }
 
 @end
