@@ -19,6 +19,21 @@ struct TestStruct {
     uint64_t g;
 };
 
+struct FakePoint {
+    CGFloat x;
+    CGFloat y;
+};
+
+struct FakeSize {
+    CGFloat w;
+    CGFloat h;
+};
+
+struct FakeRect {
+    struct FakePoint origin;
+    struct FakeSize size;
+};
+
 @interface BlockHookSampleTests : XCTestCase
 
 @end
@@ -85,7 +100,7 @@ struct TestStruct _testRect;
         (**(struct TestStruct **)(invocation.retValue)).a = 100;
     }];
     
-    struct TestStruct *result = StructReturnBlock();
+    __unused struct TestStruct *result = StructReturnBlock();
     NSAssert(result->a == 100, @"Modify return struct failed!");
 }
 
@@ -100,6 +115,20 @@ struct TestStruct _testRect;
         (*(struct TestStruct *)(invocation.args[1])).a = 100;
     }];
     StructReturnBlock(_testRect);
+}
+
+- (void)testCGRectArgAndRet {
+    struct FakeRect (^StructReturnBlock)(struct FakeRect) = ^(struct FakeRect test)
+    {
+//        NSAssert(test.origin.x == 100, @"Modify struct member failed!");
+        return test;
+    };
+    
+    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct FakeRect test){
+        // Hook 改参数
+//        (*(CGRect *)(invocation.args[1])).origin.x = 100;
+    }];
+    StructReturnBlock((struct FakeRect){1,2,3,4});
 }
 
 - (void)testStructPointerArg {
@@ -136,7 +165,7 @@ struct TestStruct _testRect;
         *(const char **)(invocation.retValue) = fakeResult;
     }];
     id z = [NSObject new];
-    const char *result = protocolBlock(z, block);
+    __unused const char *result = protocolBlock(z, block);
     NSAssert(strcmp(result, fakeResult) == 0, @"Change const char * result failed!");
 }
 
@@ -241,7 +270,7 @@ struct TestStruct _testRect;
         return result;
     };
     
-    BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation, int a){
+    __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation, int a){
         // BHToken is the only arg.
         NSLog(@"block dead! token:%@", invocation.token);
         NSAssert(a == 0, @"Overstep args for DeadMode not pass!.");
@@ -249,7 +278,7 @@ struct TestStruct _testRect;
     
     NSAssert(tokenDead != nil, @"Overstep args for DeadMode not pass!.");
     
-    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y, int a){
+    __unused BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y, int a){
         [invocation invokeOriginalBlock];
         NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
         // change the block imp and result

@@ -403,7 +403,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     NSUInteger size, align;
     long length;
     BHSizeAndAlignment(str, &size, &align, &length);
-    ffi_type *structType = [self _allocate:size];
+    ffi_type *structType = [self _allocate:sizeof(*structType)];
     structType->type = FFI_TYPE_STRUCT;
     structType->size = size;
     structType->alignment = align;
@@ -414,9 +414,14 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     while (temp && *temp && *temp != '=') {
         temp++;
     }
-    ffi_type **elements = [self _typesWithEncodeString:temp + 1];
+    int elementCount = 0;
+    ffi_type **elements = [self _typesWithEncodeString:temp + 1 getCount:&elementCount startIndex:0];
     if (!elements) {
         return nil;
+    }
+    // TODO: flate elements.
+    for (int i = 0; i < elementCount; i++) {
+        
     }
     structType->elements = elements;
     
