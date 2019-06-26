@@ -405,8 +405,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     BHSizeAndAlignment(str, &size, &align, &length);
     ffi_type *structType = [self _allocate:sizeof(*structType)];
     structType->type = FFI_TYPE_STRUCT;
-    structType->size = size;
-    structType->alignment = align;
     
     const char *temp = [[[NSString stringWithUTF8String:str] substringWithRange:NSMakeRange(0, length)] UTF8String];
     
@@ -415,35 +413,11 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         temp++;
     }
     int elementCount = 0;
-    ffi_type **elements = [self _typesWithEncodeString:temp + 1 getCount:&elementCount startIndex:0];
+    ffi_type **elements = [self _typesWithEncodeString:temp + 1 getCount:&elementCount startIndex:0 nullAtEnd:YES];
     if (!elements) {
         return nil;
     }
-    // flatten elements.
-    int totalCount = elementCount;
-    for (int i = 0; i < elementCount; i++) {
-        ffi_type *element = elements[i];
-        if (FFI_TYPE_STRUCT == element->type) {
-            totalCount += [self _countForFFIElements:element->elements totalSize:element->size];
-            totalCount--;
-        }
-    }
-    ffi_type **allElements = [self _allocate:totalCount * sizeof(*allElements)];
-    int childIndex = 0;
-    int currentIndex = 0;
-    while (childIndex < totalCount && currentIndex < elementCount) {
-        ffi_type *element = elements[currentIndex++];
-        if (FFI_TYPE_STRUCT == element->type) {
-            int count = [self _countForFFIElements:element->elements totalSize:element->size];
-            for (int i = 0; i < count; i++, childIndex++) {
-                allElements[childIndex] = element->elements[i];
-            }
-        }
-        else {
-            allElements[childIndex++] = element;
-        }
-    }
-    structType->elements = allElements;
+    structType->elements = elements;
     return structType;
 }
 
@@ -567,8 +541,13 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 - (ffi_type **)_typesWithEncodeString:(const char *)str getCount:(int *)outCount startIndex:(int)start
 {
+    return [self _typesWithEncodeString:str getCount:outCount startIndex:start nullAtEnd:NO];
+}
+
+- (ffi_type **)_typesWithEncodeString:(const char *)str getCount:(int *)outCount startIndex:(int)start nullAtEnd:(BOOL)nullAtEnd
+{
     int argCount = BHTypeCount(str) - start;
-    ffi_type **argTypes = [self _allocate:argCount * sizeof(*argTypes)];
+    ffi_type **argTypes = [self _allocate:(argCount + (nullAtEnd ? 1 : 0)) * sizeof(*argTypes)];
     
     int i = -start;
     while(str && *str)
@@ -588,6 +567,10 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         }
         i++;
         str = next;
+    }
+    
+    if (nullAtEnd) {
+        argTypes[argCount] = NULL;
     }
     
     if (outCount) {
