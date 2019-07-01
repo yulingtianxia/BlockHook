@@ -45,7 +45,7 @@ You can run `BlockHookSample iOS` or `BlockHookSample macOS` target.
 
 You can hook a block using 4 modes (before/instead/after/dead). This method returns a `BHToken` instance for more control. You can `remove` a `BHToken`, or set custom return value to its `retValue` property. Calling `invokeOriginalBlock` method will invoke original implementation of the block.
 
-```
+```objc
 - (BHToken *)block_hookWithMode:(BlockHookMode)mode
                      usingBlock:(id)block
 ```
@@ -54,7 +54,7 @@ BlockHook is easy to use. Its APIs take example by Aspects. [Here](https://githu
 
 This is an example for hooking block in all modes. You can change block return value from 8 to 15. Then remove some hook and check if it is successful. Finally we get callback when block dealloc. 
 
-```
+```objc
 NSObject *z = NSObject.new;
 int(^block)(int x, int y) = ^int(int x, int y) {
     int result = x + y;
