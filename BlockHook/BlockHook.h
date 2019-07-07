@@ -44,6 +44,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)invokeOriginalBlock;
 
+
+/**
+ Retain arguments and set return value to nil or zero.
+
+ @return If success.
+ */
+- (BOOL)retainArgsAndCleanRet;
+
 @end
 
 @interface BHToken : NSObject
@@ -122,6 +130,9 @@ NS_ASSUME_NONNULL_BEGIN
  @return Pointer to invoke function.
  */
 - (void *)block_currentInvokeFunction;
+
+typedef void(^IntercepterCompletion)(void);
+- (void)interceptBlock:(void (^)(BHInvocation *invocation, IntercepterCompletion completion))block;
 
 @end
 
