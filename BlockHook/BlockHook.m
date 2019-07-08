@@ -234,7 +234,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @interface BHInvocation ()
 
-@property (nonatomic, readwrite) BHToken *token;
+@property (nonatomic, readwrite, assign) BHToken *token;
 @property (nonatomic, readwrite) void *_Nullable *_Null_unspecified args;
 @property (nonatomic, nullable, readwrite) void *retValue;
 @property (nonatomic, readwrite) BlockHookMode mode;
@@ -248,7 +248,15 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (void)invokeOriginalBlock
 {
     [self.token invokeOriginalBlockWithArgs:self.args retValue:self.retValue];
-    
+    if (self.isArgumentsRetained) {
+        NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
+        for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
+            void *argBuf = self.args[idx];
+            if (argBuf != NULL) {
+                free(argBuf);
+            }
+        }
+    }
 }
 
 - (void)retainArguments
@@ -270,6 +278,11 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         *((void **)self.retValue) = NULL;
         self.argumentsRetained = YES;
     }
+}
+
+- (void)dealloc
+{
+    
 }
 
 @end
@@ -671,7 +684,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         [blockInvocation setArgument:(void *)&invocation atIndex:1];
     }
     
-    
     // origin block invoke func arguments: block(self), ...
     // origin block invoke func arguments (x86 struct return): struct*, block(self), ...
     // hook block signature arguments: block(self), invocation, ...
@@ -680,7 +692,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         [blockInvocation setArgument:args[idx - 1] atIndex:idx];
     }
     [blockInvocation invokeWithTarget:self.aspectBlock];
-    
     return YES;
 }
 
@@ -751,13 +762,15 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 }
 
 - (void)interceptBlock:(void (^)(BHInvocation *invocation, IntercepterCompletion completion))block {
+    __weak typeof(block) weakBlock = block;
     [self block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation) {
-        if (block) {
+        __strong typeof(weakBlock) strongBlock = weakBlock;
+        if (strongBlock) {
             [invocation retainArguments];
             IntercepterCompletion completion = ^() {
                 [invocation invokeOriginalBlock];
             };
-            block(invocation, completion);
+            strongBlock(invocation, completion);
         }
     }];
 }
