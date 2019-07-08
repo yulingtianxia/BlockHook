@@ -44,13 +44,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)invokeOriginalBlock;
 
-
 /**
  Retain arguments and set return value to nil or zero.
-
- @return If success.
  */
-- (BOOL)retainArgsAndCleanRet;
+- (void)retainArguments;
 
 @end
 

@@ -239,7 +239,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 @property (nonatomic, nullable, readwrite) void *retValue;
 @property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableData *dataArgs;
-@property (nonatomic) id block;
+@property (nonatomic) id target;
+@property (nonatomic, getter=isArgumentsRetained) BOOL argumentsRetained;
 
 @end
 @implementation BHInvocation
@@ -249,27 +250,25 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     [self.token invokeOriginalBlockWithArgs:self.args retValue:self.retValue];
 }
 
-- (BOOL)retainArgsAndCleanRet
+- (void)retainArguments
 {
-    NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
-    self.dataArgs = [NSMutableData dataWithLength:numberOfArguments* sizeof(void *)];
-    void **args = [self.dataArgs mutableBytes];
-    for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
-        void *argBuf = NULL;
-        const char *type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx];
-        NSUInteger argSize;
-        NSGetSizeAndAlignment(type, &argSize, NULL);
-        
-        if (!(argBuf = reallocf(argBuf, argSize))) {
-            NSLog(@"Failed to allocate memory for block invocation.");
-            return NO;
+    if (!self.isArgumentsRetained) {
+        NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
+        self.dataArgs = [NSMutableData dataWithLength:numberOfArguments* sizeof(void *)];
+        void **args = [self.dataArgs mutableBytes];
+        for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
+            const char *type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx];
+            NSUInteger argSize;
+            NSGetSizeAndAlignment(type, &argSize, NULL);
+            void *argBuf = malloc(argSize);
+            memcpy(argBuf, self.args[idx], argSize);
+            args[idx] = argBuf;
         }
-        memcpy(argBuf, self.args[idx], argSize);
-        args[idx] = argBuf;
+        self.args = args;
+        self.target = self.token.block;
+        *((void **)self.retValue) = NULL;
+        self.argumentsRetained = YES;
     }
-    self.args = args;
-    *((void **)self.retValue) = NULL;
-    return YES;
 }
 
 @end
@@ -668,7 +667,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         invocation.retValue = retValue;
         invocation.token = self;
         invocation.mode = mode;
-        invocation.block = self.block;
         [blockInvocation setArgument:(void *)&invocation atIndex:1];
     }
     
@@ -754,7 +752,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (void)interceptBlock:(void (^)(BHInvocation *invocation, IntercepterCompletion completion))block {
     [self block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation) {
         if (block) {
-            [invocation retainArgsAndCleanRet];
+            [invocation retainArguments];
             IntercepterCompletion completion = ^() {
                 [invocation invokeOriginalBlock];
             };
