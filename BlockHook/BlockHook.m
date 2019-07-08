@@ -248,13 +248,14 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (void)invokeOriginalBlock
 {
     [self.token invokeOriginalBlockWithArgs:self.args retValue:self.retValue];
+    
 }
 
 - (void)retainArguments
 {
     if (!self.isArgumentsRetained) {
         NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
-        self.dataArgs = [NSMutableData dataWithLength:numberOfArguments* sizeof(void *)];
+        self.dataArgs = [NSMutableData dataWithLength:numberOfArguments * sizeof(void *)];
         void **args = [self.dataArgs mutableBytes];
         for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
             const char *type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx];

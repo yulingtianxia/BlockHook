@@ -31,13 +31,11 @@
             NSLog(@"Intercept!");
             NSObject *a = (__bridge NSObject *)*(void **)(invocation.args[1]);
             NSObject *p = [NSObject new];
-            NSLog(@"p:%@", p);
             *(void **)(invocation.args[1]) = (__bridge void *)(p);
             completion();
         });
     }];
     NSObject *result = testblock(self.test);
-    NSLog(@"self.test:%@", self.test);
     NSLog(@"result:%@", result);
 }
 
