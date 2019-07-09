@@ -360,7 +360,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     BHLock *lock = [self.block bh_lockForKey:@selector(next)];
     [lock lock];
     if (!_next) {
-        _next = ((BHDealloc *)objc_getAssociatedObject(self.block, self.originInvoke)).token;
+        BHDealloc *bhDealloc = objc_getAssociatedObject(self.block, self.originInvoke);
+        _next = bhDealloc.token;
     }
     BHToken *result = _next;
     [lock unlock];
