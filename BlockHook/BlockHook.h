@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Token for hook.
  */
-@property (nonatomic, readonly, assign) BHToken *token;
+@property (nonatomic, readonly, weak) BHToken *token;
 /**
  Arguments of invoking the block. Need type casting.
  */

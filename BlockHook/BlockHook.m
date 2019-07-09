@@ -234,7 +234,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @interface BHInvocation ()
 
-@property (nonatomic, readwrite, assign) BHToken *token;
+@property (nonatomic, readwrite, weak) BHToken *token;
 @property (nonatomic, readwrite) void *_Nullable *_Null_unspecified args;
 @property (nonatomic, nullable, readwrite) void *retValue;
 @property (nonatomic, readwrite) BlockHookMode mode;
@@ -243,6 +243,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 @property (nonatomic, getter=isArgumentsRetained) BOOL argumentsRetained;
 
 @end
+
 @implementation BHInvocation
 
 - (void)invokeOriginalBlock
@@ -280,9 +281,30 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     }
 }
 
+@end
+
+@interface BHDealloc : NSObject
+
+@property (nonatomic) BHToken *token;
+
+@end
+
+@implementation BHDealloc
+
 - (void)dealloc
 {
-    
+    if (BlockHookModeContainsMode(self.token.mode, BlockHookModeDead)) {
+        BHInvocation *invocation = nil;
+        NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:self.token.aspectBlockSignature];
+        if (self.token.aspectBlockSignature.numberOfArguments >= 2) {
+            invocation = [BHInvocation new];
+            invocation.token = self.token;
+            invocation.mode = BlockHookModeDead;
+            [blockInvocation setArgument:(void *)&invocation atIndex:1];
+        }
+        [blockInvocation invokeWithTarget:self.token.aspectBlock];
+    }
+    [self.token remove];
 }
 
 @end
@@ -316,7 +338,9 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         }
 
         [self _prepClosure];
-        objc_setAssociatedObject(block, _replacementInvoke, self, OBJC_ASSOCIATION_RETAIN);
+        BHDealloc *bhDealloc = [BHDealloc new];
+        bhDealloc.token = self;
+        objc_setAssociatedObject(block, _replacementInvoke, bhDealloc, OBJC_ASSOCIATION_RETAIN);
         _mode = mode;
         _aspectBlock = aspectBlock;
     }
@@ -325,18 +349,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 - (void)dealloc
 {
-    if (BlockHookModeContainsMode(self.mode, BlockHookModeDead)) {
-        BHInvocation *invocation = nil;
-        NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:self.aspectBlockSignature];
-        if (self.aspectBlockSignature.numberOfArguments >= 2) {
-            invocation = [BHInvocation new];
-            invocation.token = self;
-            invocation.mode = BlockHookModeDead;
-            [blockInvocation setArgument:(void *)&invocation atIndex:1];
-        }
-        [blockInvocation invokeWithTarget:self.aspectBlock];
-    }
-    [self remove];
     if (_closure) {
         ffi_closure_free(_closure);
         _closure = NULL;
@@ -348,7 +360,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     BHLock *lock = [self.block bh_lockForKey:@selector(next)];
     [lock lock];
     if (!_next) {
-        _next = objc_getAssociatedObject(self.block, self.originInvoke);
+        _next = ((BHDealloc *)objc_getAssociatedObject(self.block, self.originInvoke)).token;
     }
     BHToken *result = _next;
     [lock unlock];
@@ -748,7 +760,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         return [dbpd->dbpd_block block_currentHookToken];
     }
     void *invoke = [self block_currentInvokeFunction];
-    return objc_getAssociatedObject(self, invoke);
+    BHDealloc *bhDealloc = objc_getAssociatedObject(self, invoke);
+    return bhDealloc.token;
 }
 
 - (void *)block_currentInvokeFunction

@@ -12,6 +12,7 @@
 @interface ViewController ()
 @property (nonatomic, strong) NSObject *test;
 @property (nonatomic, strong) NSObject *result;
+@property (nonatomic, strong) BHToken *token;
 @end
 
 @implementation ViewController
@@ -26,24 +27,29 @@
         return self.result;
     };
     __block BHInvocation *inv = nil;
-//    [(id)testblock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation) {
-////        [invocation invokeOriginalBlock];
+    self.token = [(id)testblock block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation) {
+//        [invocation invokeOriginalBlock];
 //        inv = invocation;
-//    }];
-    
-    [(id)testblock interceptBlock:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
-        id block = ^{
-            NSLog(@"Intercept!");
-            inv = invocation;
-            NSObject *a = (__bridge NSObject *)*(void **)(invocation.args[1]);
-            NSObject *p = [NSObject new];
-            *(void **)(invocation.args[1]) = (__bridge void *)(p);
-            completion();
-        };
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), block);
+        NSLog(@"hehehe");
     }];
+    
+//    [(id)testblock interceptBlock:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+//        id block = ^{
+//            NSLog(@"Intercept!");
+//            inv = invocation;
+//            NSObject *a = (__bridge NSObject *)*(void **)(invocation.args[1]);
+//            NSObject *p = [NSObject new];
+//            *(void **)(invocation.args[1]) = (__bridge void *)(p);
+//            completion();
+//        };
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), block);
+//    }];
     NSObject *result = testblock(self.test);
     NSLog(@"result:%@", result);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"Token:%@", self.token.description);
+    });
 }
 
 @end

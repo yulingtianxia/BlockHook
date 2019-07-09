@@ -303,7 +303,6 @@ struct TestStruct _testRect;
     };
     
     BHToken *token = [block block_hookWithMode:BlockHookModeDead|BlockHookModeBefore|BlockHookModeInstead|BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y) {
-        NSLog(@"block dead! token:%@", invocation.token);
         switch (invocation.mode) {
             case BlockHookModeBefore:
                 // BHToken has to be the first arg.
