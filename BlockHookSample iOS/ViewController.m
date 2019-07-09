@@ -27,23 +27,23 @@
         return self.result;
     };
     __block BHInvocation *inv = nil;
-    self.token = [(id)testblock block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation) {
-//        [invocation invokeOriginalBlock];
-//        inv = invocation;
-        NSLog(@"hehehe");
-    }];
-    
-//    [(id)testblock interceptBlock:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
-//        id block = ^{
-//            NSLog(@"Intercept!");
-//            inv = invocation;
-//            NSObject *a = (__bridge NSObject *)*(void **)(invocation.args[1]);
-//            NSObject *p = [NSObject new];
-//            *(void **)(invocation.args[1]) = (__bridge void *)(p);
-//            completion();
-//        };
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), block);
+//    self.token = [(id)testblock block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation) {
+////        [invocation invokeOriginalBlock];
+////        inv = invocation;
+//        NSLog(@"hehehe");
 //    }];
+    
+    [(id)testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+        id block = ^{
+            NSLog(@"Intercept!");
+            inv = invocation;
+            NSObject *a = (__bridge NSObject *)*(void **)(invocation.args[1]);
+            NSObject *p = [NSObject new];
+            *(void **)(invocation.args[1]) = (__bridge void *)(p);
+//            completion();
+        };
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), block);
+    }];
     NSObject *result = testblock(self.test);
     NSLog(@"result:%@", result);
     

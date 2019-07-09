@@ -129,7 +129,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void *)block_currentInvokeFunction;
 
 typedef void(^IntercepterCompletion)(void);
-- (void)interceptBlock:(void (^)(BHInvocation *invocation, IntercepterCompletion completion))block;
+
+/**
+ Interceptor for blocks. When your interceptor completed, call `completion` callback.
+ You can call `completion` asynchronously!
+
+ @param interceptor You **MUST** call `completion` callback in interceptor, unless you want to cancel invocation.
+ */
+- (void)block_interceptor:(void (^)(BHInvocation *invocation, IntercepterCompletion completion))interceptor;
 
 @end
 
