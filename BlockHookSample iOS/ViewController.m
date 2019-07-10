@@ -10,9 +10,7 @@
 #import <BlockHook/BlockHook.h>
 
 @interface ViewController ()
-@property (nonatomic, strong) NSObject *test;
-@property (nonatomic, strong) NSObject *result;
-@property (nonatomic, strong) BHToken *token;
+
 @end
 
 @implementation ViewController
@@ -20,36 +18,30 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    self.test = [NSObject new];
-    self.result = [NSObject new];
+    NSObject *ret = [NSObject new];
     NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
         NSLog(@"I'm a block:%@", a);
-        return self.result;
+        return ret;
     };
     __block BHInvocation *inv = nil;
-//    self.token = [(id)testblock block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation) {
-////        [invocation invokeOriginalBlock];
-////        inv = invocation;
-//        NSLog(@"hehehe");
-//    }];
     
-    [(id)testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+    BHToken *token = [(id)testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         id block = ^{
             NSLog(@"Intercept!");
             inv = invocation;
             NSObject *a = (__bridge NSObject *)*(void **)(invocation.args[1]);
             NSObject *p = [NSObject new];
+            NSObject *r = [NSObject new];
             *(void **)(invocation.args[1]) = (__bridge void *)(p);
-//            completion();
+            completion();
+            *(void **)(invocation.retValue) = (__bridge void *)(r);
         };
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), block);
     }];
-    NSObject *result = testblock(self.test);
+    NSObject *a = [NSObject new];
+    NSObject *result = testblock(a);
     NSLog(@"result:%@", result);
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSLog(@"Token:%@", self.token.description);
-    });
 }
 
 @end

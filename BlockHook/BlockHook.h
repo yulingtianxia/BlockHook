@@ -40,6 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BlockHookMode mode;
 
 /**
+ YES if the receiver has retained its arguments, NO otherwise.
+ */
+@property (nonatomic, getter=isArgumentsRetained, readonly) BOOL argumentsRetained;
+/**
  Invoke original implementation of the block.
  */
 - (void)invokeOriginalBlock;
@@ -135,8 +139,9 @@ typedef void(^IntercepterCompletion)(void);
  You can call `completion` asynchronously!
 
  @param interceptor You **MUST** call `completion` callback in interceptor, unless you want to cancel invocation.
+ @return BHToken instance.
  */
-- (void)block_interceptor:(void (^)(BHInvocation *invocation, IntercepterCompletion completion))interceptor;
+- (BHToken *)block_interceptor:(void (^)(BHInvocation *invocation, IntercepterCompletion completion))interceptor;
 
 @end
 

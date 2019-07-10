@@ -277,7 +277,7 @@ struct TestStruct _testRect;
 
 - (void)testDispatchBlockCreate {
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Wait for block invoke."];
-    dispatch_queue_t queue = dispatch_queue_create("queue", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t queue = dispatch_queue_create("com.blockhook.test", DISPATCH_QUEUE_SERIAL);
     dispatch_block_t block = dispatch_block_create(0, ^{
         NSLog(@"I'm dispatch_block_t");
         [expectation fulfill];
@@ -286,7 +286,6 @@ struct TestStruct _testRect;
     __unused BHToken *token = [block block_hookWithMode:BlockHookModeAfter
                     usingBlock:^(BHInvocation *invocation){
                         NSLog(@"dispatch_block_t: Hook After");
-                        
                     }];
     NSAssert(token != nil, @"Hook dispatch_block_create not pass!.");
     dispatch_async(queue, block);
@@ -338,6 +337,32 @@ struct TestStruct _testRect;
     ret = block(3, 5);
     NSAssert(ret == 8, @"remove hook failed!");
     NSLog(@"original result:%d", ret);
+}
+
+- (void)testAsyncInterceptor {
+    NSObject *ret = [NSObject new];
+    NSObject *testArg = [NSObject new];
+    NSObject *testArg1 = [NSObject new];
+    
+    NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
+        NSAssert(a == testArg1, @"拦截器参数改写失败");
+        return ret;
+    };
+    __block BHInvocation *inv = nil;
+    
+    [(id)testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            inv = invocation;
+            NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+            NSAssert(arg == testArg, @"拦截器传参错误");
+            *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+            completion();
+            *(void **)(invocation.retValue) = (__bridge void *)([NSObject new]);
+        });
+    }];
+    
+    NSObject *result = testblock(testArg);
+    NSLog(@"result:%@", result);
 }
 
 @end
