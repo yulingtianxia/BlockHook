@@ -237,6 +237,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 @property (nonatomic, readwrite, weak) BHToken *token;
 @property (nonatomic, readwrite) void *_Nullable *_Null_unspecified args;
 @property (nonatomic, nullable, readwrite) void *retValue;
+@property (nonatomic) void *_Nullable *_Null_unspecified realArgs;
+@property (nonatomic, nullable) void *realRetValue;
 @property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableData *dataArgs;
 @property (nonatomic) NSMutableArray *retainList;
@@ -249,12 +251,11 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @synthesize argumentsRetained = _argumentsRetained;
 
-- (instancetype)initWithToken:(BHToken *)token mode:(BlockHookMode)mode
+- (instancetype)initWithToken:(BHToken *)token
 {
     self = [super init];
     if (self) {
         _token = token;
-        _mode = mode;
         _argumentsRetainedQueue = dispatch_queue_create("com.blockhook.argumentsRetained", DISPATCH_QUEUE_CONCURRENT);
     }
     return self;
@@ -282,7 +283,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 - (void)invokeOriginalBlock
 {
-    [self.token invokeOriginalBlockWithArgs:self.args retValue:self.retValue];
+    [self.token invokeOriginalBlockWithArgs:self.realArgs retValue:self.realRetValue];
     if (self.isArgumentsRetained) {
         NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
         for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
@@ -291,6 +292,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
                 free(argBuf);
             }
         }
+        // TODO: release return value
     }
 }
 
@@ -303,21 +305,29 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         void **args = [self.dataArgs mutableBytes];
         for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
             const char *type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx];
-            [self _retainPointer:self.args[idx] encode:type];
             NSUInteger argSize;
             NSGetSizeAndAlignment(type, &argSize, NULL);
             void *argBuf = malloc(argSize);
             memcpy(argBuf, self.args[idx], argSize);
             args[idx] = argBuf;
+            [self _retainPointer:args[idx] encode:type];
         }
         self.args = args;
-        *((void **)self.retValue) = NULL;
-//        [self _retainPointer:self.retValue encode:self.token.originalBlockSignature.methodReturnType];
-//        NSUInteger retSize = self.token.originalBlockSignature.methodReturnLength;
-//        void *retBuf = malloc(retSize);
-//        memcpy(retBuf, self.retValue, retSize);
-//        self.retValue = retBuf;
+        self.realArgs = args;
         self.argumentsRetained = YES;
+    }
+    NSUInteger retSize = self.token.originalBlockSignature.methodReturnLength;
+    void *retBuf = malloc(retSize);
+    memcpy(retBuf, self.retValue, retSize);
+    [self _retainPointer:retBuf encode:self.token.originalBlockSignature.methodReturnType];
+    self.retValue = retBuf;
+    self.realRetValue = retBuf;
+    if (self.token.hasStret) {
+        // TODO:
+//        // The first arg contains address of a pointer of returned struct.
+//        userRet = *((void **)args[0]);
+//        // Other args move backwards.
+//        userArgs = args + 1;
     }
 }
 
@@ -339,7 +349,9 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         }
     }
     else if (strcmp(encode, "*") == 0) {
-        
+//        char *dest = NULL;
+//        strcpy(dest, p);
+//        *(void **)pointer = dest;
     }
 }
 
@@ -359,7 +371,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         BHInvocation *invocation = nil;
         NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:self.token.aspectBlockSignature];
         if (self.token.aspectBlockSignature.numberOfArguments >= 2) {
-            invocation = [[BHInvocation alloc] initWithToken:self.token mode:BlockHookModeDead];
+            invocation = [[BHInvocation alloc] initWithToken:self.token];
+            invocation.mode = BlockHookModeDead;
             [blockInvocation setArgument:(void *)&invocation atIndex:1];
         }
         [blockInvocation invokeWithTarget:self.token.aspectBlock];
@@ -740,18 +753,14 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     [lock unlock];
 }
 
-- (BOOL)invokeAspectBlockWithArgs:(void **)args retValue:(void *)retValue mode:(BlockHookMode)mode
+- (BOOL)invokeAspectBlockWithArgs:(void **)args retValue:(void *)retValue mode:(BlockHookMode)mode invocation:(BHInvocation *)invocation
 {
     if (!self.isStackBlock && !self.block) {
         return NO;
     }
-    
+    invocation.mode = mode;
     NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:self.aspectBlockSignature];
-    BHInvocation *invocation = nil;
     if (self.aspectBlockSignature.numberOfArguments > 1) {
-        invocation = [[BHInvocation alloc] initWithToken:self mode:mode];
-        invocation.args = args;
-        invocation.retValue = retValue;
         [blockInvocation setArgument:(void *)&invocation atIndex:1];
     }
     
@@ -841,6 +850,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
             [invocation retainArguments];
             IntercepterCompletion completion = ^() {
                 [invocation invokeOriginalBlock];
+                [invocation retainArguments];
             };
             strongInterceptor(invocation, completion);
         }
@@ -862,13 +872,19 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         // Other args move backwards.
         userArgs = args + 1;
     }
+    *(void **)userRet = NULL;
+    BHInvocation *invocation = [[BHInvocation alloc] initWithToken:token];
+    invocation.args = userArgs;
+    invocation.retValue = userRet;
+    invocation.realArgs = args;
+    invocation.realRetValue = ret;
     if (BlockHookModeContainsMode(token.mode, BlockHookModeBefore)) {
-        [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeBefore];
+        [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeBefore invocation:invocation];
     }
-    if (!(BlockHookModeContainsMode(token.mode, BlockHookModeInstead) && [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeInstead])) {
+    if (!(BlockHookModeContainsMode(token.mode, BlockHookModeInstead) && [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeInstead invocation:invocation])) {
         [token invokeOriginalBlockWithArgs:args retValue:ret];
     }
     if (BlockHookModeContainsMode(token.mode, BlockHookModeAfter)) {
-        [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeAfter];
+        [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeAfter invocation:invocation];
     }
 }
