@@ -241,6 +241,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 @property (nonatomic, nullable) void *realRetValue;
 @property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableData *dataArgs;
+@property (nonatomic) NSMutableData *dataRet;
 @property (nonatomic) NSMutableArray *retainList;
 @property (nonatomic, getter=isArgumentsRetained, readwrite) BOOL argumentsRetained;
 @property (nonatomic) dispatch_queue_t argumentsRetainedQueue;
@@ -292,7 +293,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
                 free(argBuf);
             }
         }
-        // TODO: release return value
     }
 }
 
@@ -314,20 +314,23 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         }
         self.args = args;
         self.realArgs = args;
+        
+        NSUInteger retSize = self.token.originalBlockSignature.methodReturnLength;
+        self.dataRet = [NSMutableData dataWithLength:sizeof(retSize)];
+        void *ret = [self.dataRet mutableBytes];
+        memcpy(ret, self.retValue, retSize);
+        [self _retainPointer:ret encode:self.token.originalBlockSignature.methodReturnType];
+        self.retValue = ret;
+        self.realRetValue = ret;
+        if (self.token.hasStret) {
+            // TODO:
+            //        // The first arg contains address of a pointer of returned struct.
+            //        userRet = *((void **)args[0]);
+            //        // Other args move backwards.
+            //        userArgs = args + 1;
+        }
+        
         self.argumentsRetained = YES;
-    }
-    NSUInteger retSize = self.token.originalBlockSignature.methodReturnLength;
-    void *retBuf = malloc(retSize);
-    memcpy(retBuf, self.retValue, retSize);
-    [self _retainPointer:retBuf encode:self.token.originalBlockSignature.methodReturnType];
-    self.retValue = retBuf;
-    self.realRetValue = retBuf;
-    if (self.token.hasStret) {
-        // TODO:
-//        // The first arg contains address of a pointer of returned struct.
-//        userRet = *((void **)args[0]);
-//        // Other args move backwards.
-//        userArgs = args + 1;
     }
 }
 
@@ -847,12 +850,12 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return [self block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation) {
         __strong typeof(weakInterceptor) strongInterceptor = weakInterceptor;
         if (strongInterceptor) {
-            [invocation retainArguments];
+            
             IntercepterCompletion completion = ^() {
                 [invocation invokeOriginalBlock];
-                [invocation retainArguments];
             };
             strongInterceptor(invocation, completion);
+            [invocation retainArguments];
         }
     }];
 }

@@ -354,7 +354,7 @@ struct TestStruct _testRect;
     [(id)testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             inv = invocation;
-            NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+            __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
             NSAssert(arg == testArg, @"Async Interceptor wrong argument!");
             *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
             completion();
@@ -374,7 +374,6 @@ struct TestStruct _testRect;
     NSObject *ret1 = [NSObject new];
     NSObject *testArg = [NSObject new];
     NSObject *testArg1 = [NSObject new];
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Wait for block invoke."];
     
     NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
         NSAssert(a == testArg1, @"Sync Interceptor change argument failed!");
@@ -384,19 +383,16 @@ struct TestStruct _testRect;
     
     [(id)testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         inv = invocation;
-        NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+        __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
         NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
         *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
         completion();
-        *(void **)(invocation.retValue) = (__bridge void *)(ret1);
-        [expectation fulfill];
+        *(void **)(invocation.retValue) = (__bridge void *)ret1;
     }];
     
     NSObject *result = testblock(testArg);
-//    NSAssert(result == ret1, @"Sync Interceptor change return value failed!");
+    NSAssert(result == ret1, @"Sync Interceptor change return value failed!");
     NSLog(@"result:%@", result);
-    
-    [self waitForExpectations:@[expectation] timeout:30];
 }
 
 @end
