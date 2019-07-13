@@ -245,6 +245,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 @property (nonatomic) NSMutableArray *retainList;
 @property (nonatomic, getter=isArgumentsRetained, readwrite) BOOL argumentsRetained;
 @property (nonatomic) dispatch_queue_t argumentsRetainedQueue;
+@property (nonatomic) NSUInteger numberOfRealArgs;
 
 @end
 
@@ -258,8 +259,25 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     if (self) {
         _token = token;
         _argumentsRetainedQueue = dispatch_queue_create("com.blockhook.argumentsRetained", DISPATCH_QUEUE_CONCURRENT);
+        NSUInteger numberOfArguments = token.originalBlockSignature.numberOfArguments;
+        if (self.token.hasStret) {
+            numberOfArguments++;
+        }
+        _numberOfRealArgs = numberOfArguments;
     }
     return self;
+}
+
+- (void)dealloc
+{
+    if (self.isArgumentsRetained) {
+        for (NSUInteger idx = 0; idx < self.numberOfRealArgs; idx++) {
+            void *argBuf = self.realArgs[idx];
+            if (argBuf != NULL) {
+                free(argBuf);
+            }
+        }
+    }
 }
 
 #pragma mark - getter&setter
@@ -285,31 +303,15 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (void)invokeOriginalBlock
 {
     [self.token invokeOriginalBlockWithArgs:self.realArgs retValue:self.realRetValue];
-    if (self.isArgumentsRetained) {
-        NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
-        if (self.token.hasStret) {
-            numberOfArguments++;
-        }
-        for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
-            void *argBuf = self.realArgs[idx];
-            if (argBuf != NULL) {
-                free(argBuf);
-            }
-        }
-    }
 }
 
 - (void)retainArguments
 {
     if (!self.isArgumentsRetained) {
-        NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
-        if (self.token.hasStret) {
-            numberOfArguments++;
-        }
-        self.dataArgs = [NSMutableData dataWithLength:numberOfArguments * sizeof(void *)];
+        self.dataArgs = [NSMutableData dataWithLength:self.numberOfRealArgs * sizeof(void *)];
         self.retainList = [NSMutableArray array];
         void **args = [self.dataArgs mutableBytes];
-        for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
+        for (NSUInteger idx = 0; idx < self.numberOfRealArgs; idx++) {
             const char *type = NULL;
             if (self.token.hasStret) {
                 if (idx == 0) {
@@ -366,11 +368,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         else {
             [self.retainList addObject:arg];
         }
-    }
-    else if (strcmp(encode, "*") == 0) {
-//        char *dest = NULL;
-//        strcpy(dest, p);
-//        *(void **)pointer = dest;
     }
 }
 
@@ -847,7 +844,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return [self block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation) {
         __strong typeof(weakInterceptor) strongInterceptor = weakInterceptor;
         if (strongInterceptor) {
-            
             IntercepterCompletion completion = ^() {
                 [invocation invokeOriginalBlock];
             };

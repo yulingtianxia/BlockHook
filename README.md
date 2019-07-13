@@ -43,6 +43,8 @@ You can run `BlockHookSample iOS` or `BlockHookSample macOS` target.
 
 ## 🐒 How to use
 
+### Just Hook
+
 You can hook a block using 4 modes (before/instead/after/dead). This method returns a `BHToken` instance for more control. You can `remove` a `BHToken`, or set custom return value to its `retValue` property. Calling `invokeOriginalBlock` method will invoke original implementation of the block.
 
 ```objc
@@ -115,6 +117,35 @@ hook before block! invocation:<BHInvocation: 0x60000366c7c0>
 hook after block! 3 * 5 = 8
 original result:8
 block dead! token:<BHToken: 0x600000422910>
+```
+
+### Block Interceptor
+
+Sometimes you want user login first before routing to other components. To intercept a block without hacking into code of routers, you can use block interceptor.
+
+```
+NSObject *testArg = [NSObject new];
+NSObject *testArg1 = [NSObject new];
+int e = 5;
+struct TestStruct testRect = (struct TestStruct){1, 2.0, 3.0, 4, &e, NULL, 7};
+struct TestStruct (^StructReturnBlock)(NSObject *) = ^(NSObject *a)
+{
+    NSAssert(a == testArg1, @"Sync Struct Return Interceptor change argument failed!");
+    struct TestStruct result = testRect;
+    return result;
+};
+    
+[StructReturnBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+        NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
+        *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+        completion();
+        (*(struct TestStruct *)(invocation.retValue)).a = 100;
+    });
+}];
+    
+TestStruct result = StructReturnBlock(testArg);
 ```
 
 ## 📲 Installation
