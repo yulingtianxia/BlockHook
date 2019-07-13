@@ -287,8 +287,11 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     [self.token invokeOriginalBlockWithArgs:self.realArgs retValue:self.realRetValue];
     if (self.isArgumentsRetained) {
         NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
+        if (self.token.hasStret) {
+            numberOfArguments++;
+        }
         for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
-            void *argBuf = self.args[idx];
+            void *argBuf = self.realArgs[idx];
             if (argBuf != NULL) {
                 free(argBuf);
             }
@@ -300,34 +303,47 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 {
     if (!self.isArgumentsRetained) {
         NSUInteger numberOfArguments = self.token.originalBlockSignature.numberOfArguments;
+        if (self.token.hasStret) {
+            numberOfArguments++;
+        }
         self.dataArgs = [NSMutableData dataWithLength:numberOfArguments * sizeof(void *)];
         self.retainList = [NSMutableArray array];
         void **args = [self.dataArgs mutableBytes];
         for (NSUInteger idx = 0; idx < numberOfArguments; idx++) {
-            const char *type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx];
+            const char *type = NULL;
+            if (self.token.hasStret) {
+                if (idx == 0) {
+                    type = self.token.originalBlockSignature.methodReturnType;
+                }
+                else {
+                    type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx - 1];
+                }
+            }
+            else {
+                type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx];
+            }
+            
             NSUInteger argSize;
             NSGetSizeAndAlignment(type, &argSize, NULL);
             void *argBuf = malloc(argSize);
-            memcpy(argBuf, self.args[idx], argSize);
+            memcpy(argBuf, self.realArgs[idx], argSize);
             args[idx] = argBuf;
             [self _retainPointer:args[idx] encode:type];
         }
-        self.args = args;
         self.realArgs = args;
-        
-        NSUInteger retSize = self.token.originalBlockSignature.methodReturnLength;
-        self.dataRet = [NSMutableData dataWithLength:sizeof(retSize)];
-        void *ret = [self.dataRet mutableBytes];
-        memcpy(ret, self.retValue, retSize);
-        [self _retainPointer:ret encode:self.token.originalBlockSignature.methodReturnType];
-        self.retValue = ret;
-        self.realRetValue = ret;
         if (self.token.hasStret) {
-            // TODO:
-            //        // The first arg contains address of a pointer of returned struct.
-            //        userRet = *((void **)args[0]);
-            //        // Other args move backwards.
-            //        userArgs = args + 1;
+            self.args = args + 1;
+            self.retValue = *((void **)args[0]);
+        }
+        else {
+            NSUInteger retSize = self.token.originalBlockSignature.methodReturnLength;
+            self.dataRet = [NSMutableData dataWithLength:sizeof(retSize)];
+            void *ret = [self.dataRet mutableBytes];
+            memcpy(ret, self.retValue, retSize);
+            [self _retainPointer:ret encode:self.token.originalBlockSignature.methodReturnType];
+            self.args = args;
+            self.retValue = ret;
+            self.realRetValue = ret;
         }
         
         self.argumentsRetained = YES;
@@ -548,20 +564,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return structType;
 }
 
-- (int)_countForFFIElements:(ffi_type **)elements totalSize:(NSUInteger)size
-{
-    int count = 0;
-    while (size > 0) {
-        size -= elements[count]->size;
-        count++;
-    }
-    if (size < 0) {
-        size --;
-        NSLog(@"FFI Elements Wrong Size!");
-    }
-    return count;
-}
-
 - (ffi_type *)_ffiTypeForEncode:(const char *)str
 {
     #define SINT(type) do { \
@@ -659,11 +661,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 {
     // 第一个是返回值，需要排除
     return [self _typesWithEncodeString:str getCount:outCount startIndex:1];
-}
-
-- (ffi_type **)_typesWithEncodeString:(const char *)str
-{
-    return [self _typesWithEncodeString:str getCount:NULL startIndex:0];
 }
 
 - (ffi_type **)_typesWithEncodeString:(const char *)str getCount:(int *)outCount startIndex:(int)start

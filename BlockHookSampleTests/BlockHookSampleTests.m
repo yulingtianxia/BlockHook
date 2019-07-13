@@ -143,6 +143,9 @@ struct TestStruct _testRect;
         return result;
     };
     const char *(^protocolBlock)(id<CALayerDelegate>, int(^)(int, int)) = ^(id<CALayerDelegate> delegate, int(^block)(int, int)) {
+        if (block) {
+            block(1, 2);
+        }
         return (const char *)"test protocol";
     };
     const char *fakeResult = "lalalala";
@@ -273,6 +276,8 @@ struct TestStruct _testRect;
     }];
     
     NSAssert(tokenInstead != nil, @"Overstep args for InsteadMode not pass!.");
+    
+    block(1, 2);
 }
 
 - (void)testDispatchBlockCreate {
@@ -393,6 +398,57 @@ struct TestStruct _testRect;
     NSObject *result = testblock(testArg);
     NSAssert(result == ret1, @"Sync Interceptor change return value failed!");
     NSLog(@"result:%@", result);
+}
+
+- (void)testSyncStructReturnInterceptor {
+    
+    NSObject *testArg = [NSObject new];
+    NSObject *testArg1 = [NSObject new];
+    
+    struct TestStruct (^StructReturnBlock)(NSObject *) = ^(NSObject *a)
+    {
+        NSAssert(a == testArg1, @"Sync Struct Return Interceptor change argument failed!");
+        struct TestStruct result = _testRect;
+        return result;
+    };
+    
+    [StructReturnBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+        __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+        NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
+        *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+        completion();
+        (*(struct TestStruct *)(invocation.retValue)).a = 100;
+    }];
+    
+    __unused struct TestStruct result = StructReturnBlock(testArg);
+    NSAssert(result.a == 100, @"Sync Interceptor change return value failed!");
+}
+
+- (void)testAsyncStructReturnInterceptor {
+    NSObject *testArg = [NSObject new];
+    NSObject *testArg1 = [NSObject new];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Wait for block invoke."];
+    
+    struct TestStruct (^StructReturnBlock)(NSObject *) = ^(NSObject *a)
+    {
+        NSAssert(a == testArg1, @"Sync Struct Return Interceptor change argument failed!");
+        struct TestStruct result = _testRect;
+        return result;
+    };
+    
+    [StructReturnBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+            NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
+            *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+            completion();
+            (*(struct TestStruct *)(invocation.retValue)).a = 100;
+            [expectation fulfill];
+        });
+    }];
+    
+    __unused struct TestStruct result = StructReturnBlock(testArg);
+    [self waitForExpectations:@[expectation] timeout:30];
 }
 
 @end
