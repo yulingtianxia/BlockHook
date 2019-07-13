@@ -268,18 +268,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return self;
 }
 
-- (void)dealloc
-{
-    if (self.isArgumentsRetained) {
-        for (NSUInteger idx = 0; idx < self.numberOfRealArgs; idx++) {
-            void *argBuf = self.realArgs[idx];
-            if (argBuf != NULL) {
-                free(argBuf);
-            }
-        }
-    }
-}
-
 #pragma mark - getter&setter
 
 - (BOOL)isArgumentsRetained
@@ -303,6 +291,14 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (void)invokeOriginalBlock
 {
     [self.token invokeOriginalBlockWithArgs:self.realArgs retValue:self.realRetValue];
+    if (self.isArgumentsRetained) {
+        for (NSUInteger idx = 0; idx < self.numberOfRealArgs; idx++) {
+            void *argBuf = self.realArgs[idx];
+            if (argBuf != NULL) {
+                free(argBuf);
+            }
+        }
+    }
 }
 
 - (void)retainArguments
