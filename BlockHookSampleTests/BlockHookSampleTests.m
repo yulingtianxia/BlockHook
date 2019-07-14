@@ -345,14 +345,13 @@ struct TestStruct _testRect;
 }
 
 - (void)testAsyncInterceptor {
-    NSObject *ret = [NSObject new];
     NSObject *testArg = [NSObject new];
     NSObject *testArg1 = [NSObject new];
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Wait for block invoke."];
     
     NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
         NSAssert(a == testArg1, @"Async Interceptor change argument failed!");
-        return ret;
+        return [NSObject new];
     };
     __block BHInvocation *inv = nil;
     
@@ -375,14 +374,13 @@ struct TestStruct _testRect;
 }
 
 - (void)testSyncInterceptor {
-    NSObject *ret = [NSObject new];
     NSObject *ret1 = [NSObject new];
     NSObject *testArg = [NSObject new];
     NSObject *testArg1 = [NSObject new];
     
     NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
         NSAssert(a == testArg1, @"Sync Interceptor change argument failed!");
-        return ret;
+        return [NSObject new];
     };
     __block BHInvocation *inv = nil;
     

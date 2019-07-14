@@ -22,6 +22,7 @@ Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockH
 - [Hook Objective-C Block with Libffi](http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/)
 - [BlockHook with Struct](http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/)
 - [BlockHook with Revocation](http://yulingtianxia.com/blog/2019/05/26/BlockHook-with-Revocation/)
+- [BlockHook with Private Data](http://yulingtianxia.com/blog/2019/06/19/BlockHook-with-Private-Data/)
 
 ## 🌟 Features
 
@@ -123,29 +124,24 @@ block dead! token:<BHToken: 0x600000422910>
 
 Sometimes you want user login first before routing to other components. To intercept a block without hacking into code of routers, you can use block interceptor.
 
-```
+```objc
 NSObject *testArg = [NSObject new];
 NSObject *testArg1 = [NSObject new];
-int e = 5;
-struct TestStruct testRect = (struct TestStruct){1, 2.0, 3.0, 4, &e, NULL, 7};
-struct TestStruct (^StructReturnBlock)(NSObject *) = ^(NSObject *a)
-{
-    NSAssert(a == testArg1, @"Sync Struct Return Interceptor change argument failed!");
-    struct TestStruct result = testRect;
-    return result;
+    
+NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
+    return [NSObject new];
 };
     
-[StructReturnBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+[testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
-        NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
+        NSAssert(arg == testArg, @"Async Interceptor wrong argument!");
         *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
         completion();
-        (*(struct TestStruct *)(invocation.retValue)).a = 100;
     });
 }];
     
-TestStruct result = StructReturnBlock(testArg);
+testblock(testArg);
 ```
 
 ## 📲 Installation
