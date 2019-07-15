@@ -836,14 +836,12 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 }
 
 - (BHToken *)block_interceptor:(void (^)(BHInvocation *invocation, IntercepterCompletion completion))interceptor {
-    __weak typeof(interceptor) weakInterceptor = interceptor;
     return [self block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation) {
-        __strong typeof(weakInterceptor) strongInterceptor = weakInterceptor;
-        if (strongInterceptor) {
+        if (interceptor) {
             IntercepterCompletion completion = ^() {
                 [invocation invokeOriginalBlock];
             };
-            strongInterceptor(invocation, completion);
+            interceptor(invocation, completion);
             [invocation retainArguments];
         }
     }];
