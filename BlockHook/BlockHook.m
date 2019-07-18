@@ -350,9 +350,9 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 #pragma mark - Private Helper
 
-- (void)_retainPointer:(void *)pointer encode:(const char *)encode
+- (void)_retainPointer:(void **)pointer encode:(const char *)encode
 {
-    void *p = (*(void **)pointer);
+    void *p = *pointer;
     if (p == NULL) {
         return;
     }
@@ -364,6 +364,14 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         else {
             [self.retainList addObject:arg];
         }
+    }
+    else if (encode[0] == '*') {
+        char *arg = p;
+        NSMutableData *data = [NSMutableData dataWithLength:sizeof(char) * strlen(arg)];
+        [self.retainList addObject:data];
+        char *str = [data mutableBytes];
+        strcpy(str, arg);
+        *pointer = str;
     }
 }
 

@@ -344,6 +344,29 @@ struct TestStruct _testRect;
     NSLog(@"original result:%d", ret);
 }
 
+- (void)testSyncInterceptor {
+    NSObject *ret1 = [NSObject new];
+    NSObject *testArg = [NSObject new];
+    NSObject *testArg1 = [NSObject new];
+    
+    NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
+        NSAssert(a == testArg1, @"Sync Interceptor change argument failed!");
+        return [NSObject new];
+    };
+    
+    [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+        __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+        NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
+        *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+        completion();
+        *(void **)(invocation.retValue) = (__bridge void *)ret1;
+    }];
+    
+    NSObject *result = testblock(testArg);
+    NSAssert(result == ret1, @"Sync Interceptor change return value failed!");
+    NSLog(@"result:%@", result);
+}
+
 - (void)testAsyncInterceptor {
     NSObject *testArg = [NSObject new];
     NSObject *testArg1 = [NSObject new];
@@ -371,27 +394,55 @@ struct TestStruct _testRect;
     [self waitForExpectations:@[expectation] timeout:30];
 }
 
-- (void)testSyncInterceptor {
+- (void)testSyncCharArgInterceptor {
     NSObject *ret1 = [NSObject new];
-    NSObject *testArg = [NSObject new];
-    NSObject *testArg1 = [NSObject new];
-    
-    NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
-        NSAssert(a == testArg1, @"Sync Interceptor change argument failed!");
+    char *origChar = (char *)malloc(sizeof(char) * 7);
+    strcpy(origChar, "origin");
+    NSObject *(^testblock)(char *) = ^(char *a) {
+        NSAssert(strcmp(a, "hooked") == 0, @"Sync Char Arg Interceptor change argument failed!");
         return [NSObject new];
     };
     
     [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
-        __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
-        NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
-        *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+        __unused char *arg = *(char **)(invocation.args[1]);
+        NSAssert(strcmp(arg, "origin") == 0, @"Sync Char Arg Interceptor wrong argument!");
+        *(void **)(invocation.args[1]) = (void *)("hooked");
         completion();
         *(void **)(invocation.retValue) = (__bridge void *)ret1;
     }];
     
-    NSObject *result = testblock(testArg);
-    NSAssert(result == ret1, @"Sync Interceptor change return value failed!");
+    NSObject *result = testblock(origChar);
+    origChar[1] = '1';
+    free(origChar);
+    NSAssert(result == ret1, @"Sync Char Arg Interceptor change return value failed!");
+}
+
+- (void)testAsyncCharArgInterceptor {
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Wait for block invoke."];
+    char *origChar = (char *)malloc(sizeof(char) * 7);
+    strcpy(origChar, "origin");
+    NSObject *(^testblock)(char *) = ^(char *a) {
+        NSAssert(strcmp(a, "hooked") == 0, @"Async Char Arg Interceptor change argument failed!");
+        return [NSObject new];
+    };
+    
+    [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __unused char *arg = *(char **)(invocation.args[1]);
+            NSAssert(strcmp(arg, "origin") == 0, @"Async Char Arg Interceptor wrong argument!");
+            *(void **)(invocation.args[1]) = (void *)("hooked");
+            completion();
+            *(void **)(invocation.retValue) = (__bridge void *)([NSObject new]);
+            [expectation fulfill];
+        });
+    }];
+    
+    NSObject *result = testblock(origChar);
+    origChar[1] = '1';
+    free(origChar);
     NSLog(@"result:%@", result);
+    
+    [self waitForExpectations:@[expectation] timeout:30];
 }
 
 - (void)testSyncStructReturnInterceptor {
