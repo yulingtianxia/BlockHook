@@ -134,8 +134,6 @@ NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
     
 [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
-        NSAssert(arg == testArg, @"Async Interceptor wrong argument!");
         *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
         completion();
     });
