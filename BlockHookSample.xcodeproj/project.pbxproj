@@ -10,6 +10,15 @@
 		A41F8F782282F70900EF6553 /* BlockHookSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */; };
 		A4399BB2226A20BC00BF15CA /* BlockHookSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */; };
 		A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A45C5EB622EF4C7D00EEBED2 /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
+		A45C5EBF22EF4CEA00EEBED2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A45C5EBE22EF4CEA00EEBED2 /* AppDelegate.m */; };
+		A45C5EC222EF4CEA00EEBED2 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A45C5EC122EF4CEA00EEBED2 /* ViewController.m */; };
+		A45C5EC522EF4CEA00EEBED2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A45C5EC322EF4CEA00EEBED2 /* Main.storyboard */; };
+		A45C5EC722EF4CEC00EEBED2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A45C5EC622EF4CEC00EEBED2 /* Assets.xcassets */; };
+		A45C5ECA22EF4CEC00EEBED2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A45C5EC922EF4CEC00EEBED2 /* main.m */; };
+		A45C5ECE22EF4E1C00EEBED2 /* BlockHook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E7321D2261EA22003D7063 /* BlockHook.framework */; };
+		A45C5ECF22EF4E1C00EEBED2 /* BlockHook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A4E7321D2261EA22003D7063 /* BlockHook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A45C5EE122EF4EBD00EEBED2 /* BlockHookSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */; };
 		A4619AF92264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
 		A4619AFA2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
 		A4619AFB2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */; };
@@ -95,6 +104,20 @@
 			remoteGlobalIDString = A4E7325A2263640D003D7063;
 			remoteInfo = "BlockHookSample macOS";
 		};
+		A45C5ED022EF4E1C00EEBED2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A46E6BF320446489000D1DAA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A4E7321C2261EA22003D7063;
+			remoteInfo = "BlockHook tvOS";
+		};
+		A45C5EDC22EF4E7A00EEBED2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A46E6BF320446489000D1DAA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A45C5EBA22EF4CEA00EEBED2;
+			remoteInfo = "BlockHookSample tvOS";
+		};
 		A4E7320B2261E70C003D7063 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A46E6BF320446489000D1DAA /* Project object */;
@@ -112,6 +135,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		A45C5ED222EF4E1C00EEBED2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A45C5ECF22EF4E1C00EEBED2 /* BlockHook.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4E7320D2261E70C003D7063 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -141,6 +175,16 @@
 		A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHookSampleTests.m; sourceTree = "<group>"; };
 		A4399BB3226A20BC00BF15CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4399BBD226A277300BF15CA /* BlockHookSample macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BlockHookSample macOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A45C5EBB22EF4CEA00EEBED2 /* BlockHookSample tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BlockHookSample tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A45C5EBD22EF4CEA00EEBED2 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		A45C5EBE22EF4CEA00EEBED2 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		A45C5EC022EF4CEA00EEBED2 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		A45C5EC122EF4CEA00EEBED2 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		A45C5EC422EF4CEA00EEBED2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A45C5EC622EF4CEC00EEBED2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A45C5EC822EF4CEC00EEBED2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A45C5EC922EF4CEC00EEBED2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A45C5ED722EF4E7A00EEBED2 /* BlockHookSample tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BlockHookSample tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4619AED2264BC1C00A01C0B /* ffitarget_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_arm64.h; sourceTree = "<group>"; };
 		A4619AEE2264BC1C00A01C0B /* ffitarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget.h; sourceTree = "<group>"; };
 		A4619AEF2264BC1C00A01C0B /* ffi_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_arm.h; sourceTree = "<group>"; };
@@ -196,6 +240,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A4399BBA226A277300BF15CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A45C5EB822EF4CEA00EEBED2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A45C5ECE22EF4E1C00EEBED2 /* BlockHook.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A45C5ED422EF4E7A00EEBED2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -262,6 +321,21 @@
 			path = BlockHookSampleTests;
 			sourceTree = "<group>";
 		};
+		A45C5EBC22EF4CEA00EEBED2 /* BlockHookSample tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				A45C5EBD22EF4CEA00EEBED2 /* AppDelegate.h */,
+				A45C5EBE22EF4CEA00EEBED2 /* AppDelegate.m */,
+				A45C5EC022EF4CEA00EEBED2 /* ViewController.h */,
+				A45C5EC122EF4CEA00EEBED2 /* ViewController.m */,
+				A45C5EC322EF4CEA00EEBED2 /* Main.storyboard */,
+				A45C5EC622EF4CEC00EEBED2 /* Assets.xcassets */,
+				A45C5EC822EF4CEC00EEBED2 /* Info.plist */,
+				A45C5EC922EF4CEC00EEBED2 /* main.m */,
+			);
+			path = "BlockHookSample tvOS";
+			sourceTree = "<group>";
+		};
 		A4619AEC2264BC1C00A01C0B /* libffi */ = {
 			isa = PBXGroup;
 			children = (
@@ -287,6 +361,7 @@
 				A4619AEC2264BC1C00A01C0B /* libffi */,
 				A46E6C14204464B7000D1DAA /* BlockHook */,
 				A46E6BFD2044648A000D1DAA /* BlockHookSample iOS */,
+				A45C5EBC22EF4CEA00EEBED2 /* BlockHookSample tvOS */,
 				A4E7325C2263640D003D7063 /* BlockHookSample macOS */,
 				A4399BB0226A20BC00BF15CA /* BlockHookSampleTests */,
 				A46E6BFC2044648A000D1DAA /* Products */,
@@ -305,6 +380,8 @@
 				A4619B222264C40100A01C0B /* BlockHook.framework */,
 				A4399BAF226A20BC00BF15CA /* BlockHookSample iOSTests.xctest */,
 				A4399BBD226A277300BF15CA /* BlockHookSample macOSTests.xctest */,
+				A45C5EBB22EF4CEA00EEBED2 /* BlockHookSample tvOS.app */,
+				A45C5ED722EF4E7A00EEBED2 /* BlockHookSample tvOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -481,6 +558,43 @@
 			productReference = A4399BBD226A277300BF15CA /* BlockHookSample macOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A45C5EBA22EF4CEA00EEBED2 /* BlockHookSample tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A45C5ECB22EF4CEC00EEBED2 /* Build configuration list for PBXNativeTarget "BlockHookSample tvOS" */;
+			buildPhases = (
+				A45C5EB722EF4CEA00EEBED2 /* Sources */,
+				A45C5EB822EF4CEA00EEBED2 /* Frameworks */,
+				A45C5EB922EF4CEA00EEBED2 /* Resources */,
+				A45C5ED222EF4E1C00EEBED2 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A45C5ED122EF4E1C00EEBED2 /* PBXTargetDependency */,
+			);
+			name = "BlockHookSample tvOS";
+			productName = "BlockHookSample tvOS";
+			productReference = A45C5EBB22EF4CEA00EEBED2 /* BlockHookSample tvOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A45C5ED622EF4E7A00EEBED2 /* BlockHookSample tvOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A45C5EDE22EF4E7A00EEBED2 /* Build configuration list for PBXNativeTarget "BlockHookSample tvOSTests" */;
+			buildPhases = (
+				A45C5ED322EF4E7A00EEBED2 /* Sources */,
+				A45C5ED422EF4E7A00EEBED2 /* Frameworks */,
+				A45C5ED522EF4E7A00EEBED2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A45C5EDD22EF4E7A00EEBED2 /* PBXTargetDependency */,
+			);
+			name = "BlockHookSample tvOSTests";
+			productName = "BlockHookSample tvOSTests";
+			productReference = A45C5ED722EF4E7A00EEBED2 /* BlockHookSample tvOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A4619B212264C40100A01C0B /* BlockHook watchOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A4619B272264C40200A01C0B /* Build configuration list for PBXNativeTarget "BlockHook watchOS" */;
@@ -610,6 +724,15 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = A4E7325A2263640D003D7063;
 					};
+					A45C5EBA22EF4CEA00EEBED2 = {
+						CreatedOnToolsVersion = 10.3;
+						ProvisioningStyle = Automatic;
+					};
+					A45C5ED622EF4E7A00EEBED2 = {
+						CreatedOnToolsVersion = 10.3;
+						ProvisioningStyle = Automatic;
+						TestTargetID = A45C5EBA22EF4CEA00EEBED2;
+					};
 					A4619B212264C40100A01C0B = {
 						CreatedOnToolsVersion = 10.2;
 						ProvisioningStyle = Automatic;
@@ -650,6 +773,7 @@
 			projectRoot = "";
 			targets = (
 				A46E6BFA2044648A000D1DAA /* BlockHookSample iOS */,
+				A45C5EBA22EF4CEA00EEBED2 /* BlockHookSample tvOS */,
 				A4E7325A2263640D003D7063 /* BlockHookSample macOS */,
 				A4F558872064EE2A00497FFE /* BlockHook iOS */,
 				A4E731FD2261E5A8003D7063 /* BlockHook macOS */,
@@ -657,6 +781,7 @@
 				A4619B212264C40100A01C0B /* BlockHook watchOS */,
 				A4399BAE226A20BC00BF15CA /* BlockHookSample iOSTests */,
 				A4399BBC226A277300BF15CA /* BlockHookSample macOSTests */,
+				A45C5ED622EF4E7A00EEBED2 /* BlockHookSample tvOSTests */,
 			);
 		};
 /* End PBXProject section */
@@ -670,6 +795,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A4399BBB226A277300BF15CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A45C5EB922EF4CEA00EEBED2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A45C5EC722EF4CEC00EEBED2 /* Assets.xcassets in Resources */,
+				A45C5EC522EF4CEA00EEBED2 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A45C5ED522EF4E7A00EEBED2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -742,6 +883,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A45C5EB722EF4CEA00EEBED2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A45C5EC222EF4CEA00EEBED2 /* ViewController.m in Sources */,
+				A45C5ECA22EF4CEC00EEBED2 /* main.m in Sources */,
+				A45C5EBF22EF4CEA00EEBED2 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A45C5ED322EF4E7A00EEBED2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A45C5EE122EF4EBD00EEBED2 /* BlockHookSampleTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4619B1E2264C40100A01C0B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -771,6 +930,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A45C5EB622EF4C7D00EEBED2 /* BlockHook.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -805,6 +965,16 @@
 			target = A4E7325A2263640D003D7063 /* BlockHookSample macOS */;
 			targetProxy = A4399BC2226A277300BF15CA /* PBXContainerItemProxy */;
 		};
+		A45C5ED122EF4E1C00EEBED2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A4E7321C2261EA22003D7063 /* BlockHook tvOS */;
+			targetProxy = A45C5ED022EF4E1C00EEBED2 /* PBXContainerItemProxy */;
+		};
+		A45C5EDD22EF4E7A00EEBED2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A45C5EBA22EF4CEA00EEBED2 /* BlockHookSample tvOS */;
+			targetProxy = A45C5EDC22EF4E7A00EEBED2 /* PBXContainerItemProxy */;
+		};
 		A4E7320C2261E70C003D7063 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A4F558872064EE2A00497FFE /* BlockHook iOS */;
@@ -818,6 +988,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		A45C5EC322EF4CEA00EEBED2 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A45C5EC422EF4CEA00EEBED2 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 		A46E6C042044648A000D1DAA /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -920,6 +1098,84 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlockHookSample macOS.app/Contents/MacOS/BlockHookSample macOS";
+			};
+			name = Release;
+		};
+		A45C5ECC22EF4CEC00EEBED2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				INFOPLIST_FILE = "BlockHookSample tvOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		A45C5ECD22EF4CEC00EEBED2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				INFOPLIST_FILE = "BlockHookSample tvOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		A45C5EDF22EF4E7A00EEBED2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				INFOPLIST_FILE = BlockHookSampleTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yulingtianxia.BlockHookSample-tvOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlockHookSample tvOS.app/BlockHookSample tvOS";
+				TVOS_DEPLOYMENT_TARGET = 12.4;
+			};
+			name = Debug;
+		};
+		A45C5EE022EF4E7A00EEBED2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = D3RCVUP6VH;
+				INFOPLIST_FILE = BlockHookSampleTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yulingtianxia.BlockHookSample-tvOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlockHookSample tvOS.app/BlockHookSample tvOS";
+				TVOS_DEPLOYMENT_TARGET = 12.4;
 			};
 			name = Release;
 		};
@@ -1380,6 +1636,24 @@
 			buildConfigurations = (
 				A4399BC5226A277300BF15CA /* Debug */,
 				A4399BC6226A277300BF15CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A45C5ECB22EF4CEC00EEBED2 /* Build configuration list for PBXNativeTarget "BlockHookSample tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A45C5ECC22EF4CEC00EEBED2 /* Debug */,
+				A45C5ECD22EF4CEC00EEBED2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A45C5EDE22EF4E7A00EEBED2 /* Build configuration list for PBXNativeTarget "BlockHookSample tvOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A45C5EDF22EF4E7A00EEBED2 /* Debug */,
+				A45C5EE022EF4E7A00EEBED2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
