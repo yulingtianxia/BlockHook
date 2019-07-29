@@ -40,8 +40,8 @@ Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockH
 
 ## 🔮 Example
 
-BlockHook needs libffi, which supports iOS and macOS.
-You can run `BlockHookSample iOS` or `BlockHookSample macOS` target.
+BlockHook needs libffi, which supports iOS, tvOS and macOS.
+You can run `BlockHookSample iOS`, `BlockHookSample tvOS` or `BlockHookSample macOS` target.
 
 ## 🐒 How to use
 
