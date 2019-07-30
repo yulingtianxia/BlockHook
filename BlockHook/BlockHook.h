@@ -25,14 +25,17 @@ NS_ASSUME_NONNULL_BEGIN
  Token for hook.
  */
 @property (nonatomic, readonly, weak) BHToken *token;
+
 /**
  Arguments of invoking the block. Need type casting.
  */
 @property (nonatomic, readonly) void *_Nullable *_Null_unspecified args;
+
 /**
  Return value of invoking the block. Need type casting.
  */
 @property (nonatomic, nullable, readonly) void *retValue;
+
 /**
  Mode you want to insert your custom logic: Before, Instead, After OR Dead.
  This is NOT a bit mask. Just check equality.
@@ -43,6 +46,12 @@ NS_ASSUME_NONNULL_BEGIN
  YES if the receiver has retained its arguments, NO otherwise.
  */
 @property (nonatomic, getter=isArgumentsRetained, readonly) BOOL argumentsRetained;
+
+/**
+ The block's method signature.
+ */
+@property (nonatomic, strong, readonly) NSMethodSignature *methodSignature;
+
 /**
  Invoke original implementation of the block.
  */

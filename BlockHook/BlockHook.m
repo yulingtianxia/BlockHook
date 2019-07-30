@@ -301,6 +301,11 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     }
 }
 
+- (NSMethodSignature *)methodSignature
+{
+    return self.token.originalBlockSignature;
+}
+
 - (void)retainArguments
 {
     if (!self.isArgumentsRetained) {
