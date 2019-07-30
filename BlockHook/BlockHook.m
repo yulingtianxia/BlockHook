@@ -242,7 +242,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 @property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableData *dataArgs;
 @property (nonatomic) NSMutableData *dataRet;
-@property (nonatomic) NSMutableArray *retainList;
+@property (nonatomic) NSMutableDictionary *retainMap;
 @property (nonatomic, getter=isArgumentsRetained, readwrite) BOOL argumentsRetained;
 @property (nonatomic) dispatch_queue_t argumentsRetainedQueue;
 @property (nonatomic) NSUInteger numberOfRealArgs;
@@ -310,20 +310,20 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 {
     if (!self.isArgumentsRetained) {
         self.dataArgs = [NSMutableData dataWithLength:self.numberOfRealArgs * sizeof(void *)];
-        self.retainList = [NSMutableArray array];
+        self.retainMap = [NSMutableDictionary dictionaryWithCapacity:self.numberOfRealArgs + 1];
         void **args = [self.dataArgs mutableBytes];
         for (NSUInteger idx = 0; idx < self.numberOfRealArgs; idx++) {
             const char *type = NULL;
             if (self.token.hasStret) {
                 if (idx == 0) {
-                    type = self.token.originalBlockSignature.methodReturnType;
+                    type = self.methodSignature.methodReturnType;
                 }
                 else {
-                    type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx - 1];
+                    type = [self.methodSignature getArgumentTypeAtIndex:idx - 1];
                 }
             }
             else {
-                type = [self.token.originalBlockSignature getArgumentTypeAtIndex:idx];
+                type = [self.methodSignature getArgumentTypeAtIndex:idx];
             }
             
             NSUInteger argSize;
@@ -331,7 +331,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
             void *argBuf = malloc(argSize);
             memcpy(argBuf, self.realArgs[idx], argSize);
             args[idx] = argBuf;
-            [self _retainPointer:args[idx] encode:type];
+            [self _retainPointer:args[idx] encode:type key:@(idx)];
         }
         self.realArgs = args;
         if (self.token.hasStret) {
@@ -339,11 +339,11 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
             self.retValue = *((void **)args[0]);
         }
         else {
-            NSUInteger retSize = self.token.originalBlockSignature.methodReturnLength;
+            NSUInteger retSize = self.methodSignature.methodReturnLength;
             self.dataRet = [NSMutableData dataWithLength:sizeof(retSize)];
             void *ret = [self.dataRet mutableBytes];
             memcpy(ret, self.retValue, retSize);
-            [self _retainPointer:ret encode:self.token.originalBlockSignature.methodReturnType];
+            [self _retainPointer:ret encode:self.methodSignature.methodReturnType key:@-1];
             self.args = args;
             self.retValue = ret;
             self.realRetValue = ret;
@@ -353,31 +353,72 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     }
 }
 
+- (void)getReturnValue:(void *)retLoc
+{
+    NSUInteger retSize = self.methodSignature.methodReturnLength;
+    memcpy(retLoc, self.retValue, retSize);
+}
+
+- (void)setReturnValue:(void *)retLoc
+{
+    NSUInteger retSize = self.methodSignature.methodReturnLength;
+    BOOL result = [self _retainPointer:retLoc encode:self.methodSignature.methodReturnType key:@-1];
+    if (!result) {
+        memcpy(self.retValue, retLoc, retSize);
+    }
+}
+
+- (void)getArgument:(void *)argumentLocation atIndex:(NSInteger)idx
+{
+    void *arg = self.args + idx;
+    assert(arg);
+    const char *type = [self.methodSignature getArgumentTypeAtIndex:idx];
+    NSUInteger argSize;
+    NSGetSizeAndAlignment(type, &argSize, NULL);
+    memcpy(argumentLocation, arg, argSize);
+}
+
+- (void)setArgument:(void *)argumentLocation atIndex:(NSInteger)idx
+{
+    void *arg = self.args + idx;
+    assert(arg);
+    const char *type = [self.methodSignature getArgumentTypeAtIndex:idx];
+    NSUInteger argSize;
+    NSGetSizeAndAlignment(type, &argSize, NULL);
+    BOOL result = [self _retainPointer:argumentLocation encode:type key:@(idx)];
+    if (!result) {
+        memcpy(arg, argumentLocation, argSize);
+    }
+}
+
 #pragma mark - Private Helper
 
-- (void)_retainPointer:(void **)pointer encode:(const char *)encode
+- (BOOL)_retainPointer:(void **)pointer encode:(const char *)encode key:(NSNumber *)key
 {
     void *p = *pointer;
     if (p == NULL) {
-        return;
+        return NO;
     }
     if (encode[0] == '@') {
         id arg = (__bridge id)p;
         if (strcmp(encode, "@?") == 0) {
-            [self.retainList addObject:[arg copy]];
+            self.retainMap[key] = [arg copy];
         }
         else {
-            [self.retainList addObject:arg];
+            self.retainMap[key] = arg;
         }
+        return YES;
     }
     else if (encode[0] == '*') {
         char *arg = p;
         NSMutableData *data = [NSMutableData dataWithLength:sizeof(char) * strlen(arg)];
-        [self.retainList addObject:data];
+        self.retainMap[key] = data;
         char *str = [data mutableBytes];
         strcpy(str, arg);
         *pointer = str;
+        return YES;
     }
+    return NO;
 }
 
 @end

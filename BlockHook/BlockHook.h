@@ -62,6 +62,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)retainArguments;
 
+- (void)getReturnValue:(void *)retLoc;
+- (void)setReturnValue:(void *)retLoc;
+
+- (void)getArgument:(void *)argumentLocation atIndex:(NSInteger)idx;
+- (void)setArgument:(void *)argumentLocation atIndex:(NSInteger)idx;
+
 @end
 
 @interface BHToken : NSObject
