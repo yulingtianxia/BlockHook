@@ -370,7 +370,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 - (void)getArgument:(void *)argumentLocation atIndex:(NSInteger)idx
 {
-    void *arg = self.args + idx;
+    void *arg = self.args[idx];
     assert(arg);
     const char *type = [self.methodSignature getArgumentTypeAtIndex:idx];
     NSUInteger argSize;
@@ -380,7 +380,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 - (void)setArgument:(void *)argumentLocation atIndex:(NSInteger)idx
 {
-    void *arg = self.args + idx;
+    void *arg = self.args[idx];
     assert(arg);
     const char *type = [self.methodSignature getArgumentTypeAtIndex:idx];
     NSUInteger argSize;

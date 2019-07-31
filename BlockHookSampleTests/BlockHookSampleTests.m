@@ -97,7 +97,10 @@ struct TestStruct _testRect;
     
     [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
         // Hook 改参数
-        (*(struct TestStruct *)(invocation.args[1])).a = 100;
+        struct TestStruct arg;
+        [invocation getArgument:&arg atIndex:1];
+        arg.a = 100;
+        [invocation setArgument:&arg atIndex:1];
     }];
     StructReturnBlock(_testRect);
 }
