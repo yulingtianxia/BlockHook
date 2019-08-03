@@ -67,25 +67,27 @@ int(^block)(int x, int y) = ^int(int x, int y) {
 };
     
 BHToken *token = [block block_hookWithMode:BlockHookModeDead|BlockHookModeBefore|BlockHookModeInstead|BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y) {
-    NSLog(@"block dead! token:%@", invocation.token);
+    int ret = 0;
+    [invocation getReturnValue:&ret];
     switch (invocation.mode) {
         case BlockHookModeBefore:
-            // BHToken has to be the first arg.
+            // BHInvocation has to be the first arg.
             NSLog(@"hook before block! invocation:%@", invocation);
             break;
         case BlockHookModeInstead:
             [invocation invokeOriginalBlock];
-            NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
+            NSLog(@"let me see original result: %d", ret);
             // change the block imp and result
-            *(int *)(invocation.retValue) = x * y;
+            ret = x * y;
+            [invocation setReturnValue:&ret];
             NSLog(@"hook instead: '+' -> '*'");
             break;
         case BlockHookModeAfter:
             // print args and result
-            NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(invocation.retValue));
+            NSLog(@"hook after block! %d * %d = %d", x, y, ret);
             break;
         case BlockHookModeDead:
-            // BHToken is the only arg.
+            // BHInvocation is the only arg.
             NSLog(@"block dead! token:%@", invocation.token);
             break;
         default:
@@ -135,7 +137,10 @@ NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
     
 [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+        NSObject * __unsafe_unretained arg;
+        [invocation getArgument:&arg atIndex:1];
+        NSLog(@"Original argument:%@", arg);
+        [invocation setArgument:(void *)&testArg1 atIndex:1];
         completion();
     });
 }];

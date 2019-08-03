@@ -242,6 +242,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 @property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableData *dataArgs;
 @property (nonatomic) NSMutableData *dataRet;
+@property (nonatomic) NSMutableDictionary *mallocMap;
 @property (nonatomic) NSMutableDictionary *retainMap;
 @property (nonatomic, getter=isArgumentsRetained, readwrite) BOOL argumentsRetained;
 @property (nonatomic) dispatch_queue_t argumentsRetainedQueue;
@@ -291,14 +292,6 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (void)invokeOriginalBlock
 {
     [self.token invokeOriginalBlockWithArgs:self.realArgs retValue:self.realRetValue];
-    if (self.isArgumentsRetained) {
-        for (NSUInteger idx = 0; idx < self.numberOfRealArgs; idx++) {
-            void *argBuf = self.realArgs[idx];
-            if (argBuf != NULL) {
-                free(argBuf);
-            }
-        }
-    }
 }
 
 - (NSMethodSignature *)methodSignature
@@ -311,7 +304,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     if (!self.isArgumentsRetained) {
         self.dataArgs = [NSMutableData dataWithLength:self.numberOfRealArgs * sizeof(void *)];
         self.retainMap = [NSMutableDictionary dictionaryWithCapacity:self.numberOfRealArgs + 1];
-        void **args = [self.dataArgs mutableBytes];
+        self.mallocMap = [NSMutableDictionary dictionaryWithCapacity:self.numberOfRealArgs + 1];
+        void **args = self.dataArgs.mutableBytes;
         for (NSUInteger idx = 0; idx < self.numberOfRealArgs; idx++) {
             const char *type = NULL;
             if (self.token.hasStret) {
@@ -328,7 +322,9 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
             
             NSUInteger argSize;
             NSGetSizeAndAlignment(type, &argSize, NULL);
-            void *argBuf = malloc(argSize);
+            NSMutableData *argData = [NSMutableData dataWithLength:argSize];
+            self.mallocMap[@(idx)] = argData;
+            void *argBuf = argData.mutableBytes;
             memcpy(argBuf, self.realArgs[idx], argSize);
             args[idx] = argBuf;
             [self _retainPointer:args[idx] encode:type key:@(idx)];
@@ -339,10 +335,14 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
             self.retValue = *((void **)args[0]);
         }
         else {
+            self.dataRet = [NSMutableData dataWithLength:sizeof(void *)];
+            void *ret = self.dataRet.mutableBytes;
             NSUInteger retSize = self.methodSignature.methodReturnLength;
-            self.dataRet = [NSMutableData dataWithLength:sizeof(retSize)];
-            void *ret = [self.dataRet mutableBytes];
-            memcpy(ret, self.retValue, retSize);
+            NSMutableData *retData = [NSMutableData dataWithLength:retSize];
+            self.mallocMap[@-1] = retData;
+            void *retBuf = retData.mutableBytes;
+            memcpy(retBuf, self.retValue, retSize);
+            ret = retBuf;
             [self _retainPointer:ret encode:self.methodSignature.methodReturnType key:@-1];
             self.args = args;
             self.retValue = ret;
@@ -355,23 +355,31 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 - (void)getReturnValue:(void *)retLoc
 {
+    if (!retLoc || !self.retValue) {
+        return;
+    }
     NSUInteger retSize = self.methodSignature.methodReturnLength;
     memcpy(retLoc, self.retValue, retSize);
 }
 
 - (void)setReturnValue:(void *)retLoc
 {
-    NSUInteger retSize = self.methodSignature.methodReturnLength;
-    BOOL result = [self _retainPointer:retLoc encode:self.methodSignature.methodReturnType key:@-1];
-    if (!result) {
-        memcpy(self.retValue, retLoc, retSize);
+    if (!retLoc || !self.retValue) {
+        return;
     }
+    NSUInteger retSize = self.methodSignature.methodReturnLength;
+    if (self.isArgumentsRetained) {
+        [self _retainPointer:retLoc encode:self.methodSignature.methodReturnType key:@-1];
+    }
+    memcpy(self.retValue, retLoc, retSize);
 }
 
 - (void)getArgument:(void *)argumentLocation atIndex:(NSInteger)idx
 {
+    if (!argumentLocation || !self.args || !self.args[idx]) {
+        return;
+    }
     void *arg = self.args[idx];
-    assert(arg);
     const char *type = [self.methodSignature getArgumentTypeAtIndex:idx];
     NSUInteger argSize;
     NSGetSizeAndAlignment(type, &argSize, NULL);
@@ -380,15 +388,17 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 - (void)setArgument:(void *)argumentLocation atIndex:(NSInteger)idx
 {
+    if (!argumentLocation || !self.args || !self.args[idx]) {
+        return;
+    }
     void *arg = self.args[idx];
-    assert(arg);
     const char *type = [self.methodSignature getArgumentTypeAtIndex:idx];
     NSUInteger argSize;
     NSGetSizeAndAlignment(type, &argSize, NULL);
-    BOOL result = [self _retainPointer:argumentLocation encode:type key:@(idx)];
-    if (!result) {
-        memcpy(arg, argumentLocation, argSize);
+    if (self.isArgumentsRetained) {
+        [self _retainPointer:argumentLocation encode:type key:@(idx)];
     }
+    memcpy(arg, argumentLocation, argSize);
 }
 
 #pragma mark - Private Helper
@@ -396,7 +406,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (BOOL)_retainPointer:(void **)pointer encode:(const char *)encode key:(NSNumber *)key
 {
     void *p = *pointer;
-    if (p == NULL) {
+    if (!p) {
         return NO;
     }
     if (encode[0] == '@') {
@@ -413,7 +423,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         char *arg = p;
         NSMutableData *data = [NSMutableData dataWithLength:sizeof(char) * strlen(arg)];
         self.retainMap[key] = data;
-        char *str = [data mutableBytes];
+        char *str = data.mutableBytes;
         strcpy(str, arg);
         *pointer = str;
         return YES;
@@ -585,7 +595,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 {
     NSMutableData *data = [NSMutableData dataWithLength:howmuch];
     [self.allocations addObject:data];
-    return [data mutableBytes];
+    return data.mutableBytes;
 }
 
 - (ffi_type *)_ffiTypeForStructEncode:(const char *)str

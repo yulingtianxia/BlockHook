@@ -66,7 +66,10 @@ struct TestStruct _testRect;
     };
     
     [StructReturnBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x){
-        (*(struct TestStruct *)(invocation.retValue)).a = 100;
+        struct TestStruct ret;
+        [invocation getReturnValue:&ret];
+        ret.a = 100;
+        [invocation setReturnValue:&ret];
         NSAssert(x == 8, @"Wrong arg!");
     }];
     
@@ -82,7 +85,10 @@ struct TestStruct _testRect;
     };
     
     [StructReturnBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation){
-        (**(struct TestStruct **)(invocation.retValue)).a = 100;
+        struct TestStruct *ret;
+        [invocation getReturnValue:&ret];
+        ret->a = 100;
+        [invocation setReturnValue:&ret];
     }];
     
     __unused struct TestStruct *result = StructReturnBlock();
@@ -114,7 +120,10 @@ struct TestStruct _testRect;
     
     [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, CGRect test){
         // Hook 改参数
-        (*(CGRect *)(invocation.args[1])).origin.x = 100;
+        CGRect arg;
+        [invocation getArgument:&arg atIndex:1];
+        arg.origin.x = 100;
+        [invocation setArgument:&arg atIndex:1];
     }];
     StructReturnBlock((CGRect){1,2,3,4});
 }
@@ -127,7 +136,10 @@ struct TestStruct _testRect;
     
     [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
         // Hook 改参数
-        (**(struct TestStruct **)(invocation.args[1])).a = 100;
+        struct TestStruct *arg;
+        [invocation getArgument:&arg atIndex:1];
+        arg->a = 100;
+        [invocation setArgument:&arg atIndex:1];
     }];
     StructReturnBlock(&_testRect);
 }
@@ -153,7 +165,7 @@ struct TestStruct _testRect;
     };
     const char *fakeResult = "lalalala";
     [protocolBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, id<CALayerDelegate> delegate, int(^block)(int x, int y)){
-        *(const char **)(invocation.retValue) = fakeResult;
+        [invocation setReturnValue:(void *)&fakeResult];
     }];
     id z = [NSObject new];
     __unused const char *result = protocolBlock(z, block);
@@ -170,15 +182,18 @@ struct TestStruct _testRect;
     };
     
     __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation){
-        // BHToken is the only arg.
+        // BHInvocation is the only arg.
         NSLog(@"block dead! token:%@", invocation.token);
     }];
     
     BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y){
         [invocation invokeOriginalBlock];
-        NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
+        int ret = 0;
+        [invocation getReturnValue:&ret];
+        NSLog(@"let me see original result: %d", ret);
         // change the block imp and result
-        *(int *)(invocation.retValue) = x * y;
+        ret = x * y;
+        [invocation setReturnValue:&ret];
         NSLog(@"hook instead: '+' -> '*'");
     }];
     
@@ -186,11 +201,13 @@ struct TestStruct _testRect;
     
     __unused BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y){
         // print args and result
-        NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(invocation.retValue));
+        int ret = 0;
+        [invocation getReturnValue:&ret];
+        NSLog(@"hook after block! %d * %d = %d", x, y, ret);
     }];
     
     __unused BHToken *tokenBefore = [block block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation){
-        // BHToken has to be the first arg.
+        // BHInvocation has to be the first arg.
         NSLog(@"hook before block! invocation:%@", invocation);
     }];
     
@@ -217,25 +234,30 @@ struct TestStruct _testRect;
     };
     
     [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation){
-        // BHToken is the only arg.
+        // BHInvocation is the only arg.
         NSLog(@"block dead! token:%@", invocation.token);
     }];
     
     [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y){
         [invocation invokeOriginalBlock];
-        NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
+        int ret = 0;
+        [invocation getReturnValue:&ret];
+        NSLog(@"let me see original result: %d", ret);
         // change the block imp and result
-        *(int *)(invocation.retValue) = x * y;
+        ret = x * y;
+        [invocation setReturnValue:&ret];
         NSLog(@"hook instead: '+' -> '*'");
     }];
     
     [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y){
         // print args and result
-        NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(invocation.retValue));
+        int ret = 0;
+        [invocation getReturnValue:&ret];
+        NSLog(@"hook after block! %d * %d = %d", x, y, ret);
     }];
     
     [block block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation){
-        // BHToken has to be the first arg.
+        // BHInvocation has to be the first arg.
         NSLog(@"hook before block! invocation:%@", invocation);
     }];
     
@@ -262,7 +284,7 @@ struct TestStruct _testRect;
     };
     
     __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation, int a){
-        // BHToken is the only arg.
+        // BHInvocation is the only arg.
         NSLog(@"block dead! token:%@", invocation.token);
         NSAssert(a == 0, @"Overstep args for DeadMode not pass!.");
     }];
@@ -271,9 +293,12 @@ struct TestStruct _testRect;
     
     __unused BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y, int a){
         [invocation invokeOriginalBlock];
-        NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
+        int ret = 0;
+        [invocation getReturnValue:&ret];
+        NSLog(@"let me see original result: %d", ret);
         // change the block imp and result
-        *(int *)(invocation.retValue) = x * y;
+        ret = x * y;
+        [invocation setReturnValue:&ret];
         NSLog(@"hook instead: '+' -> '*'");
         NSAssert(a == 0, @"Overstep args for DeadMode not pass!.");
     }];
@@ -310,24 +335,27 @@ struct TestStruct _testRect;
     };
     
     BHToken *token = [block block_hookWithMode:BlockHookModeDead|BlockHookModeBefore|BlockHookModeInstead|BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y) {
+        int ret = 0;
+        [invocation getReturnValue:&ret];
         switch (invocation.mode) {
             case BlockHookModeBefore:
-                // BHToken has to be the first arg.
+                // BHInvocation has to be the first arg.
                 NSLog(@"hook before block! invocation:%@", invocation);
                 break;
             case BlockHookModeInstead:
                 [invocation invokeOriginalBlock];
-                NSLog(@"let me see original result: %d", *(int *)(invocation.retValue));
+                NSLog(@"let me see original result: %d", ret);
                 // change the block imp and result
-                *(int *)(invocation.retValue) = x * y;
+                ret = x * y;
+                [invocation setReturnValue:&ret];
                 NSLog(@"hook instead: '+' -> '*'");
                 break;
             case BlockHookModeAfter:
                 // print args and result
-                NSLog(@"hook after block! %d * %d = %d", x, y, *(int *)(invocation.retValue));
+                NSLog(@"hook after block! %d * %d = %d", x, y, ret);
                 break;
             case BlockHookModeDead:
-                // BHToken is the only arg.
+                // BHInvocation is the only arg.
                 NSLog(@"block dead! token:%@", invocation.token);
                 break;
             default:
@@ -358,11 +386,12 @@ struct TestStruct _testRect;
     };
     
     [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
-        __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+        NSObject * __unsafe_unretained arg;
+        [invocation getArgument:&arg atIndex:1];
         NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
-        *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+        [invocation setArgument:(void *)&testArg1 atIndex:1];
         completion();
-        *(void **)(invocation.retValue) = (__bridge void *)ret1;
+        [invocation setReturnValue:(void *)&ret1];
     }];
     
     NSObject *result = testblock(testArg);
@@ -382,11 +411,13 @@ struct TestStruct _testRect;
     
     [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+            NSObject * __unsafe_unretained arg;
+            [invocation getArgument:&arg atIndex:1];
             NSAssert(arg == testArg, @"Async Interceptor wrong argument!");
-            *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+            [invocation setArgument:(void *)&testArg1 atIndex:1];
             completion();
-            *(void **)(invocation.retValue) = (__bridge void *)([NSObject new]);
+            NSObject *ret = [NSObject new];
+            [invocation setReturnValue:(void *)&ret];
             [expectation fulfill];
         });
     }];
@@ -407,14 +438,16 @@ struct TestStruct _testRect;
     };
     
     [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
-        __unused char *arg = *(char **)(invocation.args[1]);
+        char *arg;
+        [invocation getArgument:&arg atIndex:1];
         NSAssert(strcmp(arg, "origin") == 0, @"Sync Char Arg Interceptor wrong argument!");
-        *(void **)(invocation.args[1]) = (void *)("hooked");
+        char *hooked = "hooked";
+        [invocation setArgument:(void *)&hooked atIndex:1];
         completion();
-        *(void **)(invocation.retValue) = (__bridge void *)ret1;
+        [invocation setReturnValue:(void *)&ret1];
     }];
     
-    NSObject *result = testblock(origChar);
+    __unused NSObject *result = testblock(origChar);
     origChar[1] = '1';
     free(origChar);
     NSAssert(result == ret1, @"Sync Char Arg Interceptor change return value failed!");
@@ -431,11 +464,14 @@ struct TestStruct _testRect;
     
     [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            __unused char *arg = *(char **)(invocation.args[1]);
+            char *arg;
+            [invocation getArgument:&arg atIndex:1];
             NSAssert(strcmp(arg, "origin") == 0, @"Async Char Arg Interceptor wrong argument!");
-            *(void **)(invocation.args[1]) = (void *)("hooked");
+            char *hooked = "hooked";
+            [invocation setArgument:(void *)&hooked atIndex:1];
             completion();
-            *(void **)(invocation.retValue) = (__bridge void *)([NSObject new]);
+            NSObject *ret = [NSObject new];
+            [invocation setReturnValue:(void *)&ret];
             [expectation fulfill];
         });
     }];
@@ -461,11 +497,15 @@ struct TestStruct _testRect;
     };
     
     [StructReturnBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
-        __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+        NSObject * __unsafe_unretained arg;
+        [invocation getArgument:&arg atIndex:1];
         NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
-        *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+        [invocation setArgument:(void *)&testArg1 atIndex:1];
         completion();
-        (*(struct TestStruct *)(invocation.retValue)).a = 100;
+        struct TestStruct ret;
+        [invocation getReturnValue:&ret];
+        ret.a = 100;
+        [invocation setReturnValue:&ret];
     }];
     
     __unused struct TestStruct result = StructReturnBlock(testArg);
@@ -486,11 +526,15 @@ struct TestStruct _testRect;
     
     [StructReturnBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            __unused NSObject *arg = (__bridge NSObject *)*(void **)(invocation.args[1]);
+            NSObject * __unsafe_unretained arg;
+            [invocation getArgument:&arg atIndex:1];
             NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
-            *(void **)(invocation.args[1]) = (__bridge void *)(testArg1);
+            [invocation setArgument:(void *)&testArg1 atIndex:1];
             completion();
-            (*(struct TestStruct *)(invocation.retValue)).a = 100;
+            struct TestStruct ret;
+            [invocation getReturnValue:&ret];
+            ret.a = 100;
+            [invocation setReturnValue:&ret];
             [expectation fulfill];
         });
     }];
