@@ -17,14 +17,6 @@
 
 Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockHook can run your code before/instead/after invoking a block. BlockHook can even notify you when a block dealloc. You can trace the whole lifecycle of a block using BlockHook!
 
-## 📚 Article
-
-- [Hook Objective-C Block with Libffi](http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/)
-- [BlockHook with Struct](http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/)
-- [BlockHook with Revocation](http://yulingtianxia.com/blog/2019/05/26/BlockHook-with-Revocation/)
-- [BlockHook with Private Data](http://yulingtianxia.com/blog/2019/06/19/BlockHook-with-Private-Data/)
-- [BlockHook with Invocation](http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/)
-
 ## 🌟 Features
 
 - [x] Easy to use. Keep your code clear.
@@ -207,6 +199,15 @@ After importing libffi, just add the two files `BlockHook.h/m` to your project.
 - If you **found a bug**, open an issue.
 - If you **have a feature request**, open an issue.
 - If you **want to contribute**, submit a pull request.
+
+## 📚 Article
+
+- [Hook Objective-C Block with Libffi](http://yulingtianxia.com/blog/2018/02/28/Hook-Objective-C-Block-with-Libffi/)
+- [BlockHook with Struct](http://yulingtianxia.com/blog/2019/04/27/BlockHook-with-Struct/)
+- [BlockHook with Revocation](http://yulingtianxia.com/blog/2019/05/26/BlockHook-with-Revocation/)
+- [BlockHook with Private Data](http://yulingtianxia.com/blog/2019/06/19/BlockHook-with-Private-Data/)
+- [BlockHook with Invocation(1)](http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/)
+- [BlockHook with Invocation(2)](http://yulingtianxia.com/blog/2019/08/11/BlockHook-with-Invocation-2/)
 
 ## 👨🏻‍💻 Author
 
