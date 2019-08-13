@@ -17,6 +17,8 @@
 
 Hook Objective-C blocks with libffi. It's a powerful AOP tool for blocks. BlockHook can run your code before/instead/after invoking a block. BlockHook can even notify you when a block dealloc. You can trace the whole lifecycle of a block using BlockHook!
 
+**Want to hook blocks passing to methods? Try [BlockTracker](https://github.com/yulingtianxia/BlockTracker)!**
+
 ## 🌟 Features
 
 - [x] Easy to use. Keep your code clear.
