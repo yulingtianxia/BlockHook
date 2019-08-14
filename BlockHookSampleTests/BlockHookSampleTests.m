@@ -95,20 +95,35 @@ struct TestStruct _testRect;
     NSAssert(result->a == 100, @"Modify return struct failed!");
 }
 
+- (void)testObjectArg {
+    NSObject *argOrig = [NSObject new];
+    NSObject *argFixed = [NSObject new];
+    void (^ObjectArgBlock)(NSObject *) = ^(NSObject *test)
+    {
+        NSAssert(test == argFixed, @"Modify struct member failed!");
+    };
+    
+    [ObjectArgBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, NSObject *test){
+        NSAssert(test == argOrig, @"Wrong arg!");
+        // Hook 改参数
+        [invocation setArgument:(void *)&argFixed atIndex:1];
+    }];
+    
+    ObjectArgBlock(argOrig);
+}
+
 - (void)testStructArg {
-    void (^StructReturnBlock)(struct TestStruct) = ^(struct TestStruct test)
+    void (^StructArgBlock)(struct TestStruct) = ^(struct TestStruct test)
     {
         NSAssert(test.a == 100, @"Modify struct member failed!");
     };
     
-    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
+    [StructArgBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
         // Hook 改参数
-        struct TestStruct arg;
-        [invocation getArgument:&arg atIndex:1];
-        arg.a = 100;
-        [invocation setArgument:&arg atIndex:1];
+        test.a = 100;
+        [invocation setArgument:&test atIndex:1];
     }];
-    StructReturnBlock(_testRect);
+    StructArgBlock(_testRect);
 }
 
 - (void)testCGRectArgAndRet {
@@ -120,10 +135,8 @@ struct TestStruct _testRect;
     
     [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, CGRect test){
         // Hook 改参数
-        CGRect arg;
-        [invocation getArgument:&arg atIndex:1];
-        arg.origin.x = 100;
-        [invocation setArgument:&arg atIndex:1];
+        test.origin.x = 100;
+        [invocation setArgument:&test atIndex:1];
     }];
     StructReturnBlock((CGRect){1,2,3,4});
 }
@@ -134,12 +147,10 @@ struct TestStruct _testRect;
         NSAssert(test->a == 100, @"Modify struct member failed!");
     };
     
-    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
+    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct *test){
         // Hook 改参数
-        struct TestStruct *arg;
-        [invocation getArgument:&arg atIndex:1];
-        arg->a = 100;
-        [invocation setArgument:&arg atIndex:1];
+        test->a = 100;
+        [invocation setArgument:&test atIndex:1];
     }];
     StructReturnBlock(&_testRect);
 }
