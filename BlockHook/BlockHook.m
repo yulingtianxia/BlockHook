@@ -407,7 +407,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     }
     if (encode[0] == '@') {
         id arg = (__bridge id)p;
-        if (strcmp(encode, "@?") == 0) {
+        if ([arg isKindOfClass:NSClassFromString(@"NSBlock")]) {
             self.retainMap[key] = [arg copy];
         }
         else {
