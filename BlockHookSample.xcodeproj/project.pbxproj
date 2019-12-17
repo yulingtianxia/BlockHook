@@ -46,9 +46,9 @@
 		A4619B112264BC1C00A01C0B /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF52264BC1C00A01C0B /* ffi_common.h */; };
 		A4619B122264BC1C00A01C0B /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF52264BC1C00A01C0B /* ffi_common.h */; };
 		A4619B132264BC1C00A01C0B /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF52264BC1C00A01C0B /* ffi_common.h */; };
-		A4619B142264BC1C00A01C0B /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi.a */; };
-		A4619B152264BC1C00A01C0B /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi.a */; };
-		A4619B162264BC1C00A01C0B /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi.a */; };
+		A4619B142264BC1C00A01C0B /* libffi_bh.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi_bh.a */; };
+		A4619B152264BC1C00A01C0B /* libffi_bh.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi_bh.a */; };
+		A4619B162264BC1C00A01C0B /* libffi_bh.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi_bh.a */; };
 		A4619B172264BC1C00A01C0B /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF72264BC1C00A01C0B /* ffi.h */; };
 		A4619B182264BC1C00A01C0B /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF72264BC1C00A01C0B /* ffi.h */; };
 		A4619B192264BC1C00A01C0B /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF72264BC1C00A01C0B /* ffi.h */; };
@@ -56,7 +56,7 @@
 		A4619B1B2264BC1C00A01C0B /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
 		A4619B1C2264BC1C00A01C0B /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
 		A4619B2A2264C74800A01C0B /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A4619B2C2264C76E00A01C0B /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi.a */; };
+		A4619B2C2264C76E00A01C0B /* libffi_bh.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4619AF62264BC1C00A01C0B /* libffi_bh.a */; };
 		A46E6C002044648A000D1DAA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6BFF2044648A000D1DAA /* AppDelegate.m */; };
 		A46E6C032044648A000D1DAA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C022044648A000D1DAA /* ViewController.m */; };
 		A46E6C062044648A000D1DAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A46E6C042044648A000D1DAA /* Main.storyboard */; };
@@ -194,7 +194,7 @@
 		A4619AF32264BC1C00A01C0B /* ffitarget_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_arm.h; sourceTree = "<group>"; };
 		A4619AF42264BC1C00A01C0B /* ffitarget_i386.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_i386.h; sourceTree = "<group>"; };
 		A4619AF52264BC1C00A01C0B /* ffi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_common.h; sourceTree = "<group>"; };
-		A4619AF62264BC1C00A01C0B /* libffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libffi.a; sourceTree = "<group>"; };
+		A4619AF62264BC1C00A01C0B /* libffi_bh.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libffi_bh.a; sourceTree = "<group>"; };
 		A4619AF72264BC1C00A01C0B /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
 		A4619AF82264BC1C00A01C0B /* ffi_arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_arm64.h; sourceTree = "<group>"; };
 		A4619B222264C40100A01C0B /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -212,10 +212,7 @@
 		A46E6C16204467F4000D1DAA /* BlockHook.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHook.m; sourceTree = "<group>"; };
 		A4E731F72261E360003D7063 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4E731FE2261E5A8003D7063 /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4E732122261E814003D7063 /* ffi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = ffi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4E732142261E8C5003D7063 /* libffi.a */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libffi.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E7321D2261EA22003D7063 /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4E732252261EA62003D7063 /* libffi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libffi.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E7325B2263640D003D7063 /* BlockHookSample macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BlockHookSample macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E7325D2263640D003D7063 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A4E7325E2263640D003D7063 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -226,8 +223,6 @@
 		A4E732682263640E003D7063 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4E732692263640E003D7063 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A4E7326B2263640E003D7063 /* BlockHookSampleMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BlockHookSampleMac.entitlements; sourceTree = "<group>"; };
-		A4E7327522636633003D7063 /* ffi.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = ffi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4F557BE2060ED0A00497FFE /* libffi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libffi.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4F558882064EE2A00497FFE /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -265,7 +260,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4619B2C2264C76E00A01C0B /* libffi.a in Frameworks */,
+				A4619B2C2264C76E00A01C0B /* libffi_bh.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,7 +276,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4619B152264BC1C00A01C0B /* libffi.a in Frameworks */,
+				A4619B152264BC1C00A01C0B /* libffi_bh.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,7 +284,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4619B162264BC1C00A01C0B /* libffi.a in Frameworks */,
+				A4619B162264BC1C00A01C0B /* libffi_bh.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,7 +300,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4619B142264BC1C00A01C0B /* libffi.a in Frameworks */,
+				A4619B142264BC1C00A01C0B /* libffi_bh.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,7 +343,7 @@
 				A4619AF32264BC1C00A01C0B /* ffitarget_arm.h */,
 				A4619AF42264BC1C00A01C0B /* ffitarget_i386.h */,
 				A4619AF52264BC1C00A01C0B /* ffi_common.h */,
-				A4619AF62264BC1C00A01C0B /* libffi.a */,
+				A4619AF62264BC1C00A01C0B /* libffi_bh.a */,
 				A4619AF72264BC1C00A01C0B /* ffi.h */,
 				A4619AF82264BC1C00A01C0B /* ffi_arm64.h */,
 			);
@@ -431,11 +426,6 @@
 		A4F557BC2060ED0A00497FFE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A4E7327522636633003D7063 /* ffi.dylib */,
-				A4E732252261EA62003D7063 /* libffi.a */,
-				A4E732142261E8C5003D7063 /* libffi.a */,
-				A4E732122261E814003D7063 /* ffi.dylib */,
-				A4F557BE2060ED0A00497FFE /* libffi.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
