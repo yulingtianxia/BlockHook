@@ -760,7 +760,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     ffi_type **argTypes;
     ffi_type *returnType;
     struct _BHBlock *bh_block = (__bridge void *)self.block;
-    if ((bh_block->flags & BLOCK_HAS_STRET)) {
+    if (bh_block->flags & BLOCK_HAS_STRET) {
         argTypes = [self _typesWithEncodeString:str getCount:&argCount startIndex:0];
         if (!argTypes) { // Error!
             return -1;
@@ -768,8 +768,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         argTypes[0] = &ffi_type_pointer;
         returnType = &ffi_type_void;
         self.stret = YES;
-    }
-    else {
+    } else {
         argTypes = [self _argsWithEncodeString:str getCount:&argCount];
         if (!argTypes) { // Error!
             return -1;
