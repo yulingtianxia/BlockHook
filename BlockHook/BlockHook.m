@@ -291,12 +291,10 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
             if (self.token.hasStret) {
                 if (idx == 0) {
                     type = self.methodSignature.methodReturnType;
-                }
-                else {
+                } else {
                     type = [self.methodSignature getArgumentTypeAtIndex:idx - 1];
                 }
-            }
-            else {
+            } else {
                 type = [self.methodSignature getArgumentTypeAtIndex:idx];
             }
             args[idx] = [self _copyPointer:self.realArgs[idx] encode:type key:@(idx)];
@@ -306,8 +304,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         if (self.token.hasStret) {
             self.args = args + 1;
             self.retValue = *((void **)args[0]);
-        }
-        else {
+        } else {
             void *ret = [self _copyPointer:self.retValue encode:self.methodSignature.methodReturnType key:@-1];
             [self _retainPointer:ret encode:self.methodSignature.methodReturnType key:@-1];
             self.args = args;
@@ -384,12 +381,10 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         id arg = (__bridge id)p;
         if ([arg isKindOfClass:NSClassFromString(@"NSBlock")]) {
             self.retainMap[key] = [arg copy];
-        }
-        else {
+        } else {
             self.retainMap[key] = arg;
         }
-    }
-    else if (encode[0] == '*') {
+    } else if (encode[0] == '*') {
         char *arg = p;
         NSMutableData *data = [NSMutableData dataWithLength:sizeof(char) * strlen(arg)];
         self.retainMap[key] = data;
@@ -503,8 +498,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
                     if (last) { // remove middle token
                         last.originInvoke = self.originInvoke;
                         last.next = nil;
-                    }
-                    else { // remove head(current) token
+                    } else { // remove head(current) token
                         BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
                         [lock lock];
                         ((__bridge struct _BHBlock *)self.block)->invoke = self.originInvoke;
@@ -528,8 +522,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         NSString *mangleName = self.next.mangleName;
         if (mangleName.length > 0) {
             _mangleName = mangleName;
-        }
-        else {
+        } else {
             Dl_info dlinfo;
             memset(&dlinfo, 0, sizeof(dlinfo));
             if (dladdr(self.originInvoke, &dlinfo) && dlinfo.dli_sname)
@@ -544,8 +537,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 - (void)invokeOriginalBlockWithArgs:(void **)args retValue:(void *)retValue {
     if (self.originInvoke) {
         ffi_call(&_cif, self.originInvoke, retValue, args);
-    }
-    else {
+    } else {
         NSLog(@"You had lost your originInvoke! Please check the order of removing tokens!");
     }
 }
@@ -581,18 +573,16 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 }
 
 #define SINT(type) do { \
-    if(str[0] == @encode(type)[0]) \
-    { \
-        if(sizeof(type) == 1) \
+    if (str[0] == @encode(type)[0]) { \
+        if(sizeof(type) == 1) { \
             return &ffi_type_sint8; \
-        else if(sizeof(type) == 2) \
+        } else if(sizeof(type) == 2) { \
             return &ffi_type_sint16; \
-        else if(sizeof(type) == 4) \
+        } else if(sizeof(type) == 4) { \
             return &ffi_type_sint32; \
-        else if(sizeof(type) == 8) \
+        } else if(sizeof(type) == 8) { \
             return &ffi_type_sint64; \
-        else \
-        { \
+        } else { \
             NSLog(@"Unknown size for type %s", #type); \
             abort(); \
         } \
@@ -600,18 +590,16 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 } while(0)
 
 #define UINT(type) do { \
-    if(str[0] == @encode(type)[0]) \
-    { \
-        if(sizeof(type) == 1) \
+    if (str[0] == @encode(type)[0]) { \
+        if (sizeof(type) == 1) { \
             return &ffi_type_uint8; \
-        else if(sizeof(type) == 2) \
+        } else if(sizeof(type) == 2) { \
             return &ffi_type_uint16; \
-        else if(sizeof(type) == 4) \
+        } else if(sizeof(type) == 4) { \
             return &ffi_type_uint32; \
-        else if(sizeof(type) == 8) \
+        } else if(sizeof(type) == 8) { \
             return &ffi_type_uint64; \
-        else \
-        { \
+        } else { \
             NSLog(@"Unknown size for type %s", #type); \
             abort(); \
         } \
@@ -697,8 +685,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
             ffi_type *argType = [self _ffiTypeForEncode:str];
             if (argType) {
                 argTypes[i] = argType;
-            }
-            else {
+            } else {
                 if (outCount) {
                     *outCount = -1;
                 }
