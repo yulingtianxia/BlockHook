@@ -37,16 +37,14 @@ struct TestStruct _testRect;
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-- (void)foo:(void(^)(void))block
-{
+- (void)foo:(void(^)(void))block {
     if (block) {
         block();
     }
 }
 
-- (void)performBlock:(void(^)(void))block
-{
-    BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeAfter usingBlock:^{
+- (void)performBlock:(void(^)(void))block {
+    BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^{
         NSLog(@"hook stack block succeed!");
     }];
     
@@ -55,7 +53,7 @@ struct TestStruct _testRect;
     }];
     
     [self foo:block];
-    [tokenInstead remove];
+    [tokenAfter remove];
 }
 
 - (void)testStructReturn {
@@ -70,11 +68,11 @@ struct TestStruct _testRect;
         [invocation getReturnValue:&ret];
         ret.a = 100;
         [invocation setReturnValue:&ret];
-        NSAssert(x == 8, @"Wrong arg!");
+        XCTAssert(x == 8, @"Wrong arg!");
     }];
     
     __unused struct TestStruct result = StructReturnBlock(8);
-    NSAssert(result.a == 100, @"Modify return struct failed!");
+    XCTAssert(result.a == 100, @"Modify return struct failed!");
 }
 
 - (void)testStructPointerReturn {
@@ -92,7 +90,7 @@ struct TestStruct _testRect;
     }];
     
     __unused struct TestStruct *result = StructReturnBlock();
-    NSAssert(result->a == 100, @"Modify return struct failed!");
+    XCTAssert(result->a == 100, @"Modify return struct failed!");
 }
 
 - (void)testObjectArg {
@@ -100,11 +98,11 @@ struct TestStruct _testRect;
     NSObject *argFixed = [NSObject new];
     void (^ObjectArgBlock)(NSObject *) = ^(NSObject *test)
     {
-        NSAssert(test == argFixed, @"Modify struct member failed!");
+        XCTAssert(test == argFixed, @"Modify struct member failed!");
     };
     
     [ObjectArgBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, NSObject *test){
-        NSAssert(test == argOrig, @"Wrong arg!");
+        XCTAssert(test == argOrig, @"Wrong arg!");
         // Hook 改参数
         [invocation setArgument:(void *)&argFixed atIndex:1];
     }];
@@ -115,7 +113,7 @@ struct TestStruct _testRect;
 - (void)testStructArg {
     void (^StructArgBlock)(struct TestStruct) = ^(struct TestStruct test)
     {
-        NSAssert(test.a == 100, @"Modify struct member failed!");
+        XCTAssert(test.a == 100, @"Modify struct member failed!");
     };
     
     [StructArgBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
@@ -129,7 +127,7 @@ struct TestStruct _testRect;
 - (void)testCGRectArgAndRet {
     CGRect (^StructReturnBlock)(CGRect) = ^(CGRect test)
     {
-        NSAssert(test.origin.x == 100, @"Modify struct member failed!");
+        XCTAssert(test.origin.x == 100, @"Modify struct member failed!");
         return test;
     };
     
@@ -144,7 +142,7 @@ struct TestStruct _testRect;
 - (void)testStructPointerArg {
     void (^StructReturnBlock)(struct TestStruct *) = ^(struct TestStruct *test)
     {
-        NSAssert(test->a == 100, @"Modify struct member failed!");
+        XCTAssert(test->a == 100, @"Modify struct member failed!");
     };
     
     [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct *test){
@@ -180,7 +178,7 @@ struct TestStruct _testRect;
     }];
     id z = [NSObject new];
     __unused const char *result = protocolBlock(z, block);
-    NSAssert(strcmp(result, fakeResult) == 0, @"Change const char * result failed!");
+    XCTAssert(strcmp(result, fakeResult) == 0, @"Change const char * result failed!");
 }
 
 - (void)testHookBlock {
@@ -208,7 +206,7 @@ struct TestStruct _testRect;
         NSLog(@"hook instead: '+' -> '*'");
     }];
     
-    NSAssert([tokenInstead.mangleName isEqualToString:@"__37-[BlockHookSampleTests testHookBlock]_block_invoke"], @"Wrong mangle name!");
+    XCTAssert([tokenInstead.mangleName isEqualToString:@"__37-[BlockHookSampleTests testHookBlock]_block_invoke"], @"Wrong mangle name!");
     
     __unused BHToken *tokenAfter = [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y){
         // print args and result
@@ -224,13 +222,13 @@ struct TestStruct _testRect;
     
     NSLog(@"hooked block");
     int ret = block(3, 5);
-    NSAssert(ret == 15, @"hook failed!");
+    XCTAssert(ret == 15, @"hook failed!");
     NSLog(@"hooked result:%d", ret);
     // remove token.
     [tokenInstead remove];
     NSLog(@"remove tokens, original block");
     ret = block(3, 5);
-    NSAssert(ret == 8, @"remove hook failed!");
+    XCTAssert(ret == 8, @"remove hook failed!");
     NSLog(@"original result:%d", ret);
     //        [tokenDead remove];
 }
@@ -274,19 +272,18 @@ struct TestStruct _testRect;
     
     NSLog(@"hooked block");
     int ret = block(3, 5);
-    NSAssert(ret == 15, @"hook failed!");
+    XCTAssert(ret == 15, @"hook failed!");
     NSLog(@"hooked result:%d", ret);
     // remove all tokens when you don't need.
     [block block_removeAllHook];
     NSLog(@"remove tokens, original block");
     ret = block(3, 5);
     NSLog(@"original result:%d", ret);
-    NSAssert(ret == 8, @"remove hook failed!");
-    NSAssert([block block_currentHookToken] == nil, @"remove all hook failed!");
+    XCTAssert(ret == 8, @"remove hook failed!");
+    XCTAssert([block block_currentHookToken] == nil, @"remove all hook failed!");
 }
 
-- (void)testOverstepArgs
-{
+- (void)testOverstepArgs {
     NSObject *z = NSObject.new;
     int(^block)(int x, int y) = ^int(int x, int y) {
         int result = x + y;
@@ -297,10 +294,10 @@ struct TestStruct _testRect;
     __unused BHToken *tokenDead = [block block_hookWithMode:BlockHookModeDead usingBlock:^(BHInvocation *invocation, int a){
         // BHInvocation is the only arg.
         NSLog(@"block dead! token:%@", invocation.token);
-        NSAssert(a == 0, @"Overstep args for DeadMode not pass!.");
+        XCTAssert(a == 0, @"Overstep args for DeadMode not pass!.");
     }];
     
-    NSAssert(tokenDead != nil, @"Overstep args for DeadMode not pass!.");
+    XCTAssert(tokenDead != nil, @"Overstep args for DeadMode not pass!.");
     
     __unused BHToken *tokenInstead = [block block_hookWithMode:BlockHookModeInstead usingBlock:^(BHInvocation *invocation, int x, int y, int a){
         [invocation invokeOriginalBlock];
@@ -311,10 +308,10 @@ struct TestStruct _testRect;
         ret = x * y;
         [invocation setReturnValue:&ret];
         NSLog(@"hook instead: '+' -> '*'");
-        NSAssert(a == 0, @"Overstep args for DeadMode not pass!.");
+        XCTAssert(a == 0, @"Overstep args for DeadMode not pass!.");
     }];
     
-    NSAssert(tokenInstead != nil, @"Overstep args for InsteadMode not pass!.");
+    XCTAssert(tokenInstead != nil, @"Overstep args for InsteadMode not pass!.");
     
     block(1, 2);
 }
@@ -331,7 +328,7 @@ struct TestStruct _testRect;
                     usingBlock:^(BHInvocation *invocation){
                         NSLog(@"dispatch_block_t: Hook After");
                     }];
-    NSAssert(token != nil, @"Hook dispatch_block_create not pass!.");
+    XCTAssert(token != nil, @"Hook dispatch_block_create not pass!.");
     dispatch_async(queue, block);
     [self waitForExpectations:@[expectation] timeout:30];
     dispatch_block_cancel(block);
@@ -376,13 +373,13 @@ struct TestStruct _testRect;
     
     NSLog(@"hooked block");
     int ret = block(3, 5);
-    NSAssert(ret == 15, @"hook failed!");
+    XCTAssert(ret == 15, @"hook failed!");
     NSLog(@"hooked result:%d", ret);
     // remove token.
     [token remove];
     NSLog(@"remove tokens, original block");
     ret = block(3, 5);
-    NSAssert(ret == 8, @"remove hook failed!");
+    XCTAssert(ret == 8, @"remove hook failed!");
     NSLog(@"original result:%d", ret);
 }
 
@@ -392,21 +389,21 @@ struct TestStruct _testRect;
     NSObject *testArg1 = [NSObject new];
     
     NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
-        NSAssert(a == testArg1, @"Sync Interceptor change argument failed!");
+        XCTAssert(a == testArg1, @"Sync Interceptor change argument failed!");
         return [NSObject new];
     };
     
     [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         NSObject * __unsafe_unretained arg;
         [invocation getArgument:&arg atIndex:1];
-        NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
+        XCTAssert(arg == testArg, @"Sync Interceptor wrong argument!");
         [invocation setArgument:(void *)&testArg1 atIndex:1];
         completion();
         [invocation setReturnValue:(void *)&ret1];
     }];
     
     NSObject *result = testblock(testArg);
-    NSAssert(result == ret1, @"Sync Interceptor change return value failed!");
+    XCTAssert(result == ret1, @"Sync Interceptor change return value failed!");
     NSLog(@"result:%@", result);
 }
 
@@ -416,7 +413,7 @@ struct TestStruct _testRect;
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Wait for block invoke."];
     
     NSObject *(^testblock)(NSObject *) = ^(NSObject *a) {
-        NSAssert(a == testArg1, @"Async Interceptor change argument failed!");
+        XCTAssert(a == testArg1, @"Async Interceptor change argument failed!");
         return [NSObject new];
     };
     
@@ -424,7 +421,7 @@ struct TestStruct _testRect;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             NSObject * __unsafe_unretained arg;
             [invocation getArgument:&arg atIndex:1];
-            NSAssert(arg == testArg, @"Async Interceptor wrong argument!");
+            XCTAssert(arg == testArg, @"Async Interceptor wrong argument!");
             [invocation setArgument:(void *)&testArg1 atIndex:1];
             completion();
             NSObject *ret = [NSObject new];
@@ -444,14 +441,14 @@ struct TestStruct _testRect;
     char *origChar = (char *)malloc(sizeof(char) * 7);
     strcpy(origChar, "origin");
     NSObject *(^testblock)(char *) = ^(char *a) {
-        NSAssert(strcmp(a, "hooked") == 0, @"Sync Char Arg Interceptor change argument failed!");
+        XCTAssert(strcmp(a, "hooked") == 0, @"Sync Char Arg Interceptor change argument failed!");
         return [NSObject new];
     };
     
     [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         char *arg;
         [invocation getArgument:&arg atIndex:1];
-        NSAssert(strcmp(arg, "origin") == 0, @"Sync Char Arg Interceptor wrong argument!");
+        XCTAssert(strcmp(arg, "origin") == 0, @"Sync Char Arg Interceptor wrong argument!");
         char *hooked = "hooked";
         [invocation setArgument:(void *)&hooked atIndex:1];
         completion();
@@ -461,7 +458,7 @@ struct TestStruct _testRect;
     __unused NSObject *result = testblock(origChar);
     origChar[1] = '1';
     free(origChar);
-    NSAssert(result == ret1, @"Sync Char Arg Interceptor change return value failed!");
+    XCTAssert(result == ret1, @"Sync Char Arg Interceptor change return value failed!");
 }
 
 - (void)testAsyncCharArgInterceptor {
@@ -469,7 +466,7 @@ struct TestStruct _testRect;
     char *origChar = (char *)malloc(sizeof(char) * 7);
     strcpy(origChar, "origin");
     NSObject *(^testblock)(char *) = ^(char *a) {
-        NSAssert(strcmp(a, "hooked") == 0, @"Async Char Arg Interceptor change argument failed!");
+        XCTAssert(strcmp(a, "hooked") == 0, @"Async Char Arg Interceptor change argument failed!");
         return [NSObject new];
     };
     
@@ -477,7 +474,7 @@ struct TestStruct _testRect;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             char *arg;
             [invocation getArgument:&arg atIndex:1];
-            NSAssert(strcmp(arg, "origin") == 0, @"Async Char Arg Interceptor wrong argument!");
+            XCTAssert(strcmp(arg, "origin") == 0, @"Async Char Arg Interceptor wrong argument!");
             char *hooked = "hooked";
             [invocation setArgument:(void *)&hooked atIndex:1];
             completion();
@@ -502,7 +499,7 @@ struct TestStruct _testRect;
     
     struct TestStruct (^StructReturnBlock)(NSObject *) = ^(NSObject *a)
     {
-        NSAssert(a == testArg1, @"Sync Struct Return Interceptor change argument failed!");
+        XCTAssert(a == testArg1, @"Sync Struct Return Interceptor change argument failed!");
         struct TestStruct result = _testRect;
         return result;
     };
@@ -510,7 +507,7 @@ struct TestStruct _testRect;
     [StructReturnBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         NSObject * __unsafe_unretained arg;
         [invocation getArgument:&arg atIndex:1];
-        NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
+        XCTAssert(arg == testArg, @"Sync Interceptor wrong argument!");
         [invocation setArgument:(void *)&testArg1 atIndex:1];
         completion();
         struct TestStruct ret;
@@ -520,7 +517,7 @@ struct TestStruct _testRect;
     }];
     
     __unused struct TestStruct result = StructReturnBlock(testArg);
-    NSAssert(result.a == 100, @"Sync Interceptor change return value failed!");
+    XCTAssert(result.a == 100, @"Sync Interceptor change return value failed!");
 }
 
 - (void)testAsyncStructReturnInterceptor {
@@ -530,7 +527,7 @@ struct TestStruct _testRect;
     
     struct TestStruct (^StructReturnBlock)(NSObject *) = ^(NSObject *a)
     {
-        NSAssert(a == testArg1, @"Sync Struct Return Interceptor change argument failed!");
+        XCTAssert(a == testArg1, @"Sync Struct Return Interceptor change argument failed!");
         struct TestStruct result = _testRect;
         return result;
     };
@@ -539,7 +536,7 @@ struct TestStruct _testRect;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             NSObject * __unsafe_unretained arg;
             [invocation getArgument:&arg atIndex:1];
-            NSAssert(arg == testArg, @"Sync Interceptor wrong argument!");
+            XCTAssert(arg == testArg, @"Sync Interceptor wrong argument!");
             [invocation setArgument:(void *)&testArg1 atIndex:1];
             completion();
             struct TestStruct ret;

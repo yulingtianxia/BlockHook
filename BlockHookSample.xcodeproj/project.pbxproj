@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A40C3FF2245DC9C000B912FF /* MRCTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40C3FF1245DC9C000B912FF /* MRCTests.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A40C3FF3245DCA3E00B912FF /* MRCTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40C3FF1245DC9C000B912FF /* MRCTests.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A40C3FF4245DCA3F00B912FF /* MRCTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40C3FF1245DC9C000B912FF /* MRCTests.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		A41F8F782282F70900EF6553 /* BlockHookSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */; };
 		A4399BB2226A20BC00BF15CA /* BlockHookSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */; };
 		A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -171,6 +174,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A40C3FF1245DC9C000B912FF /* MRCTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MRCTests.m; sourceTree = "<group>"; };
 		A4399BAF226A20BC00BF15CA /* BlockHookSample iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BlockHookSample iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHookSampleTests.m; sourceTree = "<group>"; };
 		A4399BB3226A20BC00BF15CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -311,6 +315,7 @@
 			isa = PBXGroup;
 			children = (
 				A4399BB1226A20BC00BF15CA /* BlockHookSampleTests.m */,
+				A40C3FF1245DC9C000B912FF /* MRCTests.m */,
 				A4399BB3226A20BC00BF15CA /* Info.plist */,
 			);
 			path = BlockHookSampleTests;
@@ -861,6 +866,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A40C3FF2245DC9C000B912FF /* MRCTests.m in Sources */,
 				A4399BB2226A20BC00BF15CA /* BlockHookSampleTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -869,6 +875,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A40C3FF3245DCA3E00B912FF /* MRCTests.m in Sources */,
 				A41F8F782282F70900EF6553 /* BlockHookSampleTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -887,6 +894,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A40C3FF4245DCA3F00B912FF /* MRCTests.m in Sources */,
 				A45C5EE122EF4EBD00EEBED2 /* BlockHookSampleTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

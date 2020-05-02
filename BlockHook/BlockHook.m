@@ -30,8 +30,7 @@ typedef void(*BHBlockCopyFunction)(void *, const void *);
 typedef void(*BHBlockDisposeFunction)(const void *);
 typedef void(*BHBlockInvokeFunction)(void *, ...);
 
-struct _BHBlockDescriptor1
-{
+struct _BHBlockDescriptor1 {
     uintptr_t reserved;
     uintptr_t size;
 };
@@ -48,8 +47,7 @@ struct _BHBlockDescriptor3 {
     const char *layout;     // contents depend on BLOCK_HAS_EXTENDED_LAYOUT
 };
 
-struct _BHBlock
-{
+struct _BHBlock {
     void *isa;
     volatile int32_t flags; // contains ref count
     int32_t reserved;
@@ -63,21 +61,18 @@ static bool BlockHookModeContainsMode(BlockHookMode m1, BlockHookMode m2) {
     return ((m1 & m2) == m2);
 }
 
-__unused static struct _BHBlockDescriptor1 * _bh_Block_descriptor_1(struct _BHBlock *aBlock)
-{
+__unused static struct _BHBlockDescriptor1 * _bh_Block_descriptor_1(struct _BHBlock *aBlock) {
     return aBlock->descriptor;
 }
 
-__unused static struct _BHBlockDescriptor2 * _bh_Block_descriptor_2(struct _BHBlock *aBlock)
-{
+__unused static struct _BHBlockDescriptor2 * _bh_Block_descriptor_2(struct _BHBlock *aBlock) {
     if (! (aBlock->flags & BLOCK_HAS_COPY_DISPOSE)) return nil;
     uint8_t *desc = (uint8_t *)aBlock->descriptor;
     desc += sizeof(struct _BHBlockDescriptor1);
     return (struct _BHBlockDescriptor2 *)desc;
 }
 
-static struct _BHBlockDescriptor3 * _bh_Block_descriptor_3(struct _BHBlock *aBlock)
-{
+static struct _BHBlockDescriptor3 * _bh_Block_descriptor_3(struct _BHBlock *aBlock) {
     if (! (aBlock->flags & BLOCK_HAS_SIGNATURE)) return nil;
     uint8_t *desc = (uint8_t *)aBlock->descriptor;
     desc += sizeof(struct _BHBlockDescriptor1);
@@ -108,8 +103,7 @@ typedef struct dispatch_block_private_data_s *dispatch_block_private_data_t;
 
 DISPATCH_ALWAYS_INLINE
 static inline dispatch_block_private_data_t
-bh_dispatch_block_get_private_data(struct _BHBlock *block)
-{
+bh_dispatch_block_get_private_data(struct _BHBlock *block) {
     // Keep in sync with _dispatch_block_create implementation
     uint8_t *x = (uint8_t *)block;
     // x points to base of struct Block_layout
@@ -122,8 +116,7 @@ bh_dispatch_block_get_private_data(struct _BHBlock *block)
     return dbpd;
 }
 
-static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *lenp)
-{
+static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInteger *alignp, long *lenp) {
     const char *out = NSGetSizeAndAlignment(str, sizep, alignp);
     if (lenp) {
         *lenp = out - str;
@@ -137,19 +130,16 @@ static const char *BHSizeAndAlignment(const char *str, NSUInteger *sizep, NSUInt
     return out;
 }
 
-static int BHTypeCount(const char *str)
-{
+static int BHTypeCount(const char *str) {
     int typeCount = 0;
-    while(str && *str)
-    {
+    while(str && *str) {
         str = BHSizeAndAlignment(str, NULL, NULL, NULL);
         typeCount++;
     }
     return typeCount;
 }
 
-static const char *BHBlockTypeEncodeString(id blockObj)
-{
+static const char *BHBlockTypeEncodeString(id blockObj) {
     struct _BHBlock *block = (__bridge void *)blockObj;
     return _bh_Block_descriptor_3(block)->signature;
 }
@@ -164,8 +154,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @implementation BHLock
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         _semaphore = dispatch_semaphore_create(1);
@@ -173,13 +162,11 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return self;
 }
 
-- (void)lock
-{
+- (void)lock {
     dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
 }
 
-- (void)unlock
-{
+- (void)unlock {
     dispatch_semaphore_signal(self.semaphore);
 }
 
@@ -193,8 +180,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @implementation NSObject (BHLock)
 
-- (BHLock *)bh_lockForKey:(const void * _Nonnull)key
-{
+- (BHLock *)bh_lockForKey:(const void * _Nonnull)key {
     BHLock *lock = objc_getAssociatedObject(self, key);
     if (!lock) {
         lock = [BHLock new];
@@ -211,6 +197,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     void *_replacementInvoke;
     ffi_closure *_closure;
 }
+
 @property (nonatomic, readwrite) BlockHookMode mode;
 @property (nonatomic) NSMutableArray *allocations;
 @property (nonatomic, weak, readwrite) id block;
@@ -253,8 +240,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @synthesize argumentsRetained = _argumentsRetained;
 
-- (instancetype)initWithToken:(BHToken *)token
-{
+- (instancetype)initWithToken:(BHToken *)token {
     self = [super init];
     if (self) {
         _token = token;
@@ -270,8 +256,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 #pragma mark - getter&setter
 
-- (BOOL)isArgumentsRetained
-{
+- (BOOL)isArgumentsRetained {
     __block BOOL temp;
     dispatch_sync(self.argumentsRetainedQueue, ^{
         temp = self->_argumentsRetained;
@@ -279,8 +264,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return temp;
 }
 
-- (void)setArgumentsRetained:(BOOL)argumentsRetained
-{
+- (void)setArgumentsRetained:(BOOL)argumentsRetained {
     dispatch_barrier_async(self.argumentsRetainedQueue, ^{
         self->_argumentsRetained = argumentsRetained;
     });
@@ -288,18 +272,15 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 #pragma mark - Public Method
 
-- (void)invokeOriginalBlock
-{
+- (void)invokeOriginalBlock {
     [self.token invokeOriginalBlockWithArgs:self.realArgs retValue:self.realRetValue];
 }
 
-- (NSMethodSignature *)methodSignature
-{
+- (NSMethodSignature *)methodSignature {
     return self.token.originalBlockSignature;
 }
 
-- (void)retainArguments
-{
+- (void)retainArguments {
     if (!self.isArgumentsRetained) {
         self.dataArgs = [NSMutableData dataWithLength:self.numberOfRealArgs * sizeof(void *)];
         self.retainMap = [NSMutableDictionary dictionaryWithCapacity:self.numberOfRealArgs + 1];
@@ -338,8 +319,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     }
 }
 
-- (void)getReturnValue:(void *)retLoc
-{
+- (void)getReturnValue:(void *)retLoc {
     if (!retLoc || !self.retValue) {
         return;
     }
@@ -347,8 +327,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     memcpy(retLoc, self.retValue, retSize);
 }
 
-- (void)setReturnValue:(void *)retLoc
-{
+- (void)setReturnValue:(void *)retLoc {
     if (!retLoc || !self.retValue) {
         return;
     }
@@ -359,8 +338,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     memcpy(self.retValue, retLoc, retSize);
 }
 
-- (void)getArgument:(void *)argumentLocation atIndex:(NSInteger)idx
-{
+- (void)getArgument:(void *)argumentLocation atIndex:(NSInteger)idx {
     if (!argumentLocation || !self.args || !self.args[idx]) {
         return;
     }
@@ -371,8 +349,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     memcpy(argumentLocation, arg, argSize);
 }
 
-- (void)setArgument:(void *)argumentLocation atIndex:(NSInteger)idx
-{
+- (void)setArgument:(void *)argumentLocation atIndex:(NSInteger)idx {
     if (!argumentLocation || !self.args || !self.args[idx]) {
         return;
     }
@@ -388,8 +365,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 #pragma mark - Private Helper
 
-- (void *)_copyPointer:(void **)pointer encode:(const char *)encode key:(NSNumber *)key
-{
+- (void *)_copyPointer:(void **)pointer encode:(const char *)encode key:(NSNumber *)key {
     NSUInteger pointerSize;
     NSGetSizeAndAlignment(encode, &pointerSize, NULL);
     NSMutableData *pointerData = [NSMutableData dataWithLength:pointerSize];
@@ -399,8 +375,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return pointerBuf;
 }
 
-- (void)_retainPointer:(void **)pointer encode:(const char *)encode key:(NSNumber *)key
-{
+- (void)_retainPointer:(void **)pointer encode:(const char *)encode key:(NSNumber *)key {
     void *p = *pointer;
     if (!p) {
         return;
@@ -434,8 +409,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @implementation BHDealloc
 
-- (void)dealloc
-{
+- (void)dealloc {
     if (BlockHookModeContainsMode(self.token.mode, BlockHookModeDead)) {
         BHInvocation *invocation = nil;
         NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:self.token.aspectBlockSignature];
@@ -455,8 +429,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @synthesize next = _next;
 
-- (instancetype)initWithBlock:(id)block mode:(BlockHookMode)mode aspectBlockBlock:(id)aspectBlock
-{
+- (instancetype)initWithBlock:(id)block mode:(BlockHookMode)mode aspectBlockBlock:(id)aspectBlock {
     self = [super init];
     if (self) {
         _allocations = [[NSMutableArray alloc] init];
@@ -484,21 +457,20 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         bhDealloc.token = self;
         objc_setAssociatedObject(block, _replacementInvoke, bhDealloc, OBJC_ASSOCIATION_RETAIN);
         _mode = mode;
-        _aspectBlock = aspectBlock;
+        // If aspectBlock is a NSStackBlock and invoked asynchronously, it will cause a wild pointer. We copy it.
+        _aspectBlock = [aspectBlock copy];
     }
     return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     if (_closure) {
         ffi_closure_free(_closure);
         _closure = NULL;
     }
 }
 
-- (BHToken *)next
-{
+- (BHToken *)next {
     BHLock *lock = [self.block bh_lockForKey:@selector(next)];
     [lock lock];
     if (!_next) {
@@ -510,16 +482,14 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return result;
 }
 
-- (void)setNext:(BHToken *)next
-{
+- (void)setNext:(BHToken *)next {
     BHLock *lock = [self.block bh_lockForKey:@selector(next)];
     [lock lock];
     _next = next;
     [lock unlock];
 }
 
-- (BOOL)remove
-{
+- (BOOL)remove {
     if (self.isStackBlock) {
         NSLog(@"Can't remove token for StackBlock!");
         return NO;
@@ -553,8 +523,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return NO;
 }
 
-- (NSString *)mangleName
-{
+- (NSString *)mangleName {
     if (!_mangleName) {
         NSString *mangleName = self.next.mangleName;
         if (mangleName.length > 0) {
@@ -572,8 +541,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return _mangleName;
 }
 
-- (void)invokeOriginalBlockWithArgs:(void **)args retValue:(void *)retValue
-{
+- (void)invokeOriginalBlockWithArgs:(void **)args retValue:(void *)retValue {
     if (self.originInvoke) {
         ffi_call(&_cif, self.originInvoke, retValue, args);
     }
@@ -584,15 +552,13 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 #pragma mark - Private Method
 
-- (void *)_allocate:(size_t)howmuch
-{
+- (void *)_allocate:(size_t)howmuch {
     NSMutableData *data = [NSMutableData dataWithLength:howmuch];
     [self.allocations addObject:data];
     return data.mutableBytes;
 }
 
-- (ffi_type *)_ffiTypeForStructEncode:(const char *)str
-{
+- (ffi_type *)_ffiTypeForStructEncode:(const char *)str {
     NSUInteger size, align;
     long length;
     BHSizeAndAlignment(str, &size, &align, &length);
@@ -614,58 +580,57 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return structType;
 }
 
-- (ffi_type *)_ffiTypeForEncode:(const char *)str
-{
-    #define SINT(type) do { \
-        if(str[0] == @encode(type)[0]) \
+#define SINT(type) do { \
+    if(str[0] == @encode(type)[0]) \
+    { \
+        if(sizeof(type) == 1) \
+            return &ffi_type_sint8; \
+        else if(sizeof(type) == 2) \
+            return &ffi_type_sint16; \
+        else if(sizeof(type) == 4) \
+            return &ffi_type_sint32; \
+        else if(sizeof(type) == 8) \
+            return &ffi_type_sint64; \
+        else \
         { \
-            if(sizeof(type) == 1) \
-                return &ffi_type_sint8; \
-            else if(sizeof(type) == 2) \
-                return &ffi_type_sint16; \
-            else if(sizeof(type) == 4) \
-                return &ffi_type_sint32; \
-            else if(sizeof(type) == 8) \
-                return &ffi_type_sint64; \
-            else \
-            { \
-                NSLog(@"Unknown size for type %s", #type); \
-                abort(); \
-            } \
+            NSLog(@"Unknown size for type %s", #type); \
+            abort(); \
         } \
-    } while(0)
-    
-    #define UINT(type) do { \
-        if(str[0] == @encode(type)[0]) \
+    } \
+} while(0)
+
+#define UINT(type) do { \
+    if(str[0] == @encode(type)[0]) \
+    { \
+        if(sizeof(type) == 1) \
+            return &ffi_type_uint8; \
+        else if(sizeof(type) == 2) \
+            return &ffi_type_uint16; \
+        else if(sizeof(type) == 4) \
+            return &ffi_type_uint32; \
+        else if(sizeof(type) == 8) \
+            return &ffi_type_uint64; \
+        else \
         { \
-            if(sizeof(type) == 1) \
-                return &ffi_type_uint8; \
-            else if(sizeof(type) == 2) \
-                return &ffi_type_uint16; \
-            else if(sizeof(type) == 4) \
-                return &ffi_type_uint32; \
-            else if(sizeof(type) == 8) \
-                return &ffi_type_uint64; \
-            else \
-            { \
-                NSLog(@"Unknown size for type %s", #type); \
-                abort(); \
-            } \
+            NSLog(@"Unknown size for type %s", #type); \
+            abort(); \
         } \
-    } while(0)
-    
-    #define INT(type) do { \
-        SINT(type); \
-        UINT(unsigned type); \
-    } while(0)
-    
-    #define COND(type, name) do { \
-        if(str[0] == @encode(type)[0]) \
-        return &ffi_type_ ## name; \
-    } while(0)
-    
-    #define PTR(type) COND(type, pointer)
-    
+    } \
+} while(0)
+
+#define INT(type) do { \
+    SINT(type); \
+    UINT(unsigned type); \
+} while(0)
+
+#define COND(type, name) do { \
+    if(str[0] == @encode(type)[0]) \
+    return &ffi_type_ ## name; \
+} while(0)
+
+#define PTR(type) COND(type, pointer)
+
+- (ffi_type *)_ffiTypeForEncode:(const char *)str {
     SINT(_Bool);
     SINT(signed char);
     UINT(unsigned char);
@@ -707,25 +672,26 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return nil;
 }
 
-- (ffi_type **)_argsWithEncodeString:(const char *)str getCount:(int *)outCount
-{
+- (ffi_type **)_argsWithEncodeString:(const char *)str getCount:(int *)outCount {
     // 第一个是返回值，需要排除
     return [self _typesWithEncodeString:str getCount:outCount startIndex:1];
 }
 
-- (ffi_type **)_typesWithEncodeString:(const char *)str getCount:(int *)outCount startIndex:(int)start
-{
+- (ffi_type **)_typesWithEncodeString:(const char *)str
+                             getCount:(int *)outCount
+                           startIndex:(int)start {
     return [self _typesWithEncodeString:str getCount:outCount startIndex:start nullAtEnd:NO];
 }
 
-- (ffi_type **)_typesWithEncodeString:(const char *)str getCount:(int *)outCount startIndex:(int)start nullAtEnd:(BOOL)nullAtEnd
-{
+- (ffi_type **)_typesWithEncodeString:(const char *)str
+                             getCount:(int *)outCount
+                           startIndex:(int)start
+                            nullAtEnd:(BOOL)nullAtEnd {
     int argCount = BHTypeCount(str) - start;
     ffi_type **argTypes = [self _allocate:(argCount + (nullAtEnd ? 1 : 0)) * sizeof(*argTypes)];
     
     int i = -start;
-    while(str && *str)
-    {
+    while(str && *str) {
         const char *next = BHSizeAndAlignment(str, NULL, NULL, NULL);
         if (i >= 0 && i < argCount) {
             ffi_type *argType = [self _ffiTypeForEncode:str];
@@ -754,8 +720,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return argTypes;
 }
 
-- (int)_prepCIF:(ffi_cif *)cif withEncodeString:(const char *)str
-{
+- (int)_prepCIF:(ffi_cif *)cif withEncodeString:(const char *)str {
     int argCount;
     ffi_type **argTypes;
     ffi_type *returnType;
@@ -786,8 +751,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return argCount;
 }
 
-- (void)_prepClosure
-{
+- (void)_prepClosure {
     ffi_status status = ffi_prep_closure_loc(_closure, &_cif, BHFFIClosureFunc, (__bridge void *)(self), _replacementInvoke);
     if (status != FFI_OK) {
         NSLog(@"ffi_prep_closure returned %d", (int)status);
@@ -802,8 +766,10 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     [lock unlock];
 }
 
-- (BOOL)invokeAspectBlockWithArgs:(void **)args retValue:(void *)retValue mode:(BlockHookMode)mode invocation:(BHInvocation *)invocation
-{
+- (BOOL)invokeAspectBlockWithArgs:(void **)args
+                         retValue:(void *)retValue
+                             mode:(BlockHookMode)mode
+                       invocation:(BHInvocation *)invocation {
     if (!self.isStackBlock && !self.block) {
         return NO;
     }
@@ -828,8 +794,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 @implementation NSObject (BlockHook)
 
-- (BOOL)block_checkValid
-{
+- (BOOL)block_checkValid {
     BOOL valid = [self isKindOfClass:NSClassFromString(@"NSBlock")];
     if (!valid) {
         NSLog(@"Not Block! %@", self);
@@ -838,8 +803,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 }
 
 - (BHToken *)block_hookWithMode:(BlockHookMode)mode
-                     usingBlock:(id)aspectBlock
-{
+                     usingBlock:(id)aspectBlock {
     if (!aspectBlock || ![self block_checkValid]) {
         return nil;
     }
@@ -856,8 +820,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return [[BHToken alloc] initWithBlock:self mode:mode aspectBlockBlock:aspectBlock];
 }
 
-- (void)block_removeAllHook
-{
+- (void)block_removeAllHook {
     if (![self block_checkValid]) {
         return;
     }
@@ -867,8 +830,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     }
 }
 
-- (BHToken *)block_currentHookToken
-{
+- (BHToken *)block_currentHookToken {
     if (![self block_checkValid]) {
         return nil;
     }
@@ -881,8 +843,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return bhDealloc.token;
 }
 
-- (void *)block_currentInvokeFunction
-{
+- (void *)block_currentInvokeFunction {
     struct _BHBlock *bh_block = (__bridge void *)self;
     BHLock *lock = [self bh_lockForKey:_cmd];
     [lock lock];
@@ -907,8 +868,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
 
 #pragma mark - Hook Function
 
-static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata)
-{
+static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata) {
     BHToken *token = (__bridge BHToken *)(userdata);
     void *userRet = ret;
     void **userArgs = args;
