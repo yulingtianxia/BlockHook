@@ -99,17 +99,24 @@ struct dispatch_block_private_data_s {
 
 typedef struct dispatch_block_private_data_s *dispatch_block_private_data_t;
 
+static dispatch_block_t blockWithPrivateData;
 #define DISPATCH_BLOCK_PRIVATE_DATA_MAGIC 0xD159B10C // 0xDISPatch_BLOCk
 
 DISPATCH_ALWAYS_INLINE
 static inline dispatch_block_private_data_t
 bh_dispatch_block_get_private_data(struct _BHBlock *block) {
+    if (!blockWithPrivateData) {
+        blockWithPrivateData = dispatch_block_create(0, ^{});
+    }
+    if (block->invoke != ((__bridge struct _BHBlock *)blockWithPrivateData)->invoke) {
+        return nil;
+    }
     // Keep in sync with _dispatch_block_create implementation
-    uint8_t *x = (uint8_t *)block;
-    // x points to base of struct Block_layout
-    x += sizeof(struct _BHBlock);
-    // x points to base of captured dispatch_block_private_data_s object
-    dispatch_block_private_data_t dbpd = (dispatch_block_private_data_t)x;
+    uint8_t *privateData = (uint8_t *)block;
+    // privateData points to base of struct Block_layout
+    privateData += sizeof(struct _BHBlock);
+    // privateData points to base of captured dispatch_block_private_data_s object
+    dispatch_block_private_data_t dbpd = (dispatch_block_private_data_t)privateData;
     if (dbpd->dbpd_magic != DISPATCH_BLOCK_PRIVATE_DATA_MAGIC) {
         return nil;
     }

@@ -325,9 +325,9 @@ struct TestStruct _testRect;
     });
     
     __unused BHToken *token = [block block_hookWithMode:BlockHookModeAfter
-                    usingBlock:^(BHInvocation *invocation){
-                        NSLog(@"dispatch_block_t: Hook After");
-                    }];
+                                             usingBlock:^(BHInvocation *invocation){
+                                                NSLog(@"dispatch_block_t: Hook After");
+                                             }];
     XCTAssert(token != nil, @"Hook dispatch_block_create not pass!.");
     dispatch_async(queue, block);
     [self waitForExpectations:@[expectation] timeout:30];
@@ -342,7 +342,8 @@ struct TestStruct _testRect;
         return result;
     };
     
-    BHToken *token = [block block_hookWithMode:BlockHookModeDead|BlockHookModeBefore|BlockHookModeInstead|BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x, int y) {
+    BHToken *token = [block block_hookWithMode:BlockHookModeDead|BlockHookModeBefore|BlockHookModeInstead|BlockHookModeAfter
+                                    usingBlock:^(BHInvocation *invocation, int x, int y) {
         int ret = 0;
         [invocation getReturnValue:&ret];
         switch (invocation.mode) {

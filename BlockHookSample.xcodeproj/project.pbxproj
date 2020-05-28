@@ -1360,6 +1360,7 @@
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "BlockHookSample iOS/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1375,6 +1376,7 @@
 				DEVELOPMENT_TEAM = D3RCVUP6VH;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "BlockHookSample iOS/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yulingtianxia.BlockHookSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
