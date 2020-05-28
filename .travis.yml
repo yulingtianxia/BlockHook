@@ -1,15 +1,14 @@
-osx_image: xcode10.2
+osx_image: xcode11.3
 language: objective-c
 xcode_project: BlockHookSample
 xcode_scheme: BlockHook iOS
-xcode_sdk: iphoneos12.2
+xcode_sdk: iphoneos12.4
 env:
   global:
   - FRAMEWORK_NAME=BlockHook
 before_install:
 - brew update
 - brew outdated carthage || brew upgrade carthage
-before_script:
 before_deploy:
 - carthage build --no-skip-current
 - carthage archive $FRAMEWORK_NAME
