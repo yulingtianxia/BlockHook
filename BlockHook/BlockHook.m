@@ -11,6 +11,7 @@
 #import <objc/runtime.h>
 #import <dlfcn.h>
 #import <os/lock.h>
+#import <sys/mman.h>
 
 #if !__has_feature(objc_arc)
 #error
@@ -756,6 +757,13 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
     [lock lock];
     self.originInvoke = block->invoke;
+    void *addr = &(block->invoke);
+    size_t pageSize = sysconf(_SC_PAGESIZE);
+    void *pageStart = (void *)((intptr_t)addr & ~(pageSize - 1));
+    int ret = mprotect(pageStart, pageSize, PROT_READ|PROT_WRITE);
+    if (ret != 0) {
+        NSLog(@"[*] ret: %d, errno: %d, addr: %p", ret, errno, addr);
+    }
     block->invoke = _replacementInvoke;
     [lock unlock];
 }
