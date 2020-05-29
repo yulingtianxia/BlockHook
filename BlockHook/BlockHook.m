@@ -153,6 +153,43 @@ static const char *BHBlockTypeEncodeString(id blockObj) {
     return _bh_Block_descriptor_3(block)->signature;
 }
 
+static BOOL ProtectInvokeVMIfNeed(void *address) {
+    vm_address_t addr = (vm_address_t)address;
+    vm_size_t vmsize = 0;
+    mach_port_t object = 0;
+#if __LP64__
+    vm_region_basic_info_data_64_t info;
+    mach_msg_type_number_t infoCnt = VM_REGION_BASIC_INFO_COUNT_64;
+    kern_return_t ret = vm_region_64(mach_task_self(), &addr, &vmsize, VM_REGION_BASIC_INFO, (vm_region_info_t)&info, &infoCnt, &object);
+#else
+    vm_region_basic_info_data_t info;
+    mach_msg_type_number_t infoCnt = VM_REGION_BASIC_INFO_COUNT;
+    kern_return_t ret = vm_region(mach_task_self(), &addr, &vmsize, VM_REGION_BASIC_INFO, (vm_region_info_t)&info, &infoCnt, &object);
+#endif
+    if (ret != KERN_SUCCESS) {
+        NSLog(@"vm_region block invoke pointer failed! ret:%d, addr:%p", ret, address);
+        return NO;
+    }
+
+    if ((info.protection & VM_PROT_WRITE) == 0) {
+        ret = vm_protect(mach_task_self(), (vm_address_t)address, sizeof(address), false, VM_PROT_READ|VM_PROT_WRITE);
+        if (ret != KERN_SUCCESS) {
+            NSLog(@"vm_protect block invoke pointer failed! ret:%d, addr:%p", ret, address);
+            return NO;
+        }
+    }
+    return YES;
+}
+
+static BOOL ReplaceBlockInvoke(struct _BHBlock *block, void *replacement) {
+    BOOL protectResult = ProtectInvokeVMIfNeed(&(block->invoke));
+    if (!protectResult) {
+        return NO;
+    }
+    block->invoke = replacement;
+    return YES;
+}
+
 static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdata);
 
 @interface BHLock : NSObject<NSLocking>
@@ -456,7 +493,10 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
             self.stackBlock = YES;
         }
 
-        [self _prepClosure];
+        BOOL success = [self _prepClosure];
+        if (!success) {
+            return nil;
+        }
         BHDealloc *bhDealloc = [BHDealloc new];
         bhDealloc.token = self;
         objc_setAssociatedObject(block, _replacementInvoke, bhDealloc, OBJC_ASSOCIATION_RETAIN);
@@ -510,7 +550,7 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
                     } else { // remove head(current) token
                         BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
                         [lock lock];
-                        ((__bridge struct _BHBlock *)self.block)->invoke = self.originInvoke;
+                        ReplaceBlockInvoke(((__bridge struct _BHBlock *)self.block), self.originInvoke);
                         [lock unlock];
                     }
                     break;
@@ -747,29 +787,25 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     return argCount;
 }
 
-- (void)_prepClosure {
+- (BOOL)_prepClosure {
     ffi_status status = ffi_prep_closure_loc(_closure, &_cif, BHFFIClosureFunc, (__bridge void *)(self), _replacementInvoke);
     if (status != FFI_OK) {
-        NSLog(@"ffi_prep_closure returned %d", (int)status);
-        abort();
+        NSLog(@"Hook failed! ffi_prep_closure returned %d", (int)status);
+        return NO;
     }
     // exchange invoke func imp
     struct _BHBlock *block = (__bridge struct _BHBlock *)self.block;
     BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
     [lock lock];
     self.originInvoke = block->invoke;
-    if ([self.block isKindOfClass:NSClassFromString(@"__NSGlobalBlock__")]) {
-        kern_return_t ret = vm_protect(mach_task_self(),
-                                       (vm_address_t)&(block->invoke),
-                                       sizeof(block->invoke),
-                                       false,
-                                       VM_PROT_READ|VM_PROT_WRITE);
-        if (ret != KERN_SUCCESS) {
-            NSLog(@"vm_protect block invoke pointer failed! ret:%d, block:%@", ret, block);
-        }
+    BOOL success = ReplaceBlockInvoke(block, _replacementInvoke);
+    if (!success) {
+        NSLog(@"Hook failed! Replace invoke pointer failed. Block:%@", self.block);
+        [lock unlock];
+        return NO;
     }
-    block->invoke = _replacementInvoke;
     [lock unlock];
+    return YES;
 }
 
 - (BOOL)invokeAspectBlockWithArgs:(void **)args
