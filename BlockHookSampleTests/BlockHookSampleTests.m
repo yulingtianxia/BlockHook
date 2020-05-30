@@ -160,6 +160,12 @@ struct TestStruct _testRect;
     }];
 }
 
+- (void)testGlobalBlock {
+    [self performBlock:^{
+        NSLog(@"global block");
+    }];
+}
+
 - (void)testProtocol {
     int(^block)(int x, int y) = ^int(int x, int y) {
         int result = x + y;

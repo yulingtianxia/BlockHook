@@ -153,11 +153,11 @@ static const char *BHBlockTypeEncodeString(id blockObj) {
     return _bh_Block_descriptor_3(block)->signature;
 }
 
-static BOOL ProtectInvokeVMIfNeed(void *address) {
+static vm_prot_t ProtectInvokeVMIfNeed(void *address) {
     vm_address_t addr = (vm_address_t)address;
     vm_size_t vmsize = 0;
     mach_port_t object = 0;
-#if __LP64__
+#if defined(__LP64__) && __LP64__
     vm_region_basic_info_data_64_t info;
     mach_msg_type_number_t infoCnt = VM_REGION_BASIC_INFO_COUNT_64;
     kern_return_t ret = vm_region_64(mach_task_self(), &addr, &vmsize, VM_REGION_BASIC_INFO, (vm_region_info_t)&info, &infoCnt, &object);
@@ -168,25 +168,32 @@ static BOOL ProtectInvokeVMIfNeed(void *address) {
 #endif
     if (ret != KERN_SUCCESS) {
         NSLog(@"vm_region block invoke pointer failed! ret:%d, addr:%p", ret, address);
-        return NO;
+        return VM_PROT_NONE;
     }
-
-    if ((info.protection & VM_PROT_WRITE) == 0) {
-        ret = vm_protect(mach_task_self(), (vm_address_t)address, sizeof(address), false, VM_PROT_READ|VM_PROT_WRITE);
+    vm_prot_t protection = info.protection;
+    if ((protection&VM_PROT_WRITE) == 0) {
+        ret = vm_protect(mach_task_self(), (vm_address_t)address, sizeof(address), false, protection|VM_PROT_WRITE);
         if (ret != KERN_SUCCESS) {
-            NSLog(@"vm_protect block invoke pointer failed! ret:%d, addr:%p", ret, address);
-            return NO;
+            NSLog(@"vm_protect block invoke pointer VM_PROT_WRITE failed! ret:%d, addr:%p", ret, address);
+            return VM_PROT_NONE;
         }
     }
-    return YES;
+    return protection;
 }
 
 static BOOL ReplaceBlockInvoke(struct _BHBlock *block, void *replacement) {
-    BOOL protectResult = ProtectInvokeVMIfNeed(&(block->invoke));
-    if (!protectResult) {
+    void *address = &(block->invoke);
+    vm_prot_t origProtection = ProtectInvokeVMIfNeed(address);
+    if (origProtection == VM_PROT_NONE) {
         return NO;
     }
     block->invoke = replacement;
+    if ((origProtection&VM_PROT_WRITE) == 0) {
+        kern_return_t ret = vm_protect(mach_task_self(), (vm_address_t)address, sizeof(address), false, origProtection);
+        if (ret != KERN_SUCCESS) {
+            NSLog(@"vm_protect block invoke pointer REVERT failed! ret:%d, addr:%p", ret, address);
+        }
+    }
     return YES;
 }
 
@@ -550,7 +557,12 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
                     } else { // remove head(current) token
                         BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
                         [lock lock];
-                        ReplaceBlockInvoke(((__bridge struct _BHBlock *)self.block), self.originInvoke);
+                        BOOL success = ReplaceBlockInvoke(((__bridge struct _BHBlock *)self.block), self.originInvoke);
+                        if (!success) {
+                            NSLog(@"Remove failed! Replace invoke pointer failed. Block:%@", self.block);
+                            [lock unlock];
+                            return NO;
+                        }
                         [lock unlock];
                     }
                     break;
