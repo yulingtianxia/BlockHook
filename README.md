@@ -210,6 +210,7 @@ After importing libffi, just add the two files `BlockHook.h/m` to your project.
 - [BlockHook with Private Data](http://yulingtianxia.com/blog/2019/06/19/BlockHook-with-Private-Data/)
 - [BlockHook with Invocation(1)](http://yulingtianxia.com/blog/2019/07/27/BlockHook-with-Invocation/)
 - [BlockHook with Invocation(2)](http://yulingtianxia.com/blog/2019/08/11/BlockHook-with-Invocation-2/)
+- [BlockHook and Memory Safety](http://yulingtianxia.com/blog/2020/05/30/BlockHook-and-Memory-Safety/)
 
 ## 👨🏻‍💻 Author
 
