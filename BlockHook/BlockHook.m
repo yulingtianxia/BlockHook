@@ -545,37 +545,37 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
         NSLog(@"Can't remove token for StackBlock!");
         return NO;
     }
-    if (self.originInvoke) {
-        if (self.block) {
-            BHToken *current = [self.block block_currentHookToken];
-            BHToken *last = nil;
-            while (current) {
-                if (current == self) {
-                    if (last) { // remove middle token
-                        last.originInvoke = self.originInvoke;
-                        last.next = nil;
-                    } else { // remove head(current) token
-                        BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
-                        [lock lock];
-                        BOOL success = ReplaceBlockInvoke(((__bridge struct _BHBlock *)self.block), self.originInvoke);
-                        if (!success) {
-                            NSLog(@"Remove failed! Replace invoke pointer failed. Block:%@", self.block);
-                            [lock unlock];
-                            return NO;
-                        }
-                        [lock unlock];
-                    }
-                    break;
-                }
-                last = current;
-                current = [current next];
-            }
-        }
-        self.originInvoke = NULL;
-        objc_setAssociatedObject(self.block, _replacementInvoke, nil, OBJC_ASSOCIATION_RETAIN);
-        return YES;
+    if (!self.originInvoke) {
+        return NO;
     }
-    return NO;
+    if (self.block) {
+        BHToken *current = [self.block block_currentHookToken];
+        BHToken *last = nil;
+        while (current) {
+            if (current == self) {
+                if (last) { // remove middle token
+                    last.originInvoke = self.originInvoke;
+                    last.next = nil;
+                } else { // remove head(current) token
+                    BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
+                    [lock lock];
+                    BOOL success = ReplaceBlockInvoke(((__bridge struct _BHBlock *)self.block), self.originInvoke);
+                    if (!success) {
+                        NSLog(@"Remove failed! Replace invoke pointer failed. Block:%@", self.block);
+                        [lock unlock];
+                        return NO;
+                    }
+                    [lock unlock];
+                }
+                break;
+            }
+            last = current;
+            current = [current next];
+        }
+    }
+    self.originInvoke = NULL;
+    objc_setAssociatedObject(self.block, _replacementInvoke, nil, OBJC_ASSOCIATION_RETAIN);
+    return YES;
 }
 
 - (NSString *)mangleName {
@@ -836,7 +836,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     // origin block invoke func arguments: block(self), ...
     // origin block invoke func arguments (x86 struct return): struct*, block(self), ...
     // hook block signature arguments: block(self), invocation, ...
-    NSUInteger numberOfArguments = MIN(self.aspectBlockSignature.numberOfArguments, self.originalBlockSignature.numberOfArguments + 1);
+    NSUInteger numberOfArguments = MIN(self.aspectBlockSignature.numberOfArguments,
+                                       self.originalBlockSignature.numberOfArguments + 1);
     for (NSUInteger idx = 2; idx < numberOfArguments; idx++) {
         [blockInvocation setArgument:args[idx - 1] atIndex:idx];
     }
@@ -941,7 +942,8 @@ static void BHFFIClosureFunc(ffi_cif *cif, void *ret, void **args, void *userdat
     if (BlockHookModeContainsMode(token.mode, BlockHookModeBefore)) {
         [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeBefore invocation:invocation];
     }
-    if (!(BlockHookModeContainsMode(token.mode, BlockHookModeInstead) && [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeInstead invocation:invocation])) {
+    if (!(BlockHookModeContainsMode(token.mode, BlockHookModeInstead) &&
+          [token invokeAspectBlockWithArgs:userArgs retValue:userRet mode:BlockHookModeInstead invocation:invocation])) {
         [token invokeOriginalBlockWithArgs:args retValue:ret];
     }
     if (BlockHookModeContainsMode(token.mode, BlockHookModeAfter)) {
