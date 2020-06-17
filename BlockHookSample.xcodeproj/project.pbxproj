@@ -77,6 +77,55 @@
 		A4BB11232264D33D00CF8758 /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF52264BC1C00A01C0B /* ffi_common.h */; };
 		A4BB11242264D33D00CF8758 /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF72264BC1C00A01C0B /* ffi.h */; };
 		A4BB11252264D33D00CF8758 /* ffi_arm64.h in Headers */ = {isa = PBXBuildFile; fileRef = A4619AF82264BC1C00A01C0B /* ffi_arm64.h */; };
+		A4E06A35249A14C500FC3CCE /* BHInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A30249A13B300FC3CCE /* BHInvocation.m */; };
+		A4E06A36249A14C500FC3CCE /* BHInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A30249A13B300FC3CCE /* BHInvocation.m */; };
+		A4E06A37249A14C700FC3CCE /* BHInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A30249A13B300FC3CCE /* BHInvocation.m */; };
+		A4E06A38249A14C700FC3CCE /* BHInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A30249A13B300FC3CCE /* BHInvocation.m */; };
+		A4E06A3A249A14D300FC3CCE /* BHInvocation+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A32249A141100FC3CCE /* BHInvocation+Private.h */; };
+		A4E06A3B249A14D300FC3CCE /* BHInvocation+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A32249A141100FC3CCE /* BHInvocation+Private.h */; };
+		A4E06A3C249A14D400FC3CCE /* BHInvocation+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A32249A141100FC3CCE /* BHInvocation+Private.h */; };
+		A4E06A3D249A14D400FC3CCE /* BHInvocation+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A32249A141100FC3CCE /* BHInvocation+Private.h */; };
+		A4E06A3E249A14D800FC3CCE /* BHInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A2F249A13B300FC3CCE /* BHInvocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E06A3F249A14D800FC3CCE /* BHInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A2F249A13B300FC3CCE /* BHInvocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E06A40249A14D900FC3CCE /* BHInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A2F249A13B300FC3CCE /* BHInvocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E06A41249A14D900FC3CCE /* BHInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A2F249A13B300FC3CCE /* BHInvocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E06A44249A15E700FC3CCE /* BHToken.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A42249A15E700FC3CCE /* BHToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E06A45249A15E700FC3CCE /* BHToken.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A42249A15E700FC3CCE /* BHToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E06A46249A15E700FC3CCE /* BHToken.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A42249A15E700FC3CCE /* BHToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E06A47249A15E700FC3CCE /* BHToken.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A42249A15E700FC3CCE /* BHToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4E06A48249A15E700FC3CCE /* BHToken.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A43249A15E700FC3CCE /* BHToken.m */; };
+		A4E06A49249A15E700FC3CCE /* BHToken.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A43249A15E700FC3CCE /* BHToken.m */; };
+		A4E06A4A249A15E700FC3CCE /* BHToken.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A43249A15E700FC3CCE /* BHToken.m */; };
+		A4E06A4B249A15E700FC3CCE /* BHToken.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A43249A15E700FC3CCE /* BHToken.m */; };
+		A4E06A53249A169100FC3CCE /* BHToken+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A51249A169100FC3CCE /* BHToken+Private.h */; };
+		A4E06A54249A169100FC3CCE /* BHToken+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A51249A169100FC3CCE /* BHToken+Private.h */; };
+		A4E06A55249A169100FC3CCE /* BHToken+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A51249A169100FC3CCE /* BHToken+Private.h */; };
+		A4E06A56249A169100FC3CCE /* BHToken+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A51249A169100FC3CCE /* BHToken+Private.h */; };
+		A4E06A5D249A16E700FC3CCE /* BHDealloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A5B249A16E700FC3CCE /* BHDealloc.h */; };
+		A4E06A5E249A16E700FC3CCE /* BHDealloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A5B249A16E700FC3CCE /* BHDealloc.h */; };
+		A4E06A5F249A16E700FC3CCE /* BHDealloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A5B249A16E700FC3CCE /* BHDealloc.h */; };
+		A4E06A60249A16E700FC3CCE /* BHDealloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A5B249A16E700FC3CCE /* BHDealloc.h */; };
+		A4E06A61249A16E700FC3CCE /* BHDealloc.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A5C249A16E700FC3CCE /* BHDealloc.m */; };
+		A4E06A62249A16E700FC3CCE /* BHDealloc.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A5C249A16E700FC3CCE /* BHDealloc.m */; };
+		A4E06A63249A16E700FC3CCE /* BHDealloc.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A5C249A16E700FC3CCE /* BHDealloc.m */; };
+		A4E06A64249A16E700FC3CCE /* BHDealloc.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A5C249A16E700FC3CCE /* BHDealloc.m */; };
+		A4E06A67249A175100FC3CCE /* BHHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A65249A175100FC3CCE /* BHHelper.h */; };
+		A4E06A68249A175100FC3CCE /* BHHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A65249A175100FC3CCE /* BHHelper.h */; };
+		A4E06A69249A175100FC3CCE /* BHHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A65249A175100FC3CCE /* BHHelper.h */; };
+		A4E06A6A249A175100FC3CCE /* BHHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A65249A175100FC3CCE /* BHHelper.h */; };
+		A4E06A6B249A175100FC3CCE /* BHHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A66249A175100FC3CCE /* BHHelper.m */; };
+		A4E06A6C249A175100FC3CCE /* BHHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A66249A175100FC3CCE /* BHHelper.m */; };
+		A4E06A6D249A175100FC3CCE /* BHHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A66249A175100FC3CCE /* BHHelper.m */; };
+		A4E06A6E249A175100FC3CCE /* BHHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A66249A175100FC3CCE /* BHHelper.m */; };
+		A4E06A71249A1BCA00FC3CCE /* BHLock.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A6F249A1BCA00FC3CCE /* BHLock.h */; };
+		A4E06A72249A1BCA00FC3CCE /* BHLock.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A6F249A1BCA00FC3CCE /* BHLock.h */; };
+		A4E06A73249A1BCA00FC3CCE /* BHLock.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A6F249A1BCA00FC3CCE /* BHLock.h */; };
+		A4E06A74249A1BCA00FC3CCE /* BHLock.h in Headers */ = {isa = PBXBuildFile; fileRef = A4E06A6F249A1BCA00FC3CCE /* BHLock.h */; };
+		A4E06A75249A1BCA00FC3CCE /* BHLock.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A70249A1BCA00FC3CCE /* BHLock.m */; };
+		A4E06A76249A1BCA00FC3CCE /* BHLock.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A70249A1BCA00FC3CCE /* BHLock.m */; };
+		A4E06A77249A1BCA00FC3CCE /* BHLock.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A70249A1BCA00FC3CCE /* BHLock.m */; };
+		A4E06A78249A1BCA00FC3CCE /* BHLock.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E06A70249A1BCA00FC3CCE /* BHLock.m */; };
+		A4E06A79249A336200FC3CCE /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
 		A4E732062261E644003D7063 /* BlockHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A46E6C16204467F4000D1DAA /* BlockHook.m */; };
 		A4E732072261E64C003D7063 /* BlockHook.h in Headers */ = {isa = PBXBuildFile; fileRef = A46E6C15204467F4000D1DAA /* BlockHook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4E732092261E70C003D7063 /* BlockHook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4F558882064EE2A00497FFE /* BlockHook.framework */; };
@@ -214,6 +263,18 @@
 		A46E6C0D2044648A000D1DAA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A46E6C15204467F4000D1DAA /* BlockHook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockHook.h; sourceTree = "<group>"; };
 		A46E6C16204467F4000D1DAA /* BlockHook.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockHook.m; sourceTree = "<group>"; };
+		A4E06A2F249A13B300FC3CCE /* BHInvocation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BHInvocation.h; sourceTree = "<group>"; };
+		A4E06A30249A13B300FC3CCE /* BHInvocation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BHInvocation.m; sourceTree = "<group>"; };
+		A4E06A32249A141100FC3CCE /* BHInvocation+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BHInvocation+Private.h"; sourceTree = "<group>"; };
+		A4E06A42249A15E700FC3CCE /* BHToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BHToken.h; sourceTree = "<group>"; };
+		A4E06A43249A15E700FC3CCE /* BHToken.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BHToken.m; sourceTree = "<group>"; };
+		A4E06A51249A169100FC3CCE /* BHToken+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BHToken+Private.h"; sourceTree = "<group>"; };
+		A4E06A5B249A16E700FC3CCE /* BHDealloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BHDealloc.h; sourceTree = "<group>"; };
+		A4E06A5C249A16E700FC3CCE /* BHDealloc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BHDealloc.m; sourceTree = "<group>"; };
+		A4E06A65249A175100FC3CCE /* BHHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BHHelper.h; sourceTree = "<group>"; };
+		A4E06A66249A175100FC3CCE /* BHHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BHHelper.m; sourceTree = "<group>"; };
+		A4E06A6F249A1BCA00FC3CCE /* BHLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BHLock.h; sourceTree = "<group>"; };
+		A4E06A70249A1BCA00FC3CCE /* BHLock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BHLock.m; sourceTree = "<group>"; };
 		A4E731F72261E360003D7063 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4E731FE2261E5A8003D7063 /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E7321D2261EA22003D7063 /* BlockHook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlockHook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -407,6 +468,18 @@
 			children = (
 				A46E6C15204467F4000D1DAA /* BlockHook.h */,
 				A46E6C16204467F4000D1DAA /* BlockHook.m */,
+				A4E06A5B249A16E700FC3CCE /* BHDealloc.h */,
+				A4E06A5C249A16E700FC3CCE /* BHDealloc.m */,
+				A4E06A42249A15E700FC3CCE /* BHToken.h */,
+				A4E06A43249A15E700FC3CCE /* BHToken.m */,
+				A4E06A51249A169100FC3CCE /* BHToken+Private.h */,
+				A4E06A6F249A1BCA00FC3CCE /* BHLock.h */,
+				A4E06A70249A1BCA00FC3CCE /* BHLock.m */,
+				A4E06A2F249A13B300FC3CCE /* BHInvocation.h */,
+				A4E06A30249A13B300FC3CCE /* BHInvocation.m */,
+				A4E06A32249A141100FC3CCE /* BHInvocation+Private.h */,
+				A4E06A65249A175100FC3CCE /* BHHelper.h */,
+				A4E06A66249A175100FC3CCE /* BHHelper.m */,
 				A4E731F72261E360003D7063 /* Info.plist */,
 			);
 			path = BlockHook;
@@ -446,11 +519,18 @@
 				A4BB111B2264D33D00CF8758 /* ffitarget_arm64.h in Headers */,
 				A4BB111C2264D33D00CF8758 /* ffitarget.h in Headers */,
 				A4BB111D2264D33D00CF8758 /* ffi_arm.h in Headers */,
+				A4E06A41249A14D900FC3CCE /* BHInvocation.h in Headers */,
 				A4BB111E2264D33D00CF8758 /* ffi_i386.h in Headers */,
 				A4BB111F2264D33D00CF8758 /* ffitarget_x86_64.h in Headers */,
 				A4BB11202264D33D00CF8758 /* ffi_x86_64.h in Headers */,
+				A4E06A60249A16E700FC3CCE /* BHDealloc.h in Headers */,
+				A4E06A56249A169100FC3CCE /* BHToken+Private.h in Headers */,
+				A4E06A6A249A175100FC3CCE /* BHHelper.h in Headers */,
+				A4E06A47249A15E700FC3CCE /* BHToken.h in Headers */,
+				A4E06A3D249A14D400FC3CCE /* BHInvocation+Private.h in Headers */,
 				A4BB11212264D33D00CF8758 /* ffitarget_arm.h in Headers */,
 				A4BB11222264D33D00CF8758 /* ffitarget_i386.h in Headers */,
+				A4E06A74249A1BCA00FC3CCE /* BHLock.h in Headers */,
 				A4BB11232264D33D00CF8758 /* ffi_common.h in Headers */,
 				A4BB11242264D33D00CF8758 /* ffi.h in Headers */,
 				A4BB11252264D33D00CF8758 /* ffi_arm64.h in Headers */,
@@ -465,11 +545,18 @@
 				A4619B0C2264BC1C00A01C0B /* ffitarget_arm.h in Headers */,
 				A4619AFA2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */,
 				A4619B0F2264BC1C00A01C0B /* ffitarget_i386.h in Headers */,
+				A4E06A3F249A14D800FC3CCE /* BHInvocation.h in Headers */,
 				A4619B092264BC1C00A01C0B /* ffi_x86_64.h in Headers */,
 				A4619B032264BC1C00A01C0B /* ffi_i386.h in Headers */,
 				A4619B062264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */,
+				A4E06A5E249A16E700FC3CCE /* BHDealloc.h in Headers */,
+				A4E06A54249A169100FC3CCE /* BHToken+Private.h in Headers */,
+				A4E06A68249A175100FC3CCE /* BHHelper.h in Headers */,
+				A4E06A45249A15E700FC3CCE /* BHToken.h in Headers */,
+				A4E06A3B249A14D300FC3CCE /* BHInvocation+Private.h in Headers */,
 				A4619B1B2264BC1C00A01C0B /* ffi_arm64.h in Headers */,
 				A4619AFD2264BC1C00A01C0B /* ffitarget.h in Headers */,
+				A4E06A72249A1BCA00FC3CCE /* BHLock.h in Headers */,
 				A4E732072261E64C003D7063 /* BlockHook.h in Headers */,
 				A4619B002264BC1C00A01C0B /* ffi_arm.h in Headers */,
 				A4619B122264BC1C00A01C0B /* ffi_common.h in Headers */,
@@ -484,11 +571,18 @@
 				A4619B0D2264BC1C00A01C0B /* ffitarget_arm.h in Headers */,
 				A4619AFB2264BC1C00A01C0B /* ffitarget_arm64.h in Headers */,
 				A4619B102264BC1C00A01C0B /* ffitarget_i386.h in Headers */,
+				A4E06A40249A14D900FC3CCE /* BHInvocation.h in Headers */,
 				A4619B0A2264BC1C00A01C0B /* ffi_x86_64.h in Headers */,
 				A4619B042264BC1C00A01C0B /* ffi_i386.h in Headers */,
 				A4619B072264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */,
+				A4E06A5F249A16E700FC3CCE /* BHDealloc.h in Headers */,
+				A4E06A55249A169100FC3CCE /* BHToken+Private.h in Headers */,
+				A4E06A69249A175100FC3CCE /* BHHelper.h in Headers */,
+				A4E06A46249A15E700FC3CCE /* BHToken.h in Headers */,
+				A4E06A3C249A14D400FC3CCE /* BHInvocation+Private.h in Headers */,
 				A4619B1C2264BC1C00A01C0B /* ffi_arm64.h in Headers */,
 				A4619AFE2264BC1C00A01C0B /* ffitarget.h in Headers */,
+				A4E06A73249A1BCA00FC3CCE /* BHLock.h in Headers */,
 				A4E732292261FD2A003D7063 /* BlockHook.h in Headers */,
 				A4619B012264BC1C00A01C0B /* ffi_arm.h in Headers */,
 				A4619B132264BC1C00A01C0B /* ffi_common.h in Headers */,
@@ -503,11 +597,18 @@
 				A4619B0B2264BC1C00A01C0B /* ffitarget_arm.h in Headers */,
 				A4619AF92264BC1C00A01C0B /* ffitarget_arm64.h in Headers */,
 				A4619B0E2264BC1C00A01C0B /* ffitarget_i386.h in Headers */,
+				A4E06A3E249A14D800FC3CCE /* BHInvocation.h in Headers */,
 				A4619B082264BC1C00A01C0B /* ffi_x86_64.h in Headers */,
 				A4619B022264BC1C00A01C0B /* ffi_i386.h in Headers */,
 				A4619B052264BC1C00A01C0B /* ffitarget_x86_64.h in Headers */,
+				A4E06A5D249A16E700FC3CCE /* BHDealloc.h in Headers */,
+				A4E06A53249A169100FC3CCE /* BHToken+Private.h in Headers */,
+				A4E06A67249A175100FC3CCE /* BHHelper.h in Headers */,
+				A4E06A44249A15E700FC3CCE /* BHToken.h in Headers */,
+				A4E06A3A249A14D300FC3CCE /* BHInvocation+Private.h in Headers */,
 				A4619B1A2264BC1C00A01C0B /* ffi_arm64.h in Headers */,
 				A4619AFC2264BC1C00A01C0B /* ffitarget.h in Headers */,
+				A4E06A71249A1BCA00FC3CCE /* BHLock.h in Headers */,
 				A44BAC7D206785C1007BE529 /* BlockHook.h in Headers */,
 				A4619AFF2264BC1C00A01C0B /* ffi_arm.h in Headers */,
 				A4619B112264BC1C00A01C0B /* ffi_common.h in Headers */,
@@ -903,6 +1004,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4E06A79249A336200FC3CCE /* BlockHook.m in Sources */,
+				A4E06A64249A16E700FC3CCE /* BHDealloc.m in Sources */,
+				A4E06A78249A1BCA00FC3CCE /* BHLock.m in Sources */,
+				A4E06A38249A14C700FC3CCE /* BHInvocation.m in Sources */,
+				A4E06A4B249A15E700FC3CCE /* BHToken.m in Sources */,
+				A4E06A6E249A175100FC3CCE /* BHHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -920,7 +1027,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4E06A76249A1BCA00FC3CCE /* BHLock.m in Sources */,
+				A4E06A62249A16E700FC3CCE /* BHDealloc.m in Sources */,
 				A4E732062261E644003D7063 /* BlockHook.m in Sources */,
+				A4E06A36249A14C500FC3CCE /* BHInvocation.m in Sources */,
+				A4E06A49249A15E700FC3CCE /* BHToken.m in Sources */,
+				A4E06A6C249A175100FC3CCE /* BHHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -928,7 +1040,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4E06A77249A1BCA00FC3CCE /* BHLock.m in Sources */,
+				A4E06A63249A16E700FC3CCE /* BHDealloc.m in Sources */,
 				A45C5EB622EF4C7D00EEBED2 /* BlockHook.m in Sources */,
+				A4E06A35249A14C500FC3CCE /* BHInvocation.m in Sources */,
+				A4E06A4A249A15E700FC3CCE /* BHToken.m in Sources */,
+				A4E06A6D249A175100FC3CCE /* BHHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -946,7 +1063,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4E06A75249A1BCA00FC3CCE /* BHLock.m in Sources */,
+				A4E06A61249A16E700FC3CCE /* BHDealloc.m in Sources */,
 				A4F558952064EE4B00497FFE /* BlockHook.m in Sources */,
+				A4E06A37249A14C700FC3CCE /* BHInvocation.m in Sources */,
+				A4E06A48249A15E700FC3CCE /* BHToken.m in Sources */,
+				A4E06A6B249A175100FC3CCE /* BHHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
