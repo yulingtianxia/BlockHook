@@ -103,18 +103,16 @@ Here is the log:
 
 ```
 hooked block
-hook before block! invocation:<BHInvocation: 0x600003668940>
-3 + 5 = 8, z is a NSObject: <NSObject: 0x6000034245a0>
-let me see original result: 8
+hook before block! invocation:<BHInvocation: 0x60b00003c370>
+3 + 5 = 8, z is a NSObject: <NSObject: 0x6020000279d0>
+let me see original result: 0
 hook instead: '+' -> '*'
 hook after block! 3 * 5 = 15
 hooked result:15
+block dead! token:<BHToken: 0x60d000004bd0>
 remove tokens, original block
-hook before block! invocation:<BHInvocation: 0x60000366c7c0>
-3 + 5 = 8, z is a NSObject: <NSObject: 0x6000034245a0>
-hook after block! 3 * 5 = 8
+3 + 5 = 8, z is a NSObject: <NSObject: 0x6020000279d0>
 original result:8
-block dead! token:<BHToken: 0x600000422910>
 ```
 
 ### Block Interceptor
