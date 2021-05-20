@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BHToken.h"
-#import "BHInvocation.h"
+#import <BlockHook/BHToken.h>
+#import <BlockHook/BHInvocation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

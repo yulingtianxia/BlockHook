@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BHToken.h"
+#import <BlockHook/BHToken.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
