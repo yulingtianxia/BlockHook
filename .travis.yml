@@ -1,8 +1,8 @@
-osx_image: xcode11.3
+osx_image: xcode12.5
 language: objective-c
 xcode_project: BlockHookSample
 xcode_scheme: BlockHook iOS
-xcode_sdk: iphoneos13.3
+xcode_sdk: iphoneos14.5
 env:
   global:
   - FRAMEWORK_NAME=BlockHook
@@ -13,7 +13,7 @@ before_deploy:
 - carthage build --no-skip-current
 - carthage archive $FRAMEWORK_NAME
 script:
-- xcodebuild -project BlockHookSample.xcodeproj -scheme "BlockHookSample iOS" -configuration Release -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=13.3' ONLY_ACTIVE_ARCH=NO GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES build test
+- xcodebuild -project BlockHookSample.xcodeproj -scheme "BlockHookSample iOS" -configuration Release -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12 Pro Max,OS=14.5' ONLY_ACTIVE_ARCH=NO GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES build test
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 deploy:
