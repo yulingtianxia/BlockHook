@@ -7,7 +7,6 @@
 //
 
 #import "ViewController.h"
-@import BlockHook;
 
 @interface ViewController ()
 
@@ -18,12 +17,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    void(^block)(void) = ^() {
-        NSLog(@"This is global block!");
-    };
-    [block block_hookWithMode:BlockHookModeAfter usingBlock:^(BHToken *token) {
-        NSLog(@"After global block!");
-    }];
 }
 
 @end

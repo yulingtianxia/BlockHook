@@ -56,14 +56,13 @@ struct TestStruct _testRect;
     [tokenAfter remove];
 }
 
+struct TestStruct (^structReturnBlock)(int) = ^(int x) {
+    struct TestStruct result = _testRect;
+    return result;
+};
+
 - (void)testStructReturn {
-    struct TestStruct (^StructReturnBlock)(int) = ^(int x)
-    {
-        struct TestStruct result = _testRect;
-        return result;
-    };
-    
-    [StructReturnBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x){
+    [structReturnBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, int x){
         struct TestStruct ret;
         [invocation getReturnValue:&ret];
         ret.a = 100;
@@ -71,25 +70,24 @@ struct TestStruct _testRect;
         XCTAssert(x == 8, @"Wrong arg!");
     }];
     
-    __unused struct TestStruct result = StructReturnBlock(8);
+    __unused struct TestStruct result = structReturnBlock(8);
     XCTAssert(result.a == 100, @"Modify return struct failed!");
 }
 
+struct TestStruct *(^structPointerReturnBlock)(void) = ^() {
+    struct TestStruct *result = &_testRect;
+    return result;
+};
+
 - (void)testStructPointerReturn {
-    struct TestStruct * (^StructReturnBlock)(void) = ^()
-    {
-        struct TestStruct *result = &_testRect;
-        return result;
-    };
-    
-    [StructReturnBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation){
+    [structPointerReturnBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation){
         struct TestStruct *ret;
         [invocation getReturnValue:&ret];
         ret->a = 100;
         [invocation setReturnValue:&ret];
     }];
     
-    __unused struct TestStruct *result = StructReturnBlock();
+    __unused struct TestStruct *result = structPointerReturnBlock();
     XCTAssert(result->a == 100, @"Modify return struct failed!");
 }
 
@@ -110,47 +108,44 @@ struct TestStruct _testRect;
     ObjectArgBlock(argOrig);
 }
 
+void (^structArgBlock)(struct TestStruct) = ^(struct TestStruct test) {
+    XCTAssert(test.a == 100, @"Modify struct member failed!");
+};
+
 - (void)testStructArg {
-    void (^StructArgBlock)(struct TestStruct) = ^(struct TestStruct test)
-    {
-        XCTAssert(test.a == 100, @"Modify struct member failed!");
-    };
-    
-    [StructArgBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
+    [structArgBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct test){
         // Hook 改参数
         test.a = 100;
         [invocation setArgument:&test atIndex:1];
     }];
-    StructArgBlock(_testRect);
+    structArgBlock(_testRect);
 }
 
+CGRect (^rectBlock)(CGRect) = ^(CGRect test) {
+    XCTAssert(test.origin.x == 100, @"Modify struct member failed!");
+    return test;
+};
+
 - (void)testCGRectArgAndRet {
-    CGRect (^StructReturnBlock)(CGRect) = ^(CGRect test)
-    {
-        XCTAssert(test.origin.x == 100, @"Modify struct member failed!");
-        return test;
-    };
-    
-    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, CGRect test){
+    [rectBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, CGRect test){
         // Hook 改参数
         test.origin.x = 100;
         [invocation setArgument:&test atIndex:1];
     }];
-    StructReturnBlock((CGRect){1,2,3,4});
+    rectBlock((CGRect){1,2,3,4});
 }
 
+void (^structPointerArgBlock)(struct TestStruct *) = ^(struct TestStruct *test) {
+    XCTAssert(test->a == 100, @"Modify struct member failed!");
+};
+
 - (void)testStructPointerArg {
-    void (^StructReturnBlock)(struct TestStruct *) = ^(struct TestStruct *test)
-    {
-        XCTAssert(test->a == 100, @"Modify struct member failed!");
-    };
-    
-    [StructReturnBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct *test){
+    [structPointerArgBlock block_hookWithMode:BlockHookModeBefore usingBlock:^(BHInvocation *invocation, struct TestStruct *test){
         // Hook 改参数
         test->a = 100;
         [invocation setArgument:&test atIndex:1];
     }];
-    StructReturnBlock(&_testRect);
+    structPointerArgBlock(&_testRect);
 }
 
 - (void)testStackBlock {
@@ -166,18 +161,20 @@ struct TestStruct _testRect;
     }];
 }
 
+const char *(^protocolBlock)(id<CALayerDelegate>, int(^)(int, int)) = ^(id<CALayerDelegate> delegate, int(^block)(int, int)) {
+    if (block) {
+        block(1, 2);
+    }
+    return (const char *)"test protocol";
+};
+
 - (void)testProtocol {
     int(^block)(int x, int y) = ^int(int x, int y) {
         int result = x + y;
         NSLog(@"%d + %d = %d", x, y, result);
         return result;
     };
-    const char *(^protocolBlock)(id<CALayerDelegate>, int(^)(int, int)) = ^(id<CALayerDelegate> delegate, int(^block)(int, int)) {
-        if (block) {
-            block(1, 2);
-        }
-        return (const char *)"test protocol";
-    };
+    
     const char *fakeResult = "lalalala";
     [protocolBlock block_hookWithMode:BlockHookModeAfter usingBlock:^(BHInvocation *invocation, id<CALayerDelegate> delegate, int(^block)(int x, int y)){
         [invocation setReturnValue:(void *)&fakeResult];
@@ -188,7 +185,6 @@ struct TestStruct _testRect;
 }
 
 - (void)testHookBlock {
-    
     NSObject *z = NSObject.new;
     int(^block)(int x, int y) = ^int(int x, int y) {
         int result = x + y;
@@ -443,16 +439,17 @@ struct TestStruct _testRect;
     [self waitForExpectations:@[expectation] timeout:30];
 }
 
+NSObject *(^testSyncCharArgBlock)(char *) = ^(char *a) {
+    XCTAssert(strcmp(a, "hooked") == 0, @"Sync Char Arg Interceptor change argument failed!");
+    return [NSObject new];
+};
+
 - (void)testSyncCharArgInterceptor {
     NSObject *ret1 = [NSObject new];
     char *origChar = (char *)malloc(sizeof(char) * 7);
     strcpy(origChar, "origin");
-    NSObject *(^testblock)(char *) = ^(char *a) {
-        XCTAssert(strcmp(a, "hooked") == 0, @"Sync Char Arg Interceptor change argument failed!");
-        return [NSObject new];
-    };
     
-    [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+    [testSyncCharArgBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         char *arg;
         [invocation getArgument:&arg atIndex:1];
         XCTAssert(strcmp(arg, "origin") == 0, @"Sync Char Arg Interceptor wrong argument!");
@@ -462,22 +459,23 @@ struct TestStruct _testRect;
         [invocation setReturnValue:(void *)&ret1];
     }];
     
-    __unused NSObject *result = testblock(origChar);
+    __unused NSObject *result = testSyncCharArgBlock(origChar);
     origChar[1] = '1';
     free(origChar);
     XCTAssert(result == ret1, @"Sync Char Arg Interceptor change return value failed!");
 }
 
+NSObject *(^testAsyncCharArgBlock)(char *) = ^(char *a) {
+    XCTAssert(strcmp(a, "hooked") == 0, @"Async Char Arg Interceptor change argument failed!");
+    return [NSObject new];
+};
+
 - (void)testAsyncCharArgInterceptor {
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"Wait for block invoke."];
     char *origChar = (char *)malloc(sizeof(char) * 7);
     strcpy(origChar, "origin");
-    NSObject *(^testblock)(char *) = ^(char *a) {
-        XCTAssert(strcmp(a, "hooked") == 0, @"Async Char Arg Interceptor change argument failed!");
-        return [NSObject new];
-    };
     
-    [testblock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
+    [testAsyncCharArgBlock block_interceptor:^(BHInvocation *invocation, IntercepterCompletion  _Nonnull completion) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             char *arg;
             [invocation getArgument:&arg atIndex:1];
@@ -491,7 +489,7 @@ struct TestStruct _testRect;
         });
     }];
     
-    NSObject *result = testblock(origChar);
+    NSObject *result = testAsyncCharArgBlock(origChar);
     origChar[1] = '1';
     free(origChar);
     NSLog(@"result:%@", result);
