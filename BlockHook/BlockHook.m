@@ -34,7 +34,7 @@
     if (!aspectBlock || ![self block_checkValid]) {
         return nil;
     }
-    struct _BHBlock *bh_block = (__bridge void *)self;
+    BHBlock *bh_block = (__bridge void *)self;
     if (!_bh_Block_descriptor_3(bh_block)) {
         NSLog(@"Block has no signature! Required ABI.2010.3.16. %@", self);
         return nil;
@@ -61,7 +61,7 @@
     if (![self block_checkValid]) {
         return nil;
     }
-    dispatch_block_private_data_t dbpd = bh_dispatch_block_get_private_data((__bridge struct _BHBlock *)(self));
+    dispatch_block_private_data_t dbpd = bh_dispatch_block_get_private_data((__bridge BHBlock *)(self));
     if (dbpd && dbpd->dbpd_block) {
         return [dbpd->dbpd_block block_currentHookToken];
     }
@@ -71,7 +71,7 @@
 }
 
 - (void *)block_currentInvokeFunction {
-    struct _BHBlock *bh_block = (__bridge void *)self;
+    BHBlock *bh_block = (__bridge void *)self;
     BHLock *lock = [self bh_lockForKey:_cmd];
     [lock lock];
     void *invoke = bh_block->invoke;

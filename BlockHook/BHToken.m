@@ -18,8 +18,7 @@
 #import "BHInvocation+Private.h"
 
 
-@interface BHToken ()
-{
+@interface BHToken () {
     ffi_cif _cif;
     void *_replacementInvoke;
     ffi_closure *_closure;
@@ -48,7 +47,9 @@
 
 @synthesize next = _next;
 
-- (instancetype)initWithBlock:(id)block mode:(BlockHookMode)mode aspectBlockBlock:(id)aspectBlock {
+- (instancetype)initWithBlock:(id)block
+                         mode:(BlockHookMode)mode
+             aspectBlockBlock:(id)aspectBlock {
     self = [super init];
     if (self) {
         _allocations = [[NSMutableArray alloc] init];
@@ -132,7 +133,7 @@
             } else { // remove head(current) token
                 BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
                 [lock lock];
-                BOOL success = ReplaceBlockInvoke(((__bridge struct _BHBlock *)self.block), self.originInvoke);
+                BOOL success = ReplaceBlockInvoke(((__bridge BHBlock *)self.block), self.originInvoke);
                 if (!success) {
                     NSLog(@"Remove failed! Replace invoke pointer failed. Block:%@", self.block);
                     [lock unlock];
@@ -156,8 +157,7 @@
         } else {
             Dl_info dlinfo;
             memset(&dlinfo, 0, sizeof(dlinfo));
-            if (dladdr(self.originInvoke, &dlinfo) && dlinfo.dli_sname)
-            {
+            if (dladdr(self.originInvoke, &dlinfo) && dlinfo.dli_sname) {
                 _mangleName = [NSString stringWithUTF8String:dlinfo.dli_sname];
             }
         }
@@ -343,7 +343,7 @@
     int argCount;
     ffi_type **argTypes;
     ffi_type *returnType;
-    struct _BHBlock *bh_block = (__bridge void *)self.block;
+    BHBlock *bh_block = (__bridge void *)self.block;
     if (bh_block->flags & BLOCK_HAS_STRET) {
         argTypes = [self _typesWithEncodeString:str getCount:&argCount startIndex:0];
         if (!argTypes) { // Error!
@@ -377,7 +377,7 @@
         return NO;
     }
     // exchange invoke func imp
-    struct _BHBlock *block = (__bridge struct _BHBlock *)self.block;
+    BHBlock *block = (__bridge BHBlock *)self.block;
     BHLock *lock = [self.block bh_lockForKey:@selector(block_currentInvokeFunction)];
     [lock lock];
     self.originInvoke = block->invoke;

@@ -18,29 +18,29 @@ bool BlockHookModeContainsMode(BlockHookMode m1, BlockHookMode m2) {
     return ((m1 & m2) == m2);
 }
 
-__unused struct _BHBlockDescriptor1 * _bh_Block_descriptor_1(struct _BHBlock *aBlock) {
+__unused BHBlockDescriptor1 * _bh_Block_descriptor_1(BHBlock *aBlock) {
     return aBlock->descriptor;
 }
 
-__unused struct _BHBlockDescriptor2 * _bh_Block_descriptor_2(struct _BHBlock *aBlock) {
+__unused BHBlockDescriptor2 * _bh_Block_descriptor_2(BHBlock *aBlock) {
     if (!(aBlock->flags & BLOCK_HAS_COPY_DISPOSE)) {
         return nil;
     }
     uint8_t *desc = (uint8_t *)aBlock->descriptor;
-    desc += sizeof(struct _BHBlockDescriptor1);
-    return (struct _BHBlockDescriptor2 *)desc;
+    desc += sizeof(BHBlockDescriptor1);
+    return (BHBlockDescriptor2 *)desc;
 }
 
-struct _BHBlockDescriptor3 * _bh_Block_descriptor_3(struct _BHBlock *aBlock) {
+BHBlockDescriptor3 * _bh_Block_descriptor_3(BHBlock *aBlock) {
     if (!(aBlock->flags & BLOCK_HAS_SIGNATURE)) {
         return nil;
     }
     uint8_t *desc = (uint8_t *)aBlock->descriptor;
-    desc += sizeof(struct _BHBlockDescriptor1);
+    desc += sizeof(BHBlockDescriptor1);
     if (aBlock->flags & BLOCK_HAS_COPY_DISPOSE) {
-        desc += sizeof(struct _BHBlockDescriptor2);
+        desc += sizeof(BHBlockDescriptor2);
     }
-    return (struct _BHBlockDescriptor3 *)desc;
+    return (BHBlockDescriptor3 *)desc;
 }
 
 static dispatch_block_t blockWithPrivateData;
@@ -48,17 +48,17 @@ static dispatch_block_t blockWithPrivateData;
 
 DISPATCH_ALWAYS_INLINE
 inline dispatch_block_private_data_t
-bh_dispatch_block_get_private_data(struct _BHBlock *block) {
+bh_dispatch_block_get_private_data(BHBlock *block) {
     if (!blockWithPrivateData) {
         blockWithPrivateData = dispatch_block_create(0, ^{});
     }
-    if (block->invoke != ((__bridge struct _BHBlock *)blockWithPrivateData)->invoke) {
+    if (block->invoke != ((__bridge BHBlock *)blockWithPrivateData)->invoke) {
         return nil;
     }
     // Keep in sync with _dispatch_block_create implementation
     uint8_t *privateData = (uint8_t *)block;
     // privateData points to base of struct Block_layout
-    privateData += sizeof(struct _BHBlock);
+    privateData += sizeof(BHBlock);
     // privateData points to base of captured dispatch_block_private_data_s object
     dispatch_block_private_data_t dbpd = (dispatch_block_private_data_t)privateData;
     if (dbpd->dbpd_magic != DISPATCH_BLOCK_PRIVATE_DATA_MAGIC) {
@@ -91,7 +91,7 @@ int BHTypeCount(const char *str) {
 }
 
 const char *BHBlockTypeEncodeString(id blockObj) {
-    struct _BHBlock *block = (__bridge void *)blockObj;
+    BHBlock *block = (__bridge void *)blockObj;
     return _bh_Block_descriptor_3(block)->signature;
 }
 
@@ -123,7 +123,7 @@ vm_prot_t ProtectInvokeVMIfNeed(void *address) {
     return protection;
 }
 
-BOOL ReplaceBlockInvoke(struct _BHBlock *block, void *replacement) {
+BOOL ReplaceBlockInvoke(BHBlock *block, void *replacement) {
     void *address = &(block->invoke);
     vm_prot_t origProtection = ProtectInvokeVMIfNeed(address);
     if (origProtection == VM_PROT_NONE) {
