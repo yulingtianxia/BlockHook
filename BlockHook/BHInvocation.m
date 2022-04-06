@@ -163,6 +163,9 @@
 }
 
 - (void)_retainPointer:(void **)pointer encode:(const char *)encode key:(NSNumber *)key {
+    if (!pointer || (*encode != '@' && *encode != '*')) {
+        return;
+    }
     void *p = *pointer;
     if (!p) {
         return;
