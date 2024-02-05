@@ -8,7 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import "BHToken+Private.h"
+#if COCOAPODS
+#import "ffi.h"
+#else
 #import <ffi.h>
+#endif
 
 #ifdef __cplusplus
 #define BH_EXTERN        extern "C" __attribute__((visibility("default"))) __attribute((used))

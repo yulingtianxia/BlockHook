@@ -7,7 +7,11 @@
 //
 
 #import "BHToken.h"
+#if COCOAPODS
+#import "ffi.h"
+#else
 #import <ffi.h>
+#endif
 #import <dlfcn.h>
 #import <objc/runtime.h>
 

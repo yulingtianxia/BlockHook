@@ -12,20 +12,23 @@ s.author       = { "yulingtianxia" => "yulingtianxia@gmail.com" }
 s.social_media_url = 'https://twitter.com/yulingtianxia'
 s.source       = { :git => "https://github.com/yulingtianxia/BlockHook.git", :tag => s.version.to_s }
 
-s.source_files = "BlockHook/*.{h,m}", "libffi/*.h"
+s.source_files = "BlockHook/*.{h,m}"
 s.public_header_files = "BlockHook/BlockHook.h", "BlockHook/BHToken.h", "BlockHook/BHInvocation.h"
 s.static_framework = true
-
-s.ios.deployment_target = "8.0"
-s.osx.deployment_target = "10.10"
-s.tvos.deployment_target = "9.0"
-#s.watchos.deployment_target = "1.0"
+s.pod_target_xcconfig = {
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'
+}
 s.requires_arc = true
 
-s.ios.vendored_libraries = "libffi/*.a"
-s.osx.vendored_libraries = "libffi/*.a"
-s.tvos.vendored_libraries = "libffi/*.a"
-#s.watchos.vendored_libraries = "libffi/*.a"
+s.ios.deployment_target = "12.0"
+s.osx.deployment_target = "10.13"
+# s.tvos.deployment_target = "12.0"
+# s.watchos.deployment_target = "4.0"
+
+s.ios.vendored_frameworks = "libffi.xcframework"
+s.osx.vendored_frameworks = "libffi.xcframework"
+# s.tvos.vendored_frameworks = "libffi.xcframework"
+# s.watchos.vendored_frameworks = "libffi.xcframework"
 
 end
 
